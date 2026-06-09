@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Button } from '@/components/ui/Button'
 
 export function Navbar() {
-  const [isScrolled,    setIsScrolled]    = useState(false)
-  const [isMobileOpen,  setIsMobileOpen]  = useState(false)
-  const [activeSection, setActiveSection] = useState('home')
+  const [isScrolled,   setIsScrolled]   = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 30)
@@ -15,31 +16,13 @@ export function Navbar() {
   }, [])
 
   useEffect(() => {
-    const ids = content.nav.map(n => n.href.slice(1))
-    const observers: IntersectionObserver[] = []
-    ids.forEach(id => {
-      const el = document.getElementById(id)
-      if (!el) return
-      const obs = new IntersectionObserver(
-        ([e]) => { if (e.isIntersecting) setActiveSection(id) },
-        { threshold: 0.25 }
-      )
-      obs.observe(el)
-      observers.push(obs)
-    })
-    return () => observers.forEach(o => o.disconnect())
-  }, [])
-
-  useEffect(() => {
     const onResize = () => { if (window.innerWidth >= 768) setIsMobileOpen(false) }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const scrollTo = (href: string) => {
-    setIsMobileOpen(false)
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
-  }
+  // Close mobile menu on route change
+  const handleNavClick = () => setIsMobileOpen(false)
 
   return (
     <header
@@ -56,61 +39,67 @@ export function Navbar() {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px',
       }}>
         {/* Logo */}
-        <a
-          href="#home"
-          onClick={e => { e.preventDefault(); scrollTo('#home') }}
+        <NavLink
+          to="/"
+          onClick={handleNavClick}
           style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-          aria-label="Back to top"
+          aria-label="Josh Fallarcuna — Home"
         >
-          {/* Cyan square accent */}
           <span style={{
             display: 'inline-block', width: '8px', height: '8px',
             background: 'var(--accent)', borderRadius: '2px', transform: 'rotate(45deg)',
           }} aria-hidden="true" />
-          <span style={{
-            fontFamily: "'Space Grotesk', system-ui, sans-serif",
-            fontWeight: 700, fontSize: '1rem',
-          }}>
+          <span style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontWeight: 700, fontSize: '1rem' }}>
             <span className="text-gradient">Josh</span>
             <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}> Fallarcuna</span>
           </span>
-        </a>
+        </NavLink>
 
         {/* Desktop nav */}
         <nav aria-label="Primary navigation" className="hidden md:flex items-center" style={{ gap: '0.25rem' }}>
-          {content.nav.map(item => {
-            const isActive = activeSection === item.href.slice(1)
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={e => { e.preventDefault(); scrollTo(item.href) }}
-                style={{
-                  position: 'relative', padding: '0.5rem 0.875rem',
-                  fontSize: '0.875rem', fontWeight: isActive ? 500 : 400,
-                  color: isActive ? 'var(--accent)' : 'var(--text-muted)',
-                  textDecoration: 'none', borderRadius: '6px',
-                  transition: 'color 0.2s ease',
-                }}
-                aria-current={isActive ? 'page' : undefined}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'var(--text-primary)' }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'var(--text-muted)' }}
-              >
-                {item.label}
-                {isActive && (
-                  <span style={{
-                    position: 'absolute', bottom: '4px', left: '50%', transform: 'translateX(-50%)',
-                    width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent)',
-                  }} aria-hidden="true" />
-                )}
-              </a>
-            )
-          })}
+          {content.nav.map(item => (
+            <NavLink
+              key={item.href}
+              to={item.href}
+              end={item.href === '/'}
+              onClick={handleNavClick}
+              style={({ isActive }) => ({
+                position: 'relative',
+                padding: '0.5rem 0.875rem',
+                fontSize: '0.875rem',
+                fontWeight: isActive ? 500 : 400,
+                color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                transition: 'color 0.2s ease',
+              })}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLAnchorElement
+                if (el.getAttribute('aria-current') !== 'page') el.style.color = 'var(--text-primary)'
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLAnchorElement
+                if (el.getAttribute('aria-current') !== 'page') el.style.color = 'var(--text-muted)'
+              }}
+            >
+              {({ isActive }) => (
+                <span aria-current={isActive ? 'page' : undefined} style={{ display: 'contents' }}>
+                  {item.label}
+                  {isActive && (
+                    <span style={{
+                      position: 'absolute', bottom: '4px', left: '50%', transform: 'translateX(-50%)',
+                      width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent)',
+                    }} aria-hidden="true" />
+                  )}
+                </span>
+              )}
+            </NavLink>
+          ))}
         </nav>
 
         {/* Desktop CTA */}
         <div className="hidden md:block">
-          <Button variant="primary" size="sm" onClick={() => scrollTo('#resume')}>
+          <Button variant="primary" size="sm" onClick={() => navigate('/resume')}>
             Download CV
           </Button>
         </div>
@@ -158,28 +147,32 @@ export function Navbar() {
             }}
           >
             <div className="container-main" style={{ paddingTop: '1rem', paddingBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              {content.nav.map(item => {
-                const isActive = activeSection === item.href.slice(1)
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={e => { e.preventDefault(); scrollTo(item.href) }}
-                    style={{
-                      padding: '0.7rem 0.875rem', fontSize: '0.9rem', fontWeight: 500,
-                      color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
-                      background: isActive ? 'rgba(0,229,255,0.05)' : 'transparent',
-                      textDecoration: 'none', borderRadius: '8px',
-                      border: isActive ? '1px solid rgba(0,229,255,0.10)' : '1px solid transparent',
-                    }}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    {item.label}
-                  </a>
-                )
-              })}
+              {content.nav.map(item => (
+                <NavLink
+                  key={item.href}
+                  to={item.href}
+                  end={item.href === '/'}
+                  onClick={handleNavClick}
+                  style={({ isActive }) => ({
+                    padding: '0.7rem 0.875rem',
+                    fontSize: '0.9rem',
+                    fontWeight: 500,
+                    color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                    background: isActive ? 'rgba(0,229,255,0.05)' : 'transparent',
+                    textDecoration: 'none',
+                    borderRadius: '8px',
+                    border: isActive ? '1px solid rgba(0,229,255,0.10)' : '1px solid transparent',
+                  })}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
               <div style={{ marginTop: '0.75rem' }}>
-                <Button variant="primary" size="sm" style={{ width: '100%' }} onClick={() => scrollTo('#resume')}>
+                <Button
+                  variant="primary" size="sm"
+                  style={{ width: '100%' }}
+                  onClick={() => { navigate('/resume'); setIsMobileOpen(false) }}
+                >
                   Download CV
                 </Button>
               </div>
