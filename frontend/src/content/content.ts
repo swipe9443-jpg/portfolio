@@ -1,4 +1,5 @@
 import type { PortfolioContent } from '@/types/portfolio'
+import { RESUME_PATH } from '@/config/resume'
 
 export const content: PortfolioContent = {
   // ─── Navigation ──────────────────────────────────────────────────────────────
@@ -93,10 +94,12 @@ export const content: PortfolioContent = {
       'I enjoy solving design problems, learning modern technologies, and building projects that combine clean visuals with practical functionality.',
     ],
     personalInfo: [
-      { label: 'Full Name',  value: 'Josh Fallarcuna' },
+      { label: 'Full Name',  value: 'Josh Valeri D. Fallarcuna' },
       { label: 'Role',       value: 'Aspiring UI/UX Designer & Full-Stack Developer' },
-      { label: 'Location',   value: 'Philippines' },
-      { label: 'Education',  value: 'To be updated' },
+      { label: 'Location',   value: 'Santa Mesa, Philippines' },
+      { label: 'Email',      value: 'joshfallarcuna@gmail.com' },
+      { label: 'Contact',    value: '09087389123' },
+      { label: 'Education',  value: 'BSCS — Arellano University' },
     ],
     careerGoals: [
       'Become a professional UI/UX Designer',
@@ -166,10 +169,22 @@ export const content: PortfolioContent = {
     ],
     education: [
       {
-        institution: 'To be updated',
-        degree: 'To be updated',
-        period: 'Present',
-        details: 'Current school, course, and relevant academic details will be added here.',
+        institution: 'Arellano University Jose Abad Santos',
+        degree: 'Bachelor of Science in Computer Science (BSCS)',
+        period: '2023 – Present',
+        details: 'Currently enrolled. Focusing on software development, UI/UX design, and web technologies.',
+      },
+      {
+        institution: 'School of Saint Joseph (SSJ)',
+        degree: 'Senior High School — STEM',
+        period: '2019 – 2021',
+        details: 'Science, Technology, Engineering, and Mathematics track.',
+      },
+      {
+        institution: 'School of Saint Joseph (SSJ)',
+        degree: 'Junior High School',
+        period: '2015 – 2019',
+        details: '',
       },
     ],
   },
@@ -382,35 +397,48 @@ export const content: PortfolioContent = {
   // ─── Resume ──────────────────────────────────────────────────────────────────
   resume: {
     summary:
-      'Aspiring UI/UX Designer and future Full-Stack Web Developer with a passion for building user-centered digital experiences. Committed to continuous learning and professional growth.',
+      'Aspiring UI/UX Designer and future Full-Stack Web Developer seeking an On-the-Job Training opportunity to apply academic knowledge, enhance skills, and gain hands-on experience. Committed to continuous learning with the goal of becoming a proficient UI/UX designer and web developer.',
     education: [
       {
-        institution: 'To be updated',
-        degree: 'To be updated',
-        period: 'To be updated',
-        details: 'Current school, course, and relevant details will be added here.',
+        institution: 'Arellano University Jose Abad Santos',
+        degree: 'Bachelor of Science in Computer Science (BSCS)',
+        period: '2023 – Present',
+        details: 'Currently enrolled. Focusing on software development, UI/UX design, and web technologies.',
+      },
+      {
+        institution: 'School of Saint Joseph (SSJ)',
+        degree: 'Senior High School — Science, Technology, Engineering, and Mathematics (STEM)',
+        period: '2019 – 2021',
+        details: '',
+      },
+      {
+        institution: 'School of Saint Joseph (SSJ)',
+        degree: 'Junior High School',
+        period: '2015 – 2019',
+        details: '',
       },
     ],
     certifications: [
-      { name: 'UI/UX Design Certification',      status: 'planned' },
+      { name: 'UI/UX Design Certification',        status: 'planned' },
       { name: 'Frontend Development Certification', status: 'planned' },
     ],
     coreCompetencies: [
-      'UI/UX Design',
+      'Figma',
+      'UI Design',
       'Wireframing',
       'Prototyping',
-      'User-centered design',
       'HTML5',
       'CSS3',
       'JavaScript',
-      'TypeScript',
-      'React',
       'Responsive Design',
+      'Attention to Detail',
+      'Microsoft Word',
+      'Microsoft PowerPoint',
     ],
     experience:
-      'Portfolio and self-directed projects. Internship, freelance, or professional experience to be added when available.',
+      'Student Counseling Tracker System (Capstone Project) — Role: Figma UI Design & Documentation. Designed system interface using Figma, created wireframes and prototypes, prepared project documentation and reports, and assisted in frontend design implementation.',
     downloadLabel: 'Download Resume',
-    downloadUrl: '/resume.pdf',
+    downloadUrl: RESUME_PATH,
   },
 
   // ─── Contact ─────────────────────────────────────────────────────────────────
@@ -418,8 +446,8 @@ export const content: PortfolioContent = {
     heading: "Let's Connect",
     subheading:
       'I am open to internships, learning opportunities, collaborations, and creative web projects.',
-    email: 'josh@example.com',
-    location: 'Philippines',
+    email: 'joshfallarcuna@gmail.com',
+    location: 'Santa Mesa, Manila, Philippines',
     availability: 'Available for work',
     socialLinks: [
       { platform: 'GitHub',   url: 'https://github.com/joshfallarcuna',   label: 'GitHub profile'   },

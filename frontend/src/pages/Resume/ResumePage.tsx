@@ -5,6 +5,7 @@ import { SectionTitle } from '@/components/ui/SectionTitle'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { PageMeta } from '@/components/ui/PageMeta'
+import { viewResume, downloadResume } from '@/config/resume'
 
 const fadeUp = (delay = 0) => ({
   initial:     { opacity: 0, y: 20 },
@@ -134,9 +135,14 @@ export function ResumePage() {
                   </p>
                 </div>
                 <Button variant="primary" size="md" leftIcon={<DownloadIcon />}
-                  onClick={() => window.open(resume.downloadUrl, '_blank', 'noopener')}
+                  onClick={downloadResume}
                   aria-label="Download resume PDF" style={{ flexShrink: 0 }}>
                   {resume.downloadLabel}
+                </Button>
+                <Button variant="secondary" size="md"
+                  onClick={viewResume}
+                  aria-label="View resume PDF in browser" style={{ flexShrink: 0 }}>
+                  View Resume
                 </Button>
               </div>
             </Card>
@@ -250,11 +256,18 @@ export function ResumePage() {
             <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
               Download the PDF version for a complete overview.
             </p>
-            <Button variant="primary" size="lg" leftIcon={<DownloadIcon />}
-              onClick={() => window.open(resume.downloadUrl, '_blank', 'noopener')}
-              aria-label="Download full resume PDF">
-              {resume.downloadLabel}
-            </Button>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', justifyContent: 'center' }}>
+              <Button variant="primary" size="lg" leftIcon={<DownloadIcon />}
+                onClick={downloadResume}
+                aria-label="Download full resume PDF">
+                {resume.downloadLabel}
+              </Button>
+              <Button variant="secondary" size="lg"
+                onClick={viewResume}
+                aria-label="View full resume PDF in browser">
+                View Resume
+              </Button>
+            </div>
           </motion.div>
 
         </Container>

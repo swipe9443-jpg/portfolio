@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Button } from '@/components/ui/Button'
+import { downloadResume } from '@/config/resume'
 
 export function Navbar() {
   const [isScrolled,   setIsScrolled]   = useState(false)
@@ -99,7 +100,7 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:block">
-          <Button variant="primary" size="sm" onClick={() => navigate('/resume')}>
+          <Button variant="primary" size="sm" onClick={downloadResume}>
             Download CV
           </Button>
         </div>
@@ -171,7 +172,7 @@ export function Navbar() {
                 <Button
                   variant="primary" size="sm"
                   style={{ width: '100%' }}
-                  onClick={() => { navigate('/resume'); setIsMobileOpen(false) }}
+                  onClick={() => { downloadResume(); setIsMobileOpen(false) }}
                 >
                   Download CV
                 </Button>
