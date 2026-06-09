@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Button } from '@/components/ui/Button'
@@ -8,7 +8,7 @@ import { downloadResume } from '@/config/resume'
 export function Navbar() {
   const [isScrolled,   setIsScrolled]   = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const navigate = useNavigate()
+  
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 30)
