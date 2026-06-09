@@ -2,32 +2,119 @@ import { motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
 import { SectionTitle } from '@/components/ui/SectionTitle'
-import { Card } from '@/components/ui/Card'
 import { PageMeta } from '@/components/ui/PageMeta'
 
-const categoryIcons: Record<string, string> = {
-  'UI/UX Design':          'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
-  'Frontend Development':  'M8 9l3 3-3 3m5 0h3M3 4h18a1 1 0 011 1v14a1 1 0 01-1 1H3a1 1 0 01-1-1V5a1 1 0 011-1z',
-  'Backend Development':   'M5 12h14M12 5l7 7-7 7',
-  'Database':              'M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3v10c0 1.7-3.6 3-8 3s-8-1.3-8-3V7z M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
-  'Tools & Workflow':      'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
-  'Soft Skills':           'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+// ── Category metadata: icon, accent colour, description ───────────────────────
+const categoryMeta: Record<string, {
+  icon: JSX.Element
+  accent: string
+  description: string
+}> = {
+  'Design & Creativity': {
+    accent: '#00e5ff',
+    description: 'Visual design, prototyping tools, and creative problem-solving.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+        <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+        <circle cx="8.5"  cy="7.5"  r=".5" fill="currentColor" />
+        <circle cx="6.5"  cy="12.5" r=".5" fill="currentColor" />
+        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125A1.64 1.64 0 0 1 14.441 18h1.978c3.051 0 5.555-2.503 5.555-5.554C21.974 6.012 17.491 2 12 2z" />
+      </svg>
+    ),
+  },
+  'Frontend Development': {
+    accent: '#7dd3fc',
+    description: 'Building responsive interfaces and modern web experiences.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+      </svg>
+    ),
+  },
+  'Computer Science Fundamentals': {
+    accent: '#a78bfa',
+    description: 'Core CS concepts, algorithms, and software engineering principles.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <rect x="9" y="9" width="6" height="6" />
+        <path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3" />
+      </svg>
+    ),
+  },
+  'Professional Skills': {
+    accent: '#4ade80',
+    description: 'Soft skills and professional attributes for team environments.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    ),
+  },
+  'Current Focus': {
+    accent: '#fb923c',
+    description: 'Active areas of growth and professional development goals.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" fill="currentColor" />
+      </svg>
+    ),
+  },
 }
 
+const fallbackMeta = {
+  accent: '#00e5ff',
+  description: 'Skills and capabilities in this area.',
+  icon: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+      aria-hidden="true">
+      <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M18.66 5.34l1.41-1.41" />
+    </svg>
+  ),
+}
+
+// ── Animation variants ────────────────────────────────────────────────────────
+const cardVariants = {
+  hidden:  { opacity: 0, y: 28 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.45, delay: i * 0.08, ease: 'easeOut' as const },
+  }),
+}
+
+// ── Learning roadmap ──────────────────────────────────────────────────────────
 const roadmap = [
-  { status: 'current',  label: 'HTML, CSS, JavaScript',         note: 'Core foundation'           },
-  { status: 'current',  label: 'React + TypeScript',            note: 'Component architecture'    },
-  { status: 'current',  label: 'Figma + UI/UX Design',         note: 'Design systems'            },
-  { status: 'learning', label: 'Node.js + Express',            note: 'Backend fundamentals'      },
-  { status: 'learning', label: 'PostgreSQL + Supabase',        note: 'Database layer'            },
-  { status: 'planned',  label: 'Full-Stack Architecture',       note: 'End-to-end applications'  },
-  { status: 'planned',  label: 'Testing & CI/CD',              note: 'Production quality'        },
+  { status: 'current',  label: 'HTML, CSS, JavaScript',  note: 'Core web foundation'       },
+  { status: 'current',  label: 'Figma + UI/UX Design',   note: 'Design systems & prototypes' },
+  { status: 'current',  label: 'Adobe Photoshop',        note: 'Visual editing & assets'   },
+  { status: 'learning', label: 'React + TypeScript',     note: 'Component architecture'    },
+  { status: 'learning', label: 'Responsive Design',      note: 'Mobile-first interfaces'   },
+  { status: 'planned',  label: 'Node.js + Express',      note: 'Backend fundamentals'      },
+  { status: 'planned',  label: 'Full-Stack Projects',    note: 'End-to-end applications'   },
 ]
 
-const statusColors: Record<string, { dot: string; label: string; bg: string; border: string }> = {
-  current:  { dot: '#22c55e', label: 'Active',    bg: 'rgba(34,197,94,0.08)',  border: 'rgba(34,197,94,0.20)'  },
-  learning: { dot: '#f59e0b', label: 'Learning',  bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.20)' },
-  planned:  { dot: 'var(--accent)', label: 'Planned', bg: 'rgba(0,229,255,0.07)', border: 'rgba(0,229,255,0.20)' },
+const statusConfig: Record<string, { dot: string; label: string; bg: string; border: string }> = {
+  current:  { dot: '#22c55e', label: 'Active',   bg: 'rgba(34,197,94,0.08)',  border: 'rgba(34,197,94,0.22)'  },
+  learning: { dot: '#f59e0b', label: 'Learning', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.22)' },
+  planned:  { dot: '#00e5ff', label: 'Planned',  bg: 'rgba(0,229,255,0.07)',  border: 'rgba(0,229,255,0.20)'  },
 }
 
 export function SkillsPage() {
@@ -37,132 +124,199 @@ export function SkillsPage() {
     <>
       <PageMeta
         title="Skills | Josh Fallarcuna"
-        description="Technical skills, tools, and capabilities — UI/UX Design, Frontend, Backend, and soft skills."
+        description="Technical skills, tools, and capabilities — UI/UX Design, Frontend Development, and Computer Science fundamentals."
         ogTitle="Skills — Josh Fallarcuna"
-        ogDescription="Explore the full stack of design and development skills including Figma, React, TypeScript, Node.js, and more."
+        ogDescription="Explore the full range of design and development skills including Figma, HTML, CSS, JavaScript, and more."
       />
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section className="section-wrapper relative overflow-hidden" aria-label="Skills page">
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          PAGE HERO
+      ══════════════════════════════════════════════════════════════════════ */}
+      <section className="section-wrapper relative overflow-hidden" aria-label="Skills overview">
+        {/* Ambient top glow */}
         <div style={{
           position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-          width: '800px', height: '400px', pointerEvents: 'none', zIndex: 0,
-          background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.08) 0%, transparent 70%)',
+          width: '860px', height: '420px', pointerEvents: 'none', zIndex: 0,
+          background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.08) 0%, rgba(0,229,255,0.03) 50%, transparent 75%)',
         }} aria-hidden="true" />
+
         <Container className="relative z-10">
+          {/* Page header */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            style={{ maxWidth: '640px', marginBottom: '4rem' }}
+            style={{ maxWidth: '600px', marginBottom: '5rem' }}
           >
-            <p style={{
-              fontFamily: "'Space Grotesk', system-ui, sans-serif",
-              fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent)',
-              letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '1rem',
-            }}>
-              Technical Expertise
-            </p>
-            <h1 style={{
-              fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-              fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
-              fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em',
-              color: 'var(--text-primary)', marginBottom: '1rem',
-            }}>
-              Skills & <span className="text-gradient">Capabilities</span>
+            <p className="page-hero-label">Technical Expertise</p>
+            <h1 className="page-hero-heading">
+              Skills &amp; <span className="text-gradient">Capabilities</span>
             </h1>
-            <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-              Tools, disciplines, and technologies I work with — organized by domain.
+            <p className="page-hero-body">
+              Tools, disciplines, and technologies I work with — organised by domain.
+              Each category reflects real skills I'm actively building and applying.
             </p>
           </motion.div>
 
-          {/* Skill category cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {skills.map((cat, idx) => (
-              <motion.div
-                key={cat.id}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true as const, margin: '-24px' }}
-                transition={{ duration: 0.4, delay: idx * 0.07, ease: 'easeOut' as const }}
-              >
-                <Card padding="md" className="h-full" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{
-                      width: '36px', height: '36px', flexShrink: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.15)',
-                      borderRadius: '8px',
-                    }} aria-hidden="true">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d={categoryIcons[cat.category] ?? 'M12 12h.01'} />
-                      </svg>
+          {/* ── Skill category cards ─────────────────────────────────────────── */}
+          <div
+            className="skills-grid"
+            role="list"
+            aria-label="Skill categories"
+          >
+            {skills.map((cat, idx) => {
+              const meta = categoryMeta[cat.category] ?? fallbackMeta
+              return (
+                <motion.div
+                  key={cat.id}
+                  role="listitem"
+                  custom={idx}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: '-24px' }}
+                  variants={cardVariants}
+                  className="skill-category-card"
+                >
+                  {/* Top accent bar */}
+                  <div
+                    className="skill-cat-accent-bar"
+                    style={{ background: meta.accent }}
+                    aria-hidden="true"
+                  />
+
+                  <div style={{ padding: '1.75rem' }}>
+                    {/* ── Card header ────────────────────────── */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
+                      {/* Icon circle */}
+                      <div
+                        className="skill-cat-icon"
+                        style={{
+                          color: meta.accent,
+                          background: `${meta.accent}12`,
+                          border: `1px solid ${meta.accent}28`,
+                        }}
+                        aria-hidden="true"
+                      >
+                        {meta.icon}
+                      </div>
+
+                      <div style={{ flex: 1, minWidth: 0, paddingTop: '2px' }}>
+                        <h2 style={{
+                          fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
+                          fontSize: '0.9375rem', fontWeight: 700,
+                          color: '#ffffff', lineHeight: 1.3,
+                          letterSpacing: '-0.01em', margin: 0,
+                        }}>
+                          {cat.category}
+                        </h2>
+                        <p style={{
+                          fontSize: '0.6875rem', color: 'var(--text-muted)',
+                          fontWeight: 500, letterSpacing: '0.06em',
+                          textTransform: 'uppercase', margin: '4px 0 0',
+                        }}>
+                          {cat.skills.length} skill{cat.skills.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
                     </div>
-                    <h2 style={{
-                      fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-                      fontSize: '0.9375rem', fontWeight: 600,
-                      color: 'var(--text-primary)', lineHeight: 1.2,
+
+                    {/* Description */}
+                    <p style={{
+                      fontSize: '0.8125rem', color: 'var(--text-muted)',
+                      lineHeight: 1.6, marginBottom: '1.25rem',
                     }}>
-                      {cat.category}
-                    </h2>
-                  </div>
+                      {meta.description}
+                    </p>
 
-                  <div style={{ height: '1px', background: 'rgba(0,229,255,0.08)' }} aria-hidden="true" />
+                    {/* Divider */}
+                    <div style={{
+                      height: '1px', background: 'rgba(255,255,255,0.06)',
+                      marginBottom: '1.25rem',
+                    }} aria-hidden="true" />
 
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}
-                    role="list" aria-label={`${cat.category} skills`}>
-                    {cat.skills.map(skill => (
-                      <span key={skill} role="listitem" className="skill-badge">{skill}</span>
-                    ))}
+                    {/* ── Skill badges ─────────────────────────── */}
+                    <div
+                      style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}
+                      aria-label={`${cat.category} skills`}
+                    >
+                      {cat.skills.map(skill => (
+                        <span
+                          key={skill}
+                          className="skill-badge"
+                          style={{
+                            borderColor: `${meta.accent}18`,
+                          }}
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </Card>
-              </motion.div>
-            ))}
+                </motion.div>
+              )
+            })}
           </div>
         </Container>
       </section>
 
-      {/* ── LEARNING ROADMAP ──────────────────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════════════════════
+          LEARNING ROADMAP
+      ══════════════════════════════════════════════════════════════════════ */}
       <section className="section-wrapper section-divided" aria-label="Learning roadmap">
         <Container>
-          <SectionTitle title="Learning Roadmap" subtitle="Where I am, what I'm building towards." />
-          <div style={{ maxWidth: '680px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <SectionTitle
+            title="Learning Roadmap"
+            subtitle="Where I am today and what I'm actively building towards."
+          />
+
+          <div style={{
+            maxWidth: '720px', margin: '0 auto',
+            display: 'flex', flexDirection: 'column', gap: '0.75rem',
+          }}>
             {roadmap.map((item, i) => {
-              const s = statusColors[item.status]
+              const s = statusConfig[item.status]
               return (
                 <motion.div
                   key={item.label}
-                  initial={{ opacity: 0, x: -16 }}
+                  initial={{ opacity: 0, x: -18 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true as const, margin: '-16px' }}
+                  viewport={{ once: true, margin: '-16px' }}
                   transition={{ duration: 0.4, delay: i * 0.07, ease: 'easeOut' }}
                 >
-                  <Card padding="md">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <span style={{
-                          width: '8px', height: '8px', borderRadius: '50%',
+                  <div className="glass-card roadmap-row">
+                    {/* Left: dot + content */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <span
+                        style={{
+                          width: '9px', height: '9px', borderRadius: '50%',
                           background: s.dot, flexShrink: 0,
-                          boxShadow: `0 0 8px ${s.dot}60`,
-                        }} aria-hidden="true" />
-                        <div>
-                          <p style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            {item.label}
-                          </p>
-                          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '1px' }}>
-                            {item.note}
-                          </p>
-                        </div>
+                          boxShadow: `0 0 8px ${s.dot}70`,
+                        }}
+                        aria-hidden="true"
+                      />
+                      <div>
+                        <p style={{
+                          fontSize: '0.9375rem', fontWeight: 600,
+                          color: 'var(--text-primary)', lineHeight: 1.3,
+                        }}>
+                          {item.label}
+                        </p>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                          {item.note}
+                        </p>
                       </div>
-                      <span style={{
-                        flexShrink: 0, fontSize: '0.7rem', fontWeight: 600,
-                        padding: '0.2rem 0.65rem', borderRadius: '9999px',
-                        background: s.bg, border: `1px solid ${s.border}`, color: s.dot,
-                      }}>
-                        {s.label}
-                      </span>
                     </div>
-                  </Card>
+
+                    {/* Right: status pill */}
+                    <span style={{
+                      flexShrink: 0, fontSize: '0.6875rem', fontWeight: 600,
+                      padding: '0.25rem 0.75rem', borderRadius: '9999px',
+                      background: s.bg, border: `1px solid ${s.border}`,
+                      color: s.dot, whiteSpace: 'nowrap',
+                      letterSpacing: '0.05em', textTransform: 'uppercase',
+                    }}>
+                      {s.label}
+                    </span>
+                  </div>
                 </motion.div>
               )
             })}

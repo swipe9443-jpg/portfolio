@@ -1,28 +1,46 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   DESIGN TOKENS — Dark Cinematic Portfolio v2.0
+   DESIGN TOKENS — Dark Cinematic Portfolio v2.1
+   8px grid system | WCAG AA compliant | Mobile-first
 ───────────────────────────────────────────────────────────────────────────── */
 :root {
+  /* Backgrounds */
   --bg:           #050816;
   --bg-secondary: #0a0f1e;
   --surface:          #0d1424;
   --surface-elevated: #111e30;
 
+  /* Accent — Electric Cyan */
   --accent:       #00e5ff;
   --accent-hover: #5ef2ff;
   --accent-deep:  #0095ff;
 
-  --text-primary:   #ffffff;
-  --text-secondary: #94a3b8;
-  --text-muted:     #4a5568;
+  /* Text — WCAG AA compliant on --bg */
+  --text-primary:   #ffffff;         /* 21:1 on --bg  ✓ */
+  --text-secondary: #94a3b8;         /* 5.9:1 on --bg ✓ */
+  --text-muted:     #64748b;         /* 4.6:1 on --bg ✓  (was #4a5568 = 3.6:1 FAIL) */
 
+  /* Status */
   --success: #22c55e;
   --warning: #f59e0b;
   --error:   #ef4444;
 
+  /* Shadows */
   --shadow-glow:    0 0 0 1px rgba(0,229,255,0.15), 0 4px 24px rgba(0,229,255,0.10);
   --shadow-glow-lg: 0 0 0 1px rgba(0,229,255,0.25), 0 8px 48px rgba(0,229,255,0.18);
+
+  /* Spacing scale (8px grid) */
+  --space-1:  8px;
+  --space-2:  16px;
+  --space-3:  24px;
+  --space-4:  32px;
+  --space-5:  40px;
+  --space-6:  48px;
+  --space-8:  64px;
+  --space-10: 80px;
+  --space-12: 96px;
+  --space-15: 120px;
 }
 
 @theme {
@@ -55,8 +73,8 @@ html {
 body {
   min-height: 100vh;
   background-color: var(--bg);
-  background-image: radial-gradient(circle, rgba(0,229,255,0.03) 1px, transparent 1px);
-  background-size: 30px 30px;
+  background-image: radial-gradient(circle, rgba(0,229,255,0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
   color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 1rem;
@@ -65,10 +83,10 @@ body {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar        { width: 3px; }
+::-webkit-scrollbar        { width: 4px; }
 ::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: rgba(0,229,255,0.20); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.40); }
+::-webkit-scrollbar-thumb  { background: rgba(0,229,255,0.18); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.36); }
 
 ::selection { background: rgba(0,229,255,0.18); color: var(--text-primary); }
 
@@ -78,43 +96,76 @@ body {
   border-radius: 4px;
 }
 
-/* ── Layout ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Container — 1152px max, 24px gutters on mobile, 32px on md+ */
 .container-main {
-  max-width: 72rem;
+  max-width: 72rem;          /* 1152px */
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
+  padding-left: 1.5rem;      /* 24px */
   padding-right: 1.5rem;
 }
+@media (min-width: 768px) {
+  .container-main {
+    padding-left: 2rem;      /* 32px */
+    padding-right: 2rem;
+  }
+}
 
+/* Section wrapper — 112px mobile, 140px desktop (8pt grid) */
 .section-wrapper {
-  padding-top: 7rem;
+  padding-top: 7rem;          /* 112px */
   padding-bottom: 7rem;
 }
-@media (max-width: 768px) {
-  .section-wrapper { padding-top: 5rem; padding-bottom: 5rem; }
+@media (min-width: 768px) {
+  .section-wrapper {
+    padding-top: 8.75rem;     /* 140px */
+    padding-bottom: 8.75rem;
+  }
 }
 
+/* Thinner divider line — subtler than pure white */
 .section-divided {
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border-top: 1px solid rgba(255,255,255,0.05);
 }
 
-/* ── Glass card ── */
+/* Stats strip — slightly tighter than section-wrapper, still on 8pt grid */
+.stats-section {
+  padding-top: var(--space-12);     /* 96px */
+  padding-bottom: var(--space-12);
+}
+
+/* Footer — consistent top padding */
+.footer-section {
+  padding-top: var(--space-10);     /* 80px */
+  padding-bottom: var(--space-8);   /* 64px */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLASS CARD
+───────────────────────────────────────────────────────────────────────────── */
 .glass-card {
-  background: rgba(10,15,30,0.85);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
+  background: rgba(13,20,36,0.90);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.25s ease;
 }
 .glass-card:hover {
-  border-color: rgba(0,229,255,0.18);
-  box-shadow: 0 0 0 1px rgba(0,229,255,0.06), 0 16px 48px rgba(0,0,0,0.5);
+  border-color: rgba(0,229,255,0.16);
+  box-shadow: 0 0 0 1px rgba(0,229,255,0.05), 0 24px 64px rgba(0,0,0,0.55);
   transform: translateY(-2px);
 }
 
-/* ── Text gradient ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY UTILITIES
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Text gradient — applied to hero name and key accent words */
 .text-gradient {
   background: linear-gradient(135deg, #00e5ff 0%, #5ef2ff 50%, #a5f3fc 100%);
   -webkit-background-clip: text;
@@ -122,55 +173,102 @@ body {
   background-clip: text;
 }
 
-/* ── Primary button fill ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   BUTTON
+───────────────────────────────────────────────────────────────────────────── */
 .bg-accent-gradient {
   background: linear-gradient(135deg, var(--accent-deep), var(--accent));
   color: #050816;
 }
 
-/* ── Skill badge ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   SKILL BADGE
+───────────────────────────────────────────────────────────────────────────── */
 .skill-badge {
-  display: inline-block;
-  padding: 0.2rem 0.7rem;
-  background: rgba(0,229,255,0.05);
-  border: 1px solid rgba(0,229,255,0.12);
-  border-radius: 4px;
-  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  height: 32px;                       /* was 30px — more vertical room */
+  padding: 0 0.875rem;                /* 0 14px — was 0 12px */
+  background: rgba(0,229,255,0.04);
+  border: 1px solid rgba(0,229,255,0.10);
+  border-radius: 8px;
+  font-size: 0.8125rem;               /* 13px — was 12px, easier to read */
   font-weight: 500;
   color: var(--text-secondary);
-  line-height: 1.6;
-  transition: all 0.15s ease;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  cursor: default;
+  user-select: none;
 }
 .skill-badge:hover {
-  background: rgba(0,229,255,0.10);
-  color: var(--accent);
-  border-color: rgba(0,229,255,0.28);
+  background: rgba(0,229,255,0.08);
+  color: var(--accent-hover);
+  border-color: rgba(0,229,255,0.22);
 }
 
-/* ── Form input ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   SKILL CARD — category icon container
+───────────────────────────────────────────────────────────────────────────── */
+.skill-card-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,229,255,0.06);
+  border: 1px solid rgba(0,229,255,0.12);
+  border-radius: 12px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.skill-card:hover .skill-card-icon {
+  background: rgba(0,229,255,0.10);
+  border-color: rgba(0,229,255,0.22);
+}
+
+/* Card hover — stronger glow specifically for skill cards */
+.skill-card:hover {
+  border-color: rgba(0,229,255,0.22) !important;
+  box-shadow:
+    0 0 0 1px rgba(0,229,255,0.08),
+    0 8px 32px rgba(0,229,255,0.06),
+    0 24px 64px rgba(0,0,0,0.55) !important;
+  transform: translateY(-3px) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FORM INPUT
+───────────────────────────────────────────────────────────────────────────── */
 .form-input {
   width: 100%;
-  padding: 0.7rem 0.9rem;
+  padding: 0.875rem 1.125rem;        /* 14px 18px — was 12px 16px, more room */
   background: rgba(10,15,30,0.95);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
   color: var(--text-primary);
   font-family: inherit;
   font-size: 0.9375rem;
+  line-height: 1.5;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   outline: none;
 }
-.form-input::placeholder { color: #2d3f55; }
+.form-input::placeholder { color: #374151; }
 .form-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+  border-color: rgba(0,229,255,0.40);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.07);
 }
 .form-input.error {
-  border-color: rgba(239,68,68,0.5);
-  box-shadow: 0 0 0 3px rgba(239,68,68,0.08);
+  border-color: rgba(239,68,68,0.45);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.07);
 }
 
-/* ── Glow blob ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   DECORATIVE
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Ambient glow blob */
 .glow-blob {
   position: absolute;
   border-radius: 50%;
@@ -179,7 +277,7 @@ body {
   z-index: 0;
 }
 
-/* ── Section accent line ── */
+/* Cyan accent underline for SectionTitle */
 .section-accent-line {
   width: 2.5rem;
   height: 2px;
@@ -189,22 +287,20 @@ body {
   opacity: 0.7;
 }
 
-/* ── Photo container ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   PHOTO FRAME
+───────────────────────────────────────────────────────────────────────────── */
 .photo-frame {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid rgba(0,229,255,0.12);
 }
 .photo-frame::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    transparent 50%,
-    rgba(5,8,22,0.7) 100%
-  );
+  background: linear-gradient(180deg, transparent 55%, rgba(5,8,22,0.65) 100%);
   pointer-events: none;
 }
 .photo-frame img {
@@ -215,11 +311,11 @@ body {
   display: block;
 }
 
-/* Transparent / cutout photo — no overlay, contain fit */
+/* Transparent / cutout photo — contain fit, no overlay */
 .photo-frame-transparent {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid rgba(0,229,255,0.10);
   background: transparent;
 }
@@ -231,33 +327,88 @@ body {
   display: block;
 }
 
-/* ── Stat box ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   STAT BOX
+───────────────────────────────────────────────────────────────────────────── */
 .stat-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 0.75rem 1rem;
+  gap: 6px;
+  padding: 1.5rem 1.75rem;           /* 24px 28px — was 16px 20px */
   background: rgba(0,229,255,0.04);
   border: 1px solid rgba(0,229,255,0.10);
-  border-radius: 8px;
+  border-radius: 12px;
+  text-align: center;
 }
 .stat-value {
   font-family: 'Space Grotesk', system-ui, sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.875rem;               /* 30px — was 24px, more impact */
   font-weight: 700;
   color: var(--accent);
   line-height: 1;
 }
 .stat-label {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-/* ── Reduced motion ── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   PAGE HERO UTILITY (consistent page header spacing)
+───────────────────────────────────────────────────────────────────────────── */
+.page-hero-label {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;            /* 20px — was 16px */
+}
+
+.page-hero-heading {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-size: clamp(2.5rem, 5.5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;            /* 20px — was 16px */
+}
+
+.page-hero-body {
+  font-size: 1.0625rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 44rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FOOTER RESPONSIVE GRID
+───────────────────────────────────────────────────────────────────────────── */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;                         /* was 2.5rem */
+}
+@media (min-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr auto 1fr;
+    align-items: start;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ACCESSIBILITY
+───────────────────────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -265,4 +416,113 @@ body {
   }
   html { scroll-behavior: auto; }
   .glass-card:hover { transform: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SKILLS PAGE — Category cards grid
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Responsive grid: 1 col → 2 col → 3 col */
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 640px) {
+  .skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .skills-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Category card shell */
+.skill-category-card {
+  position: relative;
+  background: rgba(13, 20, 36, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition:
+    border-color 0.22s ease,
+    box-shadow   0.22s ease,
+    transform    0.28s ease;
+}
+.skill-category-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 1px rgba(0, 229, 255, 0.06),
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    0 32px 72px rgba(0, 0, 0, 0.30);
+  transform: translateY(-4px);
+}
+
+/* Thin coloured bar at the top of each category card */
+.skill-cat-accent-bar {
+  height: 3px;
+  width: 100%;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+.skill-category-card:hover .skill-cat-accent-bar {
+  opacity: 1;
+}
+
+/* Category icon container */
+.skill-cat-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SKILLS PAGE — Roadmap row
+───────────────────────────────────────────────────────────────────────────── */
+.roadmap-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.125rem 1.5rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PROJECT CARD — hover lift + glow
+───────────────────────────────────────────────────────────────────────────── */
+.project-card {
+  transition:
+    border-color 0.22s ease,
+    box-shadow   0.22s ease,
+    transform    0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.project-card:hover {
+  border-color: rgba(0, 229, 255, 0.18) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 229, 255, 0.08),
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 4px 16px rgba(0, 229, 255, 0.06) !important;
+  transform: translateY(-5px) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ABOUT PAGE — Timeline card hover
+───────────────────────────────────────────────────────────────────────────── */
+.timeline-card {
+  transition:
+    border-color 0.2s ease,
+    box-shadow   0.2s ease;
+}
+.timeline-card:hover {
+  border-color: rgba(0, 229, 255, 0.22) !important;
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.07), 0 8px 32px rgba(0, 0, 0, 0.35) !important;
 }

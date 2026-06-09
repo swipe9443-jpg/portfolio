@@ -122,24 +122,11 @@ export function ContactPage() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             style={{ maxWidth: '640px', marginBottom: '4rem' }}
           >
-            <p style={{
-              fontFamily: "'Space Grotesk', system-ui, sans-serif",
-              fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent)',
-              letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '1rem',
-            }}>
-              Get In Touch
-            </p>
-            <h1 style={{
-              fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-              fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
-              fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em',
-              color: 'var(--text-primary)', marginBottom: '1rem',
-            }}>
+            <p className="page-hero-label">Get In Touch</p>
+            <h1 className="page-hero-heading">
               Let's <span className="text-gradient">Connect</span>
             </h1>
-            <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-              {contact.subheading}
-            </p>
+            <p className="page-hero-body">{contact.subheading}</p>
           </motion.div>
 
           {/* Availability badge */}
@@ -289,7 +276,8 @@ export function ContactPage() {
 
                   {status !== 'success' && (
                     <form onSubmit={handleSubmit} noValidate aria-label="Contact form">
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      {/* Grid: 2-col on sm+, 1-col on mobile to prevent overflow */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
 
                         {/* Name */}
                         <div>
@@ -360,7 +348,7 @@ export function ContactPage() {
                         </div>
                       </div>
 
-                      <div style={{ marginTop: '1.25rem' }}>
+                      <div style={{ marginTop: '1.5rem' }}>
                         <Button type="submit" variant="primary" size="lg"
                           isLoading={status === 'loading'}
                           style={{ width: '100%' }}

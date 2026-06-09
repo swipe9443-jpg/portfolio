@@ -47,22 +47,11 @@ export function ProjectsPage() {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             style={{ maxWidth: '640px', marginBottom: '4rem' }}
           >
-            <p style={{
-              fontFamily: "'Space Grotesk', system-ui, sans-serif",
-              fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent)',
-              letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '1rem',
-            }}>
-              Portfolio
-            </p>
-            <h1 style={{
-              fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-              fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
-              fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em',
-              color: 'var(--text-primary)', marginBottom: '1rem',
-            }}>
+            <p className="page-hero-label">Portfolio</p>
+            <h1 className="page-hero-heading">
               Selected <span className="text-gradient">Projects</span>
             </h1>
-            <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
+            <p className="page-hero-body">
               A collection of work spanning UI/UX design, frontend development, and full-stack concepts.
               Each project represents a step in the journey.
             </p>
@@ -83,14 +72,15 @@ export function ProjectsPage() {
                 onClick={() => setActiveFilter(f)}
                 aria-pressed={activeFilter === f}
                 style={{
-                  padding: '0.4rem 1.1rem',
+                  padding: '0.4375rem 1.125rem',   /* 7px 18px — 8pt grid */
                   fontSize: '0.8125rem', fontWeight: 500,
                   borderRadius: '9999px',
-                  border: activeFilter === f ? '1px solid rgba(0,229,255,0.40)' : '1px solid rgba(255,255,255,0.10)',
+                  border: activeFilter === f ? '1px solid rgba(0,229,255,0.40)' : '1px solid rgba(255,255,255,0.08)',
                   background: activeFilter === f ? 'rgba(0,229,255,0.10)' : 'rgba(255,255,255,0.03)',
                   color: activeFilter === f ? 'var(--accent)' : 'var(--text-muted)',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {f}

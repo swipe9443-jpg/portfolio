@@ -1,5 +1,7 @@
 import type { FC } from 'react'
+import { NavLink } from 'react-router-dom'
 import { content } from '@/content/content'
+import { downloadResume } from '@/config/resume'
 
 const GitHubIcon: FC = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -15,58 +17,152 @@ const LinkedInIcon: FC = () => (
 
 const platformIcons: Record<string, FC> = { GitHub: GitHubIcon, LinkedIn: LinkedInIcon }
 
+const navLinkStyle: React.CSSProperties = {
+  fontSize: '0.8125rem',       /* 13px */
+  color: 'var(--text-muted)',
+  textDecoration: 'none',
+  transition: 'color 0.15s ease',
+  whiteSpace: 'nowrap',
+}
+
 export function Footer() {
-  const { footer } = content
+  const { footer, nav } = content
 
   return (
-    <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <div className="container-main py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-        {/* Identity */}
-        <div className="text-center sm:text-left">
-          <p
-            className="font-semibold"
-            style={{
-              fontFamily: "'Space Grotesk', system-ui, sans-serif",
-              fontSize: '0.9375rem',
-            }}
-          >
+    <footer
+      style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      aria-label="Site footer"
+    >
+      {/* ── Main footer row ── */}
+      <div
+        className="container-main footer-section"
+      >
+      <div className="footer-grid">
+        {/* Left — identity */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <p style={{
+            fontFamily: "'Space Grotesk', system-ui, sans-serif",
+            fontSize: '1rem',
+            fontWeight: 700,
+          }}>
             <span className="text-gradient">{footer.name}</span>
           </p>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+          <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: '18rem' }}>
             {footer.tagline}
           </p>
+
+          {/* Social icons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', marginTop: '0.25rem' }}>
+            {footer.socialLinks.map(link => {
+              const Icon = platformIcons[link.platform]
+              return (
+                <a
+                  key={link.platform}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.label}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: '36px', height: '36px',
+                    borderRadius: '8px',
+                    color: 'var(--text-muted)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    background: 'transparent',
+                    transition: 'color 0.15s ease, border-color 0.15s ease, background 0.15s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.color = 'var(--accent)'
+                    e.currentTarget.style.borderColor = 'rgba(0,229,255,0.20)'
+                    e.currentTarget.style.background = 'rgba(0,229,255,0.05)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.color = 'var(--text-muted)'
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'
+                    e.currentTarget.style.background = 'transparent'
+                  }}
+                >
+                  {Icon ? <Icon /> : link.platform}
+                </a>
+              )
+            })}
+          </div>
         </div>
 
-        {/* Social icons */}
-        <div className="flex items-center gap-2">
-          {footer.socialLinks.map(link => {
-            const Icon = platformIcons[link.platform]
-            return (
-              <a
-                key={link.platform}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={link.label}
-                className="p-2 rounded-lg transition-colors"
-                style={{ color: 'var(--text-muted)' }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--accent)'
-                  e.currentTarget.style.background = 'rgba(0,229,255,0.06)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = 'var(--text-muted)'
-                  e.currentTarget.style.background = 'transparent'
-                }}
-              >
-                {Icon ? <Icon /> : link.platform}
-              </a>
-            )
-          })}
-        </div>
+        {/* Center — navigation */}
+        <nav aria-label="Footer navigation">
+          <p style={{
+            fontFamily: "'Space Grotesk', system-ui, sans-serif",
+            fontSize: '0.6875rem',
+            fontWeight: 600,
+            color: 'var(--text-muted)',
+            letterSpacing: '0.10em',
+            textTransform: 'uppercase',
+            marginBottom: '1rem',
+          }}>
+            Navigation
+          </p>
+          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+            {nav.map(item => (
+              <li key={item.href}>
+                <NavLink
+                  to={item.href}
+                  end={item.href === '/'}
+                  style={({ isActive }) => ({
+                    ...navLinkStyle,
+                    color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                  })}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-        {/* Copyright */}
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{footer.copyright}</p>
+        {/* Right — resume */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <p style={{
+            fontFamily:    "'Space Grotesk', system-ui, sans-serif",
+            fontSize:      '0.6875rem',
+            fontWeight:    600,
+            color:         'var(--text-muted)',
+            letterSpacing: '0.10em',
+            textTransform: 'uppercase',
+            marginBottom:  '1rem',
+          }}>
+            Resume
+          </p>
+          <button
+            onClick={downloadResume}
+            style={{ ...navLinkStyle, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
+            aria-label="Download resume PDF"
+          >
+            Download Resume ↓
+          </button>
+        </div>
+      </div>
+      </div>
+
+      {/* ── Bottom bar — copyright ── */}
+      <div
+        className="container-main"
+        style={{
+          paddingTop: '1rem',
+          paddingBottom: '1.5rem',
+          borderTop: '1px solid rgba(255,255,255,0.04)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+          {footer.copyright}
+        </p>
       </div>
     </footer>
   )

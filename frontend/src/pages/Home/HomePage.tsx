@@ -7,17 +7,19 @@ import { Card } from '@/components/ui/Card'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { ProjectCard } from '@/components/ui/ProjectCard'
 import { PageMeta } from '@/components/ui/PageMeta'
+import { downloadResume } from '@/config/resume'
 import heroPhoto from '@/assets/profile.png'
 
+/* ── Animation helpers ────────────────────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
   initial:    { opacity: 0, y: 28 },
-  animate:    { opacity: 1, y: 0 },
+  animate:    { opacity: 1, y: 0  },
   transition: { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
 })
 
 const inView = (delay = 0) => ({
   initial:     { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
+  whileInView: { opacity: 1, y: 0  },
   viewport:    { once: true as const, margin: '-40px' },
   transition:  { duration: 0.45, delay, ease: 'easeOut' as const },
 })
@@ -39,93 +41,134 @@ export function HomePage() {
         ogDescription="Dark cinematic portfolio — UI/UX Design, Frontend Development, Full-Stack concepts."
       />
 
-      {/* ── HERO ──────────────────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════════════
+          HERO
+      ════════════════════════════════════════════════════════════════════════ */}
       <section
         className="relative overflow-hidden"
         style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}
         aria-label="Introduction"
       >
-        {/* Top radial glow */}
+        {/* Radial glow — top center */}
         <div aria-hidden="true" style={{
           position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-          width: '900px', height: '500px', pointerEvents: 'none', zIndex: 0,
-          background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.12) 0%, rgba(0,229,255,0.05) 35%, transparent 70%)',
+          width: '900px', height: '520px', pointerEvents: 'none', zIndex: 0,
+          background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.11) 0%, rgba(0,229,255,0.04) 40%, transparent 70%)',
         }} />
 
-        <Container className="relative z-10" style={{ paddingTop: '8rem', paddingBottom: '6rem' }}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <Container className="relative z-10" style={{ paddingTop: '9rem', paddingBottom: '7rem' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
-            {/* LEFT — text */}
-            <div style={{ maxWidth: '560px' }}>
-              <motion.div {...fadeUp(0.0)} style={{ marginBottom: '1.5rem' }}>
+            {/* ── LEFT: Text content ── */}
+            <div style={{ maxWidth: '580px' }}>
+
+              {/* Availability badge */}
+              <motion.div {...fadeUp(0.0)} style={{ marginBottom: '2rem' }}>
                 <span style={{
                   display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                  padding: '0.3rem 1rem',
-                  background: 'rgba(0,229,255,0.06)', border: '1px solid rgba(0,229,255,0.15)',
-                  borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 500,
-                  color: 'var(--accent)', letterSpacing: '0.08em', textTransform: 'uppercase',
+                  padding: '0.4375rem 1.125rem',
+                  background: 'rgba(0,229,255,0.06)',
+                  border: '1px solid rgba(0,229,255,0.15)',
+                  borderRadius: '9999px',
+                  fontSize: '0.8125rem', fontWeight: 500,
+                  color: 'var(--accent)',
+                  letterSpacing: '0.08em', textTransform: 'uppercase',
                   fontFamily: "'Space Grotesk', system-ui, sans-serif",
                 }}>
                   <span style={{
-                    width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e',
-                    boxShadow: '0 0 8px rgba(34,197,94,0.7)',
+                    width: '7px', height: '7px', borderRadius: '50%',
+                    background: '#22c55e', boxShadow: '0 0 8px rgba(34,197,94,0.7)',
+                    flexShrink: 0,
                   }} aria-hidden="true" />
                   Available for Work
                 </span>
               </motion.div>
 
-              <motion.p {...fadeUp(0.05)} style={{
+              {/* Greeting */}
+              <motion.p {...fadeUp(0.06)} style={{
                 fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                fontSize: '0.875rem', fontWeight: 400, letterSpacing: '0.12em',
-                textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem',
+                fontSize: '0.9375rem', fontWeight: 400,
+                letterSpacing: '0.12em', textTransform: 'uppercase',
+                color: 'var(--text-muted)', marginBottom: '0.625rem',
               }}>
                 {hero.greeting}
               </motion.p>
 
-              <motion.h1 {...fadeUp(0.10)} style={{
+              {/* Name */}
+              <motion.h1 {...fadeUp(0.12)} style={{
                 fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-                fontSize: 'clamp(2.8rem, 6vw, 5.5rem)',
-                fontWeight: 700, lineHeight: 1.0, letterSpacing: '-0.03em', marginBottom: '1rem',
+                fontSize: 'clamp(3rem, 6.5vw, 5.75rem)',
+                fontWeight: 700, lineHeight: 1.0, letterSpacing: '-0.03em',
+                marginBottom: '1.25rem',
               }}>
                 <span className="text-gradient">{hero.name}</span>
               </motion.h1>
 
-              <motion.h2 {...fadeUp(0.18)} style={{
+              {/* Role */}
+              <motion.h2 {...fadeUp(0.20)} style={{
                 fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-                fontSize: 'clamp(0.95rem, 2vw, 1.25rem)', fontWeight: 500,
-                color: 'var(--accent)', lineHeight: 1.4, marginBottom: '1.5rem',
+                fontSize: 'clamp(1.0625rem, 2vw, 1.375rem)', fontWeight: 500,
+                color: 'var(--accent)', lineHeight: 1.4, marginBottom: '1.75rem',
               }}>
                 {hero.role}
               </motion.h2>
 
-              <motion.p {...fadeUp(0.26)} style={{
-                fontSize: '1rem', color: 'var(--text-secondary)',
-                lineHeight: 1.8, maxWidth: '32rem', marginBottom: '2.25rem',
+              {/* Introduction */}
+              <motion.p {...fadeUp(0.28)} style={{
+                fontSize: '1.0625rem', color: 'var(--text-secondary)',
+                lineHeight: 1.8, maxWidth: '34rem', marginBottom: '2.5rem',
               }}>
                 {hero.introduction}
               </motion.p>
 
-              <motion.div {...fadeUp(0.34)} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                <Button variant="primary" size="lg" onClick={() => navigate(hero.ctas.primary.href)}>
+              {/* CTAs */}
+              <motion.div
+                {...fadeUp(0.36)}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  marginBottom: '3rem',
+                }}
+              >
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => navigate(hero.ctas.primary.href)}
+                  aria-label="View my projects"
+                >
                   {hero.ctas.primary.label}
                 </Button>
-                <Button variant="secondary" size="lg" onClick={() => navigate(hero.ctas.tertiary.href)}>
-                  {hero.ctas.tertiary.label}
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={downloadResume}
+                  aria-label="Download my resume PDF"
+                >
+                  Download Resume
                 </Button>
               </motion.div>
 
-              <motion.div {...fadeUp(0.42)} style={{
-                display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '2rem',
-              }} aria-label="Key strengths">
+              {/* Highlight pills */}
+              <motion.div
+                {...fadeUp(0.44)}
+                style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem' }}
+                aria-label="Key strengths"
+              >
                 {hero.highlights.map(h => (
                   <span key={h.label} style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-                    padding: '0.25rem 0.75rem',
-                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
-                    borderRadius: '6px', fontSize: '0.8125rem', color: 'var(--text-muted)',
+                    display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                    padding: '0.4375rem 0.875rem',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem', color: 'var(--text-muted)',
                   }}>
                     <span style={{
-                      width: '5px', height: '5px', background: 'var(--accent)',
+                      width: '5px', height: '5px',
+                      background: 'var(--accent)',
                       borderRadius: '1px', transform: 'rotate(45deg)', flexShrink: 0,
                     }} aria-hidden="true" />
                     {h.label}
@@ -134,7 +177,7 @@ export function HomePage() {
               </motion.div>
             </div>
 
-            {/* RIGHT — photo */}
+            {/* ── RIGHT: Photo ── */}
             <motion.div
               initial={{ opacity: 0, scale: 0.97, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -142,41 +185,62 @@ export function HomePage() {
               style={{ display: 'flex', justifyContent: 'center' }}
               aria-hidden="true"
             >
-              <div style={{ position: 'relative', width: '100%', maxWidth: '420px' }}>
+              <div style={{ position: 'relative', width: '100%', maxWidth: '460px' }}>
+                {/* Glow halo */}
                 <div style={{
-                  position: 'absolute', inset: '-24px',
+                  position: 'absolute', inset: '-32px',
                   background: 'radial-gradient(ellipse at center, rgba(0,229,255,0.10) 0%, transparent 70%)',
-                  borderRadius: '20px', pointerEvents: 'none', zIndex: 0,
+                  borderRadius: '24px', pointerEvents: 'none', zIndex: 0,
                 }} />
-                <div className="photo-frame-transparent" style={{
-                  position: 'relative', zIndex: 1, height: '520px',
-                  boxShadow: '0 0 0 1px rgba(0,229,255,0.10), 0 32px 80px rgba(0,0,0,0.5)',
-                }}>
+
+                {/* Photo */}
+                <div
+                  className="photo-frame-transparent"
+                  style={{
+                    position: 'relative', zIndex: 1,
+                    height: '560px',
+                    boxShadow: '0 0 0 1px rgba(0,229,255,0.12), 0 40px 96px rgba(0,0,0,0.55)',
+                  }}
+                >
                   <img src={heroPhoto} alt="Josh Fallarcuna — UI/UX Designer" />
                 </div>
+
+                {/* Identity card overlay */}
                 <div style={{
-                  position: 'absolute', bottom: '1.25rem', left: '1.25rem', right: '1.25rem', zIndex: 2,
-                  background: 'rgba(5,8,22,0.85)', backdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(0,229,255,0.14)',
-                  borderRadius: '10px', padding: '0.875rem 1rem',
+                  position: 'absolute',
+                  bottom: '1.5rem', left: '1.5rem', right: '1.5rem',
+                  zIndex: 2,
+                  background: 'rgba(5,8,22,0.90)',
+                  backdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(0,229,255,0.16)',
+                  borderRadius: '12px',
+                  padding: '1.125rem 1.25rem',
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 }}>
                   <div>
-                    <p style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
+                    <p style={{
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                      fontWeight: 700, fontSize: '1rem',
+                      color: 'var(--text-primary)',
+                    }}>
                       {hero.name}
                     </p>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginTop: '3px' }}>
                       UI/UX Designer · Full-Stack Dev
                     </p>
                   </div>
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: '0.375rem',
-                    padding: '0.25rem 0.7rem',
-                    background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.20)',
+                    padding: '0.3125rem 0.875rem',
+                    background: 'rgba(34,197,94,0.10)',
+                    border: '1px solid rgba(34,197,94,0.22)',
                     borderRadius: '9999px',
                   }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }} />
-                    <span style={{ fontSize: '0.7rem', color: '#86efac', fontWeight: 500 }}>Available</span>
+                    <span style={{
+                      width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e',
+                      boxShadow: '0 0 6px rgba(34,197,94,0.6)',
+                    }} />
+                    <span style={{ fontSize: '0.75rem', color: '#86efac', fontWeight: 500 }}>Available</span>
                   </div>
                 </div>
               </div>
@@ -187,20 +251,21 @@ export function HomePage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.6 }}
+            transition={{ delay: 1.6, duration: 0.6 }}
             style={{
               position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.375rem',
             }}
             aria-hidden="true"
           >
-            <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-              Scroll
-            </span>
+            <span style={{
+              fontSize: '0.6875rem', color: 'var(--text-muted)',
+              letterSpacing: '0.12em', textTransform: 'uppercase',
+            }}>Scroll</span>
             <motion.div
               animate={{ y: [0, 7, 0] }}
               transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
-              style={{ color: 'var(--accent)', opacity: 0.55 }}
+              style={{ color: 'var(--accent)', opacity: 0.5 }}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -210,17 +275,27 @@ export function HomePage() {
         </Container>
       </section>
 
-      {/* ── STATS ─────────────────────────────────────────────────────────────── */}
-      <section className="section-divided" style={{ paddingTop: '5rem', paddingBottom: '5rem' }} aria-label="Key statistics">
+      {/* ════════════════════════════════════════════════════════════════════════
+          STATS
+      ════════════════════════════════════════════════════════════════════════ */}
+      <section
+        className="stats-section section-divided"
+        aria-label="Key statistics"
+      >
         <Container>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {home.stats.map((stat, i) => (
               <motion.div key={stat.label} {...inView(i * 0.08)}>
-                <div className="stat-box" style={{ padding: '1.5rem 1rem', gap: '0.375rem', borderRadius: '12px' }}>
-                  <span className="stat-value" style={{ fontSize: '2rem' }}>{stat.value}</span>
+                <div className="stat-box">
+                  <span className="stat-value">{stat.value}</span>
                   <span className="stat-label">{stat.label}</span>
                   {stat.sublabel && (
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>{stat.sublabel}</span>
+                    <span style={{
+                      fontSize: '0.75rem', color: 'var(--text-muted)',
+                      marginTop: '3px', textAlign: 'center',
+                    }}>
+                      {stat.sublabel}
+                    </span>
                   )}
                 </div>
               </motion.div>
@@ -229,19 +304,27 @@ export function HomePage() {
         </Container>
       </section>
 
-      {/* ── FEATURED PROJECTS ─────────────────────────────────────────────────── */}
-      <section className="section-wrapper section-divided relative overflow-hidden" aria-label="Featured projects">
+      {/* ════════════════════════════════════════════════════════════════════════
+          FEATURED PROJECTS
+      ════════════════════════════════════════════════════════════════════════ */}
+      <section
+        className="section-wrapper section-divided relative overflow-hidden"
+        aria-label="Featured projects"
+      >
+        {/* Subtle right glow */}
         <div className="glow-blob" style={{
-          width: '500px', height: '500px', top: '50%', right: '-6rem', transform: 'translateY(-50%)',
+          width: '480px', height: '480px',
+          top: '50%', right: '-4rem', transform: 'translateY(-50%)',
           background: 'radial-gradient(circle, rgba(0,229,255,0.5) 0%, transparent 70%)',
-          opacity: 0.06,
+          opacity: 0.05,
         }} aria-hidden="true" />
+
         <Container className="relative z-10">
           <SectionTitle
             title="Selected Projects"
             subtitle="Work showcasing design thinking and frontend development."
           />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ marginBottom: '3rem' }}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" style={{ marginBottom: '4rem' }}>
             {featuredProjects.map((project, idx) => (
               <ProjectCard key={project.id} project={project} index={idx} />
             ))}
@@ -254,63 +337,107 @@ export function HomePage() {
         </Container>
       </section>
 
-      {/* ── CORE EXPERTISE ────────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════════════
+          CORE EXPERTISE
+      ════════════════════════════════════════════════════════════════════════ */}
       <section className="section-wrapper section-divided" aria-label="Core expertise">
         <Container>
           <SectionTitle title="Core Expertise" subtitle="The disciplines and tools I work with." />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {home.coreExpertise.map((area, i) => (
-              <motion.div key={area.title} {...inView(i * 0.1)}>
-                <Card padding="lg" className="h-full">
-                  <h3 style={{
-                    fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                    fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text-primary)',
-                    marginBottom: '1rem',
-                  }}>
-                    {area.title}
-                  </h3>
-                  <div style={{ height: '1px', background: 'rgba(0,229,255,0.08)', marginBottom: '1rem' }} aria-hidden="true" />
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {area.skills.map(s => (
-                      <span key={s} className="skill-badge">{s}</span>
-                    ))}
+
+          {/*
+            Wider constraint at max-width 960px — prevents cramping on lg screens.
+            3 cards in a row get more breathing room each.
+          */}
+          <div
+            style={{ maxWidth: '960px', margin: '0 auto' }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {home.coreExpertise.map((area, i) => (
+                <motion.div key={area.title} {...inView(i * 0.1)} className="h-full">
+                  <div
+                    className="glass-card h-full"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      padding: '2.5rem',          /* 40px uniform — generous all-around breathing room */
+                    }}
+                  >
+                    {/* Title */}
+                    <h3 style={{
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                      fontSize: '1.125rem',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      lineHeight: 1.3,
+                      marginBottom: '1.5rem',     /* 24px */
+                    }}>
+                      {area.title}
+                    </h3>
+
+                    {/* Divider */}
+                    <div style={{
+                      height: '1px',
+                      background: 'rgba(0,229,255,0.10)',
+                      marginBottom: '1.75rem',    /* 28px */
+                    }} aria-hidden="true" />
+
+                    {/* Badges */}
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '0.5rem',
+                      flex: 1,
+                      alignContent: 'flex-start',
+                    }}>
+                      {area.skills.map(s => (
+                        <span key={s} className="skill-badge">{s}</span>
+                      ))}
+                    </div>
                   </div>
-                </Card>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </Container>
       </section>
 
-      {/* ── WHY WORK WITH ME ──────────────────────────────────────────────────── */}
+      {/* ════════════════════════════════════════════════════════════════════════
+          WHY WORK WITH ME
+      ════════════════════════════════════════════════════════════════════════ */}
       <section className="section-wrapper section-divided" aria-label="Why work with me">
         <Container>
           <SectionTitle title="Why Work With Me" subtitle="What I bring to every project and collaboration." />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
             {home.whyWorkWithMe.map((item, i) => (
               <motion.div key={item.title} {...inView(i * 0.1)}>
                 <Card padding="lg" className="h-full">
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.25rem' }}>
+                    {/* Icon box */}
                     <div style={{
-                      width: '44px', height: '44px', flexShrink: 0,
+                      width: '48px', height: '48px', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.15)',
-                      borderRadius: '10px',
+                      background: 'rgba(0,229,255,0.07)',
+                      border: '1px solid rgba(0,229,255,0.14)',
+                      borderRadius: '12px',
                     }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="var(--accent)" strokeWidth="1.5"
                         strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <path d={item.icon} />
                       </svg>
                     </div>
+
                     <div>
                       <h3 style={{
                         fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                        fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.375rem',
+                        fontSize: '1.0625rem', fontWeight: 700,
+                        color: 'var(--text-primary)', marginBottom: '0.5rem',
                       }}>
                         {item.title}
                       </h3>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                      <p style={{
+                        fontSize: '0.9375rem', color: 'var(--text-secondary)', lineHeight: 1.75,
+                      }}>
                         {item.description}
                       </p>
                     </div>
@@ -322,12 +449,18 @@ export function HomePage() {
         </Container>
       </section>
 
-      {/* ── CTA ───────────────────────────────────────────────────────────────── */}
-      <section className="section-wrapper section-divided relative overflow-hidden" aria-label="Call to action">
+      {/* ════════════════════════════════════════════════════════════════════════
+          CTA BANNER
+      ════════════════════════════════════════════════════════════════════════ */}
+      <section
+        className="section-wrapper section-divided relative overflow-hidden"
+        aria-label="Call to action"
+      >
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at center, rgba(0,149,255,0.07) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse at center, rgba(0,149,255,0.06) 0%, transparent 70%)',
         }} aria-hidden="true" />
+
         <Container className="relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -338,20 +471,27 @@ export function HomePage() {
           >
             <h2 style={{
               fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-              fontSize: 'clamp(1.75rem, 4vw, 2.75rem)',
-              fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em',
-              color: 'var(--text-primary)', marginBottom: '1rem',
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              fontWeight: 700, lineHeight: 1.12, letterSpacing: '-0.025em',
+              color: 'var(--text-primary)', marginBottom: '1.25rem',
             }}>
               {home.cta.heading}
             </h2>
             <p style={{
-              fontSize: '1rem', color: 'var(--text-secondary)',
-              lineHeight: 1.75, marginBottom: '2.5rem',
+              fontSize: '1.0625rem', color: 'var(--text-secondary)',
+              lineHeight: 1.8, marginBottom: '3rem',
             }}>
               {home.cta.subheading}
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
-              <Button variant="primary" size="lg" onClick={() => navigate('/contact')}>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: '1.5rem',
+              justifyContent: 'center',
+            }}>
+              <Button variant="primary"   size="lg" onClick={() => navigate('/contact')}>
                 {home.cta.primary}
               </Button>
               <Button variant="secondary" size="lg" onClick={() => navigate('/projects')}>
