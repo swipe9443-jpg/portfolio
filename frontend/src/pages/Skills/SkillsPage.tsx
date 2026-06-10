@@ -16,12 +16,13 @@ import { SiGit }            from 'react-icons/si'
 import { SiGithub }         from 'react-icons/si'
 import { SiVercel }         from 'react-icons/si'
 import { SiPicsart }        from 'react-icons/si'
+import { SiOpenai }         from 'react-icons/si'
 
 // ── Tabler Icons ──────────────────────────────────────────────────────────────
 import {
   TbBrush, TbDeviceDesktop, TbPencilBolt, TbVectorBezierArc,
   TbComponents, TbDeviceMobile, TbLayoutDashboard,
-  TbBrandVscode,
+  TbBrandVscode, TbBrandVisualStudio, TbBrandOpenai,
   TbBrain, TbHierarchy, TbAtom, TbStack2, TbTerminal,
   TbVideo, TbScissors, TbPhoto,
   TbUsers, TbMessageCircle, TbEye, TbCalendarCheck, TbBooks,
@@ -205,6 +206,42 @@ const PowerDirectorIcon = ({ size }: { size: number }) => (
   </svg>
 )
 
+// Cursor — brand arrow/cursor mark; no library entry.
+// Brand: black logomark on white, adapted for dark theme with glass bg + currentColor.
+const CursorIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect width="24" height="24" rx="5" fill="rgba(255,255,255,0.07)"
+      stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+    {/* Cursor arrow — simplified brand silhouette */}
+    <path d="M6 4L6 17.5L9.5 14L12.5 20L14.5 19L11.5 13L16 13Z"
+      fill="currentColor" fillOpacity="0.9" />
+  </svg>
+)
+
+// Kiro — Amazon Kiro IDE; no library entry.
+// Uses the "K" lettermark with Kiro's teal brand color.
+const KiroIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect width="24" height="24" rx="5" fill="rgba(0,186,173,0.15)" />
+    <text x="12" y="17" textAnchor="middle"
+      fontFamily="system-ui,-apple-system,sans-serif"
+      fontWeight="900" fontSize="14" fill="#00BAA0">K</text>
+  </svg>
+)
+
+// Stitch AI — Google Stitch; no library entry.
+// Uses a stylized "S" stitch needle motif.
+const StitchIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect width="24" height="24" rx="5" fill="rgba(66,133,244,0.15)" />
+    {/* Stitch-style thread path */}
+    <path d="M7 8 C7 5 17 5 17 8 C17 11 7 11 7 14 C7 17 17 17 17 14"
+      stroke="#4285F4" strokeWidth="2" strokeLinecap="round" fill="none" />
+    <circle cx="7"  cy="8"  r="1.5" fill="#4285F4" />
+    <circle cx="17" cy="14" r="1.5" fill="#4285F4" />
+  </svg>
+)
+
 const toolGroups: ToolGroup[] = [
   {
     label: 'Design Tools',
@@ -212,7 +249,7 @@ const toolGroups: ToolGroup[] = [
       { name: 'Figma',           icon: <SiFigma          size={TOOL_ICON_SIZE} color="#F24E1E" />,  accent: '#F24E1E' },
       { name: 'Adobe Photoshop', icon: <SiAdobephotoshop size={TOOL_ICON_SIZE} color="#31A8FF" />,  accent: '#31A8FF' },
       { name: 'Picsart',         icon: <SiPicsart        size={TOOL_ICON_SIZE} color="#FF4B4B" />,  accent: '#FF4B4B' },
-      { name: 'PixelLab',        icon: <PixelLabIcon size={TOOL_ICON_SIZE} />,                      accent: '#7B5CF0' },
+      { name: 'PixelLab',        icon: <PixelLabIcon     size={TOOL_ICON_SIZE} />,                  accent: '#7B5CF0' },
     ],
   },
   {
@@ -228,10 +265,21 @@ const toolGroups: ToolGroup[] = [
   {
     label: 'Development Tools',
     tools: [
-      { name: 'Git',    icon: <SiGit          size={TOOL_ICON_SIZE} color="#F05032" />, accent: '#F05032' },
-      { name: 'GitHub', icon: <SiGithub       size={TOOL_ICON_SIZE} />,                 accent: '#ffffff' },
-      { name: 'VS Code',icon: <TbBrandVscode  size={TOOL_ICON_SIZE} color="#007ACC" />, accent: '#007ACC' },
-      { name: 'Vercel', icon: <SiVercel       size={TOOL_ICON_SIZE} />,                 accent: '#ffffff' },
+      { name: 'Git',            icon: <SiGit                size={TOOL_ICON_SIZE} color="#F05032" />, accent: '#F05032' },
+      { name: 'GitHub',         icon: <SiGithub             size={TOOL_ICON_SIZE} />,                 accent: '#ffffff' },
+      { name: 'VS Code',        icon: <TbBrandVscode        size={TOOL_ICON_SIZE} color="#007ACC" />, accent: '#007ACC' },
+      { name: 'Visual Studio',  icon: <TbBrandVisualStudio  size={TOOL_ICON_SIZE} color="#854CC7" />, accent: '#854CC7' },
+      { name: 'Cursor',         icon: <CursorIcon           size={TOOL_ICON_SIZE} />,                 accent: '#ffffff' },
+      { name: 'Kiro',           icon: <KiroIcon             size={TOOL_ICON_SIZE} />,                 accent: '#00BAA0' },
+      { name: 'Vercel',         icon: <SiVercel             size={TOOL_ICON_SIZE} />,                 accent: '#ffffff' },
+    ],
+  },
+  {
+    label: 'AI Tools',
+    tools: [
+      { name: 'ChatGPT',  icon: <SiOpenai       size={TOOL_ICON_SIZE} color="#10a37f" />, accent: '#10a37f' },
+      { name: 'Codex',    icon: <TbBrandOpenai  size={TOOL_ICON_SIZE} color="#00e5ff" />, accent: '#00e5ff' },
+      { name: 'Stitch AI',icon: <StitchIcon     size={TOOL_ICON_SIZE} />,                 accent: '#4285F4' },
     ],
   },
   {
