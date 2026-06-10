@@ -1,169 +1,317 @@
-import type { FC } from 'react'
+import { type FC, useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { downloadResume } from '@/config/resume'
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Social icons
+───────────────────────────────────────────────────────────────────────────── */
 const GitHubIcon: FC = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483
+      0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466
+      -.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832
+      .092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688
+      -.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004
+      1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7
+      1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855
+      0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484
+      17.522 2 12 2z" />
   </svg>
 )
 
 const LinkedInIcon: FC = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136
+      1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85
+      3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065
+      0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064
+      2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542
+      C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0
+      22.222 0h.003z" />
   </svg>
 )
 
 const platformIcons: Record<string, FC> = { GitHub: GitHubIcon, LinkedIn: LinkedInIcon }
 
-const navLinkStyle: React.CSSProperties = {
-  fontSize: '0.8125rem',       /* 13px */
-  color: 'var(--text-muted)',
-  textDecoration: 'none',
-  transition: 'color 0.15s ease',
-  whiteSpace: 'nowrap',
+/* ─────────────────────────────────────────────────────────────────────────────
+   Social icon button — extracted for clean hook usage
+───────────────────────────────────────────────────────────────────────────── */
+function SocialButton({ link }: { link: { platform: string; url: string; label: string } }) {
+  const Icon = platformIcons[link.platform]
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={link.label}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        width: '40px', height: '40px',
+        borderRadius: '10px',
+        color:       hovered ? 'var(--accent)'              : 'var(--text-muted)',
+        border:      hovered ? '1px solid rgba(0,229,255,0.28)' : '1px solid rgba(255,255,255,0.07)',
+        background:  hovered ? 'rgba(0,229,255,0.07)'       : 'rgba(255,255,255,0.02)',
+        boxShadow:   hovered ? '0 0 16px rgba(0,229,255,0.12)' : 'none',
+        transition:  'color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease',
+        textDecoration: 'none',
+      }}
+    >
+      {Icon ? <Icon /> : link.platform}
+    </a>
+  )
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Nav link — active + hover states
+───────────────────────────────────────────────────────────────────────────── */
+function FooterNavLink({ item }: { item: { label: string; href: string } }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <NavLink
+      to={item.href}
+      end={item.href === '/'}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={({ isActive }) => ({
+        fontSize: '0.875rem',
+        fontWeight: isActive ? 500 : 400,
+        color:    isActive ? 'var(--text-primary)' : hovered ? 'var(--text-secondary)' : 'var(--text-muted)',
+        textDecoration: 'none',
+        letterSpacing:  '0.01em',
+        transition:     'color 0.2s ease',
+        whiteSpace:     'nowrap',
+        /* Subtle underline on hover — cinematic accent line */
+        borderBottom:   hovered && !isActive
+          ? '1px solid rgba(0,229,255,0.25)'
+          : '1px solid transparent',
+        paddingBottom:  '1px',
+      })}
+    >
+      {item.label}
+    </NavLink>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Resume button
+───────────────────────────────────────────────────────────────────────────── */
+function ResumeButton() {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      onClick={downloadResume}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      aria-label="Download resume PDF"
+      style={{
+        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+        fontSize:      '0.875rem',
+        fontWeight:    400,
+        color:         hovered ? 'var(--text-secondary)' : 'var(--text-muted)',
+        letterSpacing: '0.01em',
+        transition:    'color 0.2s ease',
+        borderBottom:  hovered ? '1px solid rgba(0,229,255,0.25)' : '1px solid transparent',
+        paddingBottom: '1px',
+        textAlign:     'left',
+      }}
+    >
+      Download Resume ↓
+    </button>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Footer
+───────────────────────────────────────────────────────────────────────────── */
 export function Footer() {
   const { footer, nav } = content
 
   return (
     <footer
-      style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
       aria-label="Site footer"
+      style={{
+        position:   'relative',
+        overflow:   'hidden',
+        /* Deeper surface — lifts footer off the page body */
+        background: 'linear-gradient(180deg, var(--bg) 0%, #030611 100%)',
+      }}
     >
-      {/* ── Main footer row ── */}
-      <div
-        className="container-main footer-section"
-      >
-      <div className="footer-grid">
-        {/* Left — identity */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <p style={{
-            fontFamily: "'Space Grotesk', system-ui, sans-serif",
-            fontSize: '1rem',
-            fontWeight: 700,
-          }}>
-            <span className="text-gradient">{footer.name}</span>
-          </p>
-          <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: '18rem' }}>
-            {footer.tagline}
-          </p>
 
-          {/* Social icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', marginTop: '0.25rem' }}>
-            {footer.socialLinks.map(link => {
-              const Icon = platformIcons[link.platform]
-              return (
-                <a
-                  key={link.platform}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={link.label}
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: '36px', height: '36px',
-                    borderRadius: '8px',
-                    color: 'var(--text-muted)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    background: 'transparent',
-                    transition: 'color 0.15s ease, border-color 0.15s ease, background 0.15s ease',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.color = 'var(--accent)'
-                    e.currentTarget.style.borderColor = 'rgba(0,229,255,0.20)'
-                    e.currentTarget.style.background = 'rgba(0,229,255,0.05)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.color = 'var(--text-muted)'
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'
-                    e.currentTarget.style.background = 'transparent'
-                  }}
-                >
-                  {Icon ? <Icon /> : link.platform}
-                </a>
-              )
-            })}
+      {/* ── Cinematic top edge: vignette + glow ────────────────────────────── */}
+      {/* Faint top border */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0,
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent 0%, rgba(0,229,255,0.18) 50%, transparent 100%)',
+        pointerEvents: 'none',
+      }} aria-hidden="true" />
+
+      {/* Ambient center glow — ties footer to the page's light language */}
+      <div style={{
+        position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+        width: '700px', height: '320px', pointerEvents: 'none',
+        background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.06) 0%, rgba(0,229,255,0.02) 40%, transparent 70%)',
+      }} aria-hidden="true" />
+
+      {/* Subtle noise vignette — adds cinematic depth */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background:
+          'radial-gradient(ellipse 120% 80% at 50% 100%, rgba(0,0,0,0.45) 0%, transparent 70%)',
+      }} aria-hidden="true" />
+
+      {/* ── Main content ────────────────────────────────────────────────────── */}
+      <div className="container-main footer-section" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="footer-grid">
+
+          {/* ── Left: identity + social ──────────────────────────────────── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+            {/* Brand name */}
+            <div>
+              <p style={{
+                fontFamily:    "'Space Grotesk', system-ui, sans-serif",
+                fontSize:      '1.125rem',
+                fontWeight:    700,
+                letterSpacing: '-0.02em',
+                lineHeight:    1.2,
+                marginBottom:  '0.5rem',
+              }}>
+                <span className="text-gradient">{footer.name}</span>
+              </p>
+              <p style={{
+                fontSize:   '0.8125rem',
+                color:      'var(--text-muted)',
+                lineHeight: 1.65,
+                maxWidth:   '20rem',
+              }}>
+                {footer.tagline}
+              </p>
+            </div>
+
+            {/* Thin accent rule — cinematic brand separator */}
+            <div style={{
+              width:        '2rem',
+              height:       '1px',
+              background:   'var(--accent)',
+              opacity:      0.4,
+              borderRadius: '1px',
+            }} aria-hidden="true" />
+
+            {/* Social icons */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {footer.socialLinks.map(link => (
+                <SocialButton key={link.platform} link={link} />
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Center — navigation */}
-        <nav aria-label="Footer navigation">
-          <p style={{
-            fontFamily: "'Space Grotesk', system-ui, sans-serif",
-            fontSize: '0.6875rem',
-            fontWeight: 600,
-            color: 'var(--text-muted)',
-            letterSpacing: '0.10em',
-            textTransform: 'uppercase',
-            marginBottom: '1rem',
-          }}>
-            Navigation
-          </p>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-            {nav.map(item => (
-              <li key={item.href}>
-                <NavLink
-                  to={item.href}
-                  end={item.href === '/'}
-                  style={({ isActive }) => ({
-                    ...navLinkStyle,
-                    color: isActive ? 'var(--accent)' : 'var(--text-muted)',
-                  })}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
+          {/* ── Center: navigation ───────────────────────────────────────── */}
+          <nav aria-label="Footer navigation">
+            <p style={{
+              fontFamily:    "'Space Grotesk', system-ui, sans-serif",
+              fontSize:      '0.6875rem',
+              fontWeight:    700,
+              color:         'rgba(100,116,139,0.7)',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              marginBottom:  '1.25rem',
+            }}>
+              Navigation
+            </p>
+            <ul style={{
+              listStyle: 'none',
+              display:   'flex',
+              flexDirection: 'column',
+              gap:       '0.875rem',
+            }}>
+              {nav.map(item => (
+                <li key={item.href}>
+                  <FooterNavLink item={item} />
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        {/* Right — resume */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <p style={{
-            fontFamily:    "'Space Grotesk', system-ui, sans-serif",
-            fontSize:      '0.6875rem',
-            fontWeight:    600,
-            color:         'var(--text-muted)',
-            letterSpacing: '0.10em',
-            textTransform: 'uppercase',
-            marginBottom:  '1rem',
-          }}>
-            Resume
-          </p>
-          <button
-            onClick={downloadResume}
-            style={{ ...navLinkStyle, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-muted)')}
-            aria-label="Download resume PDF"
-          >
-            Download Resume ↓
-          </button>
+          {/* ── Right: resume ────────────────────────────────────────────── */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <p style={{
+              fontFamily:    "'Space Grotesk', system-ui, sans-serif",
+              fontSize:      '0.6875rem',
+              fontWeight:    700,
+              color:         'rgba(100,116,139,0.7)',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              marginBottom:  '1.25rem',
+            }}>
+              Resume
+            </p>
+            <ResumeButton />
+          </div>
+
         </div>
       </div>
-      </div>
 
-      {/* ── Bottom bar — copyright ── */}
-      <div
+      {/* ── Bottom bar: copyright ───────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
         className="container-main"
         style={{
-          paddingTop: '1rem',
-          paddingBottom: '1.5rem',
-          borderTop: '1px solid rgba(255,255,255,0.04)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          position:        'relative',
+          zIndex:          1,
+          paddingTop:      '1.25rem',
+          paddingBottom:   '1.75rem',
+          /* Single very faint rule — no double-border */
+          borderTop:       '1px solid rgba(255,255,255,0.04)',
+          display:         'flex',
+          alignItems:      'center',
+          justifyContent:  'center',
+          gap:             '0.5rem',
         }}
       >
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+        {/* Micro cyan diamond — cinematic punctuation mark */}
+        <span style={{
+          display:      'inline-block',
+          width:        '5px',
+          height:       '5px',
+          borderRadius: '1px',
+          background:   'var(--accent)',
+          opacity:      0.3,
+          transform:    'rotate(45deg)',
+          flexShrink:   0,
+        }} aria-hidden="true" />
+
+        <p style={{
+          fontSize:   '0.75rem',
+          color:      'rgba(100,116,139,0.55)',
+          textAlign:  'center',
+          letterSpacing: '0.02em',
+        }}>
           {footer.copyright}
         </p>
-      </div>
+
+        <span style={{
+          display:      'inline-block',
+          width:        '5px',
+          height:       '5px',
+          borderRadius: '1px',
+          background:   'var(--accent)',
+          opacity:      0.3,
+          transform:    'rotate(45deg)',
+          flexShrink:   0,
+        }} aria-hidden="true" />
+      </motion.div>
+
     </footer>
   )
 }

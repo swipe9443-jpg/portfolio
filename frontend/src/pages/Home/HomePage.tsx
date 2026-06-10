@@ -3,12 +3,93 @@ import { motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
 import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { ProjectCard } from '@/components/ui/ProjectCard'
 import { PageMeta } from '@/components/ui/PageMeta'
 import { downloadResume } from '@/config/resume'
 import heroPhoto from '@/assets/profile.png'
+
+// ── Icons for Core Expertise cards ───────────────────────────────────────────
+import { SiFigma, SiAdobephotoshop, SiHtml5, SiCss3, SiJavascript, SiReact, SiTailwindcss, SiVite, SiTypescript, SiFramer } from 'react-icons/si'
+import {
+  TbBrush, TbPencilBolt, TbVectorBezierArc, TbDeviceDesktop,
+  TbCode, TbDeviceMobile,
+  TbHierarchy, TbAccessible,
+} from 'react-icons/tb'
+
+// ── Icon size token — matches SkillsPage ICON_SIZE ───────────────────────────
+const BADGE_ICON_SIZE = 13
+
+// ── Skill badge icon map (subset for Home page expertise badges) ──────────────
+const badgeIconMap: Record<string, React.ReactNode> = {
+  // UI/UX Design
+  'Figma':                   <SiFigma          size={BADGE_ICON_SIZE} color="#F24E1E" aria-hidden="true" />,
+  'Wireframing':             <TbPencilBolt     size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'Prototyping':             <TbVectorBezierArc size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'User Research':           <TbHierarchy      size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'Design Systems':          <TbHierarchy      size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  // Frontend Development
+  'React':                   <SiReact          size={BADGE_ICON_SIZE} color="#61DAFB" aria-hidden="true" />,
+  'TypeScript':              <SiTypescript     size={BADGE_ICON_SIZE} color="#3178C6" aria-hidden="true" />,
+  'Tailwind CSS':            <SiTailwindcss    size={BADGE_ICON_SIZE} color="#06B6D4" aria-hidden="true" />,
+  'Vite':                    <SiVite           size={BADGE_ICON_SIZE} color="#646CFF" aria-hidden="true" />,
+  'Framer Motion':           <SiFramer         size={BADGE_ICON_SIZE} color="#0055FF" aria-hidden="true" />,
+  // Design Thinking
+  'User Flows':              <TbHierarchy      size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'Information Architecture':<TbHierarchy      size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'Accessibility':           <TbAccessible     size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'Responsive Design':       <TbDeviceMobile   size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  // Extras that may appear
+  'Adobe Photoshop':         <SiAdobephotoshop size={BADGE_ICON_SIZE} color="#31A8FF" aria-hidden="true" />,
+  'HTML':                    <SiHtml5          size={BADGE_ICON_SIZE} color="#E34F26" aria-hidden="true" />,
+  'CSS':                     <SiCss3           size={BADGE_ICON_SIZE} color="#1572B6" aria-hidden="true" />,
+  'JavaScript':              <SiJavascript     size={BADGE_ICON_SIZE} color="#F7DF1E" aria-hidden="true" />,
+  'UI Design':               <TbBrush          size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'UX Fundamentals':         <TbDeviceDesktop  size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'Modern Web Interfaces':   <TbDeviceDesktop  size={BADGE_ICON_SIZE} aria-hidden="true" />,
+  'Frontend Development':    <TbCode           size={BADGE_ICON_SIZE} aria-hidden="true" />,
+}
+
+// ── Card-level category icons for Core Expertise ──────────────────────────────
+const expertiseCategoryIcon: Record<string, React.ReactNode> = {
+  'UI/UX Design': (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+      aria-hidden="true">
+      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688
+               0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125A1.64 1.64
+               0 0 1 14.441 18h1.978c3.051 0 5.555-2.503 5.555-5.554C21.974 6.012
+               17.491 2 12 2z"/>
+      <circle cx="9"  cy="11" r=".6" fill="currentColor"/>
+      <circle cx="12" cy="8"  r=".6" fill="currentColor"/>
+      <circle cx="15" cy="11" r=".6" fill="currentColor"/>
+    </svg>
+  ),
+  'Frontend Development': (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+      aria-hidden="true">
+      <polyline points="16 18 22 12 16 6"/>
+      <polyline points="8 6 2 12 8 18"/>
+    </svg>
+  ),
+  'Design Thinking': (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+      aria-hidden="true">
+      <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10
+               a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/>
+      <line x1="10" y1="21" x2="14" y2="21"/>
+    </svg>
+  ),
+}
+
+// accent per category — mirrors the Design & Creativity token
+const expertiseCategoryAccent: Record<string, string> = {
+  'UI/UX Design':          '#00e5ff',
+  'Frontend Development':  '#7dd3fc',
+  'Design Thinking':       '#a78bfa',
+}
 
 /* ── Animation helpers ────────────────────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
@@ -344,58 +425,111 @@ export function HomePage() {
         <Container>
           <SectionTitle title="Core Expertise" subtitle="The disciplines and tools I work with." />
 
-          {/*
-            Wider constraint at max-width 960px — prevents cramping on lg screens.
-            3 cards in a row get more breathing room each.
-          */}
-          <div
-            style={{ maxWidth: '960px', margin: '0 auto' }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {home.coreExpertise.map((area, i) => (
-                <motion.div key={area.title} {...inView(i * 0.1)} className="h-full">
-                  <div
-                    className="glass-card h-full"
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      padding: '2.5rem',          /* 40px uniform — generous all-around breathing room */
-                    }}
-                  >
-                    {/* Title */}
-                    <h3 style={{
-                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                      fontSize: '1.125rem',
-                      fontWeight: 700,
-                      color: 'var(--text-primary)',
-                      lineHeight: 1.3,
-                      marginBottom: '1.5rem',     /* 24px */
-                    }}>
-                      {area.title}
-                    </h3>
+          <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {home.coreExpertise.map((area, i) => {
+                const accent = expertiseCategoryAccent[area.title] ?? 'var(--accent)'
+                const catIcon = expertiseCategoryIcon[area.title]
+                return (
+                  <motion.div key={area.title} {...inView(i * 0.1)} style={{ height: '100%' }}>
+                    <div
+                      className="glass-card"
+                      style={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        padding: '0',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {/* Thin top accent bar — matches SkillsPage category card pattern */}
+                      <div style={{
+                        height: '3px',
+                        background: accent,
+                        opacity: 0.75,
+                        flexShrink: 0,
+                      }} aria-hidden="true" />
 
-                    {/* Divider */}
-                    <div style={{
-                      height: '1px',
-                      background: 'rgba(0,229,255,0.10)',
-                      marginBottom: '1.75rem',    /* 28px */
-                    }} aria-hidden="true" />
+                      <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
 
-                    {/* Badges */}
-                    <div style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '0.5rem',
-                      flex: 1,
-                      alignContent: 'flex-start',
-                    }}>
-                      {area.skills.map(s => (
-                        <span key={s} className="skill-badge">{s}</span>
-                      ))}
+                        {/* Card header: icon + title */}
+                        <div style={{
+                          display: 'flex', alignItems: 'flex-start',
+                          gap: '0.875rem', marginBottom: '1rem',
+                        }}>
+                          {/* Category icon box */}
+                          <div style={{
+                            width: '46px', height: '46px', flexShrink: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            background: `${accent}12`,
+                            border: `1px solid ${accent}28`,
+                            borderRadius: '12px',
+                            color: accent,
+                          }} aria-hidden="true">
+                            {catIcon ?? (
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" strokeWidth="1.6"
+                                strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32
+                                         1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41
+                                         M18.66 5.34l1.41-1.41" />
+                              </svg>
+                            )}
+                          </div>
+
+                          <div style={{ flex: 1, minWidth: 0, paddingTop: '3px' }}>
+                            <h3 style={{
+                              fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                              fontSize: '0.9375rem', fontWeight: 700,
+                              color: 'var(--text-primary)', lineHeight: 1.3,
+                              letterSpacing: '-0.01em', margin: 0,
+                            }}>
+                              {area.title}
+                            </h3>
+                            <p style={{
+                              fontSize: '0.6875rem', color: 'var(--text-muted)',
+                              fontWeight: 500, letterSpacing: '0.06em',
+                              textTransform: 'uppercase', margin: '4px 0 0',
+                            }}>
+                              {area.skills.length} skill{area.skills.length !== 1 ? 's' : ''}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div style={{
+                          height: '1px',
+                          background: 'rgba(255,255,255,0.06)',
+                          marginBottom: '1.25rem',
+                        }} aria-hidden="true" />
+
+                        {/* Skill badges — with icons, matching SkillsPage style */}
+                        <div style={{
+                          display: 'flex', flexWrap: 'wrap',
+                          gap: '0.5rem',
+                          flex: 1, alignContent: 'flex-start',
+                        }}>
+                          {area.skills.map(s => (
+                            <span
+                              key={s}
+                              className="skill-badge"
+                              style={{
+                                borderColor: `${accent}18`,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.375rem',
+                              }}
+                            >
+                              {badgeIconMap[s] ?? null}
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                )
+              })}
             </div>
           </div>
         </Container>
@@ -407,42 +541,78 @@ export function HomePage() {
       <section className="section-wrapper section-divided" aria-label="Why work with me">
         <Container>
           <SectionTitle title="Why Work With Me" subtitle="What I bring to every project and collaboration." />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
+
+          {/*
+            2-col on md+, 1-col on mobile.
+            gap-6 (24px) on mobile → gap-7 (28px) on md+ via responsive class.
+            Each card is a flex column so the description grows to fill,
+            making all cards equal height naturally.
+          */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {home.whyWorkWithMe.map((item, i) => (
-              <motion.div key={item.title} {...inView(i * 0.1)}>
-                <Card padding="lg" className="h-full">
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.25rem' }}>
+              <motion.div key={item.title} {...inView(i * 0.09)} style={{ height: '100%' }}>
+                <div
+                  className="glass-card"
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '2rem',
+                  }}
+                >
+                  {/* Icon box + title row */}
+                  <div style={{
+                    display: 'flex', alignItems: 'flex-start',
+                    gap: '1rem', marginBottom: '1.25rem',
+                  }}>
                     {/* Icon box */}
                     <div style={{
                       width: '48px', height: '48px', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       background: 'rgba(0,229,255,0.07)',
-                      border: '1px solid rgba(0,229,255,0.14)',
+                      border: '1px solid rgba(0,229,255,0.16)',
                       borderRadius: '12px',
                     }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="var(--accent)" strokeWidth="1.5"
-                        strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        strokeLinecap="round" strokeLinejoin="round"
+                        aria-hidden="true">
                         <path d={item.icon} />
                       </svg>
                     </div>
 
-                    <div>
+                    {/* Title — vertically centred with icon box */}
+                    <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', minHeight: '48px' }}>
                       <h3 style={{
                         fontFamily: "'Space Grotesk', system-ui, sans-serif",
                         fontSize: '1.0625rem', fontWeight: 700,
-                        color: 'var(--text-primary)', marginBottom: '0.5rem',
+                        color: 'var(--text-primary)',
+                        lineHeight: 1.3,
+                        margin: 0,
                       }}>
                         {item.title}
                       </h3>
-                      <p style={{
-                        fontSize: '0.9375rem', color: 'var(--text-secondary)', lineHeight: 1.75,
-                      }}>
-                        {item.description}
-                      </p>
                     </div>
                   </div>
-                </Card>
+
+                  {/* Thin rule under header */}
+                  <div style={{
+                    height: '1px',
+                    background: 'rgba(255,255,255,0.05)',
+                    marginBottom: '1.25rem',
+                    flexShrink: 0,
+                  }} aria-hidden="true" />
+
+                  {/* Description — flex: 1 so all cards stretch to equal height */}
+                  <p style={{
+                    fontSize: '0.9375rem',
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.75,
+                    flex: 1,
+                  }}>
+                    {item.description}
+                  </p>
+                </div>
               </motion.div>
             ))}
           </div>

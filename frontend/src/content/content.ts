@@ -194,6 +194,10 @@ export const content: PortfolioContent = {
         'Prototyping',
         'UI Design',
         'UX Fundamentals',
+        'Picsart',
+        'PixelLab',
+        'CapCut',
+        'PowerDirector',
       ],
     },
     {

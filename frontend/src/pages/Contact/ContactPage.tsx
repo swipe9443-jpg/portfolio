@@ -2,12 +2,13 @@ import { useState, type FC, type ChangeEvent, type FocusEvent, type FormEvent } 
 import { motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
-import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { PageMeta } from '@/components/ui/PageMeta'
 import type { ContactFormData, FormStatus } from '@/types/portfolio'
 
-// ── Icons ─────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   Icons
+───────────────────────────────────────────────────────────────────────────── */
 const EmailIcon: FC = () => (
   <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true">
     <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
@@ -25,7 +26,8 @@ const LinkedInIcon: FC = () => (
   </svg>
 )
 const LocationIcon: FC = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M12 22s-8-7.333-8-12a8 8 0 0116 0c0 4.667-8 12-8 12z"/>
     <circle cx="12" cy="10" r="2.5"/>
   </svg>
@@ -33,7 +35,9 @@ const LocationIcon: FC = () => (
 
 const platformIcons: Record<string, FC> = { GitHub: GitHubIcon, LinkedIn: LinkedInIcon }
 
-// ── Form validation ───────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
+   Form validation
+───────────────────────────────────────────────────────────────────────────── */
 type FormErrors = Partial<Record<keyof ContactFormData, string>>
 
 function validate(data: ContactFormData): FormErrors {
@@ -49,12 +53,43 @@ function validate(data: ContactFormData): FormErrors {
 
 const empty: ContactFormData = { name: '', email: '', subject: '', message: '' }
 
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: '0.8125rem', fontWeight: 500,
-  color: 'var(--text-secondary)', marginBottom: '0.4rem',
+/* ─────────────────────────────────────────────────────────────────────────────
+   Shared primitives — keeps inline style objects DRY
+───────────────────────────────────────────────────────────────────────────── */
+
+/** Icon box: consistent 40×40 tinted square used for every contact-info row */
+const iconBox: React.CSSProperties = {
+  width: '40px', height: '40px',
+  borderRadius: '10px', flexShrink: 0,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  background: 'rgba(0,229,255,0.07)',
+  border: '1px solid rgba(0,229,255,0.14)',
+  color: 'var(--accent)',
+  transition: 'background 0.15s, border-color 0.15s',
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
+/** Glass card shell — same surface as Card padding="lg" (32px) */
+const cardShell: React.CSSProperties = {
+  background: 'rgba(13,20,36,0.90)',
+  border: '1px solid rgba(255,255,255,0.07)',
+  borderRadius: '16px',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+  padding: '2rem',
+}
+
+/** Form field label */
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: '0.8125rem', fontWeight: 500,
+  color: 'var(--text-secondary)',
+  marginBottom: '0.5rem',
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Component
+───────────────────────────────────────────────────────────────────────────── */
 export function ContactPage() {
   const { contact } = content
   const [formData, setFormData] = useState<ContactFormData>(empty)
@@ -107,20 +142,26 @@ export function ContactPage() {
         ogDescription="Open to internships, learning opportunities, and collaborations. Let's connect."
       />
 
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
+      {/* ── PAGE SECTION ─────────────────────────────────────────────────────── */}
       <section className="section-wrapper relative overflow-hidden" aria-label="Contact page">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(10,15,30,0.30)' }} aria-hidden="true" />
+
+        {/* Ambient glows */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'rgba(10,15,30,0.30)' }} aria-hidden="true" />
         <div className="glow-blob opacity-[0.07]" style={{
-          width: '500px', height: '500px', top: '-4rem', left: '50%', transform: 'translateX(-50%)',
+          width: '500px', height: '500px',
+          top: '-4rem', left: '50%', transform: 'translateX(-50%)',
           background: 'radial-gradient(circle, rgba(0,229,255,0.5) 0%, transparent 70%)',
         }} aria-hidden="true" />
 
         <Container className="relative z-10">
+
+          {/* ── PAGE HEADER ──────────────────────────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            style={{ maxWidth: '640px', marginBottom: '4rem' }}
+            style={{ maxWidth: '640px', marginBottom: '2rem' }}
           >
             <p className="page-hero-label">Get In Touch</p>
             <h1 className="page-hero-heading">
@@ -129,238 +170,361 @@ export function ContactPage() {
             <p className="page-hero-body">{contact.subheading}</p>
           </motion.div>
 
-          {/* Availability badge */}
+          {/* ── AVAILABILITY BADGE ───────────────────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15, ease: 'easeOut' }}
-            style={{ marginBottom: '3rem' }}
+            style={{ marginBottom: '3.5rem' }}
           >
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
               padding: '0.375rem 1rem',
-              background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.22)',
-              borderRadius: '9999px', fontSize: '0.8125rem', fontWeight: 500, color: '#86efac',
+              background: 'rgba(34,197,94,0.08)',
+              border: '1px solid rgba(34,197,94,0.22)',
+              borderRadius: '9999px',
+              fontSize: '0.8125rem', fontWeight: 500, color: '#86efac',
             }}>
               <span style={{
-                width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e',
-                boxShadow: '0 0 8px rgba(34,197,94,0.7)',
+                width: '7px', height: '7px', borderRadius: '50%',
+                background: '#22c55e', boxShadow: '0 0 8px rgba(34,197,94,0.7)',
               }} aria-hidden="true" />
               {contact.availability}
             </span>
           </motion.div>
 
-          {/* Grid: info + form */}
-          <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+          {/* ── TWO-COLUMN GRID ──────────────────────────────────────────────── */}
+          {/*
+            Desktop:  left col = 5 parts (contact info + note)
+                      right col = 7 parts (form) — form gets more room
+            Tablet:   collapses to full-width stacked at < 768px
+            Mobile:   single column, gap increases for breathing room
+          */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 22rem), 1fr))',
+            gap: '1.75rem',
+            alignItems: 'start',
+          }}>
 
-              {/* Contact info panel */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true as const }} transition={{ duration: 0.45 }}
-                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-              >
-                <Card padding="md">
-                  <h2 style={{
-                    fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                    fontSize: '0.6875rem', fontWeight: 600, color: 'var(--accent)',
-                    letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1.25rem',
+            {/* ── LEFT: contact info ─────────────────────────────────────────── */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true as const }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+            >
+
+              {/* Contact info card */}
+              <div style={cardShell} className="glass-card">
+
+                {/* Card eyebrow */}
+                <p style={{
+                  fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                  fontSize: '0.6875rem', fontWeight: 700,
+                  color: 'var(--accent)', letterSpacing: '0.14em', textTransform: 'uppercase',
+                  marginBottom: '1.5rem',
+                }}>
+                  Contact Info
+                </p>
+
+                {/* Info rows */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+
+                  {/* Email */}
+                  <a
+                    href={`mailto:${contact.email}`}
+                    aria-label={`Email ${contact.email}`}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '0.875rem',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem', color: 'var(--text-secondary)',
+                      transition: 'color 0.15s',
+                      padding: '0.25rem 0',
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
+                  >
+                    <span style={iconBox}><EmailIcon /></span>
+                    <span style={{ minWidth: 0, overflowWrap: 'anywhere' }}>{contact.email}</span>
+                  </a>
+
+                  {/* Location */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '0.875rem',
+                    fontSize: '0.9rem', color: 'var(--text-secondary)',
+                    padding: '0.25rem 0',
                   }}>
-                    Contact Info
-                  </h2>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {/* Email */}
-                    <a href={`mailto:${contact.email}`}
-                      style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', fontSize: '0.875rem', color: 'var(--text-secondary)' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
-                      aria-label={`Email ${contact.email}`}>
-                      <span style={{
-                        width: '36px', height: '36px', borderRadius: '8px', flexShrink: 0,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(0,229,255,0.07)', border: '1px solid rgba(0,229,255,0.14)', color: 'var(--accent)',
-                      }}>
-                        <EmailIcon />
-                      </span>
-                      <span style={{ wordBreak: 'break-all' }}>{contact.email}</span>
-                    </a>
+                    <span style={iconBox}><LocationIcon /></span>
+                    <span>{contact.location}</span>
+                  </div>
 
-                    {/* Location */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                      <span style={{
-                        width: '36px', height: '36px', borderRadius: '8px', flexShrink: 0,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(0,229,255,0.07)', border: '1px solid rgba(0,229,255,0.14)', color: 'var(--accent)',
-                      }}>
-                        <LocationIcon />
-                      </span>
-                      {contact.location}
+                  {/* Divider */}
+                  <div style={{
+                    height: '1px', background: 'rgba(255,255,255,0.05)',
+                    margin: '0.25rem 0',
+                  }} aria-hidden="true" />
+
+                  {/* Social links */}
+                  {contact.socialLinks.map(link => {
+                    const Icon = platformIcons[link.platform]
+                    return (
+                      <a
+                        key={link.platform}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={link.label}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '0.875rem',
+                          textDecoration: 'none',
+                          fontSize: '0.9rem', color: 'var(--text-secondary)',
+                          transition: 'color 0.15s',
+                          padding: '0.25rem 0',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
+                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
+                      >
+                        <span style={iconBox}>
+                          {Icon ? <Icon /> : link.platform}
+                        </span>
+                        <span>{link.platform}</span>
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Response note card */}
+              <div style={{
+                ...cardShell,
+                padding: '1.5rem 2rem',
+                background: 'rgba(0,229,255,0.03)',
+                border: '1px solid rgba(0,229,255,0.09)',
+              }}>
+                <p style={{
+                  fontSize: '0.875rem',
+                  color: 'var(--text-secondary)',
+                  lineHeight: 1.75,
+                }}>
+                  Whether you have a project idea, an internship opportunity, or simply want to
+                  connect — feel free to reach out. I respond within 24–48 hours.
+                </p>
+              </div>
+
+            </motion.div>
+
+            {/* ── RIGHT: contact form ────────────────────────────────────────── */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true as const }}
+              transition={{ duration: 0.45, delay: 0.08, ease: 'easeOut' }}
+            >
+              <div style={cardShell} className="glass-card">
+
+                {/* ── Success state ─────────────────────────────────────────── */}
+                {status === 'success' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{ textAlign: 'center', padding: '2.5rem 1rem' }}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <div style={{
+                      width: '64px', height: '64px', borderRadius: '50%',
+                      background: 'rgba(34,197,94,0.10)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      margin: '0 auto 1.25rem',
+                    }}>
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                        <circle cx="14" cy="14" r="14" fill="rgba(34,197,94,0.15)"/>
+                        <path d="M8 14l4 4 8-8" stroke="#22C55E" strokeWidth="2"
+                          strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <h3 style={{
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                      fontSize: '1.125rem', fontWeight: 700,
+                      color: 'var(--text-primary)', marginBottom: '0.5rem',
+                    }}>
+                      Message Sent!
+                    </h3>
+                    <p style={{
+                      fontSize: '0.875rem', color: 'var(--text-secondary)',
+                      marginBottom: '1.75rem', lineHeight: 1.65,
+                    }}>
+                      Thanks for reaching out. I'll get back to you soon.
+                    </p>
+                    <Button variant="secondary" size="sm" onClick={reset}>Send Another</Button>
+                  </motion.div>
+                )}
+
+                {/* ── Error banner ─────────────────────────────────────────── */}
+                {status === 'error' && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    style={{
+                      marginBottom: '1.5rem', padding: '0.875rem 1rem',
+                      background: 'rgba(239,68,68,0.08)',
+                      border: '1px solid rgba(239,68,68,0.18)',
+                      borderRadius: '10px',
+                      fontSize: '0.875rem', color: 'var(--error)',
+                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                    }}
+                    role="alert"
+                    aria-live="assertive"
+                  >
+                    <span style={{ flex: 1 }}>
+                      Something went wrong. Please try again or email me directly.
+                    </span>
+                    <button
+                      onClick={reset}
+                      style={{
+                        flexShrink: 0, color: 'rgba(239,68,68,0.6)',
+                        background: 'none', border: 'none',
+                        cursor: 'pointer', fontSize: '1.25rem', lineHeight: 1,
+                      }}
+                      aria-label="Dismiss error"
+                    >
+                      ×
+                    </button>
+                  </motion.div>
+                )}
+
+                {/* ── Form ─────────────────────────────────────────────────── */}
+                {status !== 'success' && (
+                  <form onSubmit={handleSubmit} noValidate aria-label="Contact form">
+
+                    {/* Card eyebrow — mirrors left panel */}
+                    <p style={{
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                      fontSize: '0.6875rem', fontWeight: 700,
+                      color: 'var(--accent)', letterSpacing: '0.14em', textTransform: 'uppercase',
+                      marginBottom: '1.5rem',
+                    }}>
+                      Send a Message
+                    </p>
+
+                    {/* Name + Email — 2-col above 400px, 1-col below */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 11rem), 1fr))',
+                      gap: '1.25rem',
+                      marginBottom: '1.25rem',
+                    }}>
+                      {/* Name */}
+                      <div>
+                        <label htmlFor="name" style={labelStyle}>
+                          Name <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
+                        </label>
+                        <input
+                          id="name" name="name" type="text"
+                          value={formData.name}
+                          onChange={handleChange} onBlur={handleBlur}
+                          placeholder="Your full name" autoComplete="name"
+                          className={['form-input', errors.name && touched.name ? 'error' : ''].join(' ')}
+                          aria-required="true"
+                          aria-describedby={errors.name && touched.name ? 'name-err' : undefined}
+                          aria-invalid={!!(errors.name && touched.name)}
+                        />
+                        {errors.name && touched.name && (
+                          <p id="name-err" role="alert" style={{ marginTop: '0.375rem', fontSize: '0.75rem', color: 'var(--error)' }}>
+                            {errors.name}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Email */}
+                      <div>
+                        <label htmlFor="email" style={labelStyle}>
+                          Email <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
+                        </label>
+                        <input
+                          id="email" name="email" type="email"
+                          value={formData.email}
+                          onChange={handleChange} onBlur={handleBlur}
+                          placeholder="your@email.com" autoComplete="email"
+                          className={['form-input', errors.email && touched.email ? 'error' : ''].join(' ')}
+                          aria-required="true"
+                          aria-describedby={errors.email && touched.email ? 'email-err' : undefined}
+                          aria-invalid={!!(errors.email && touched.email)}
+                        />
+                        {errors.email && touched.email && (
+                          <p id="email-err" role="alert" style={{ marginTop: '0.375rem', fontSize: '0.75rem', color: 'var(--error)' }}>
+                            {errors.email}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Social links */}
-                    {contact.socialLinks.map(link => {
-                      const Icon = platformIcons[link.platform]
-                      return (
-                        <a key={link.platform} href={link.url} target="_blank" rel="noopener noreferrer"
-                          aria-label={link.label}
-                          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', fontSize: '0.875rem', color: 'var(--text-secondary)' }}
-                          onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent)')}
-                          onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}>
-                          <span style={{
-                            width: '36px', height: '36px', borderRadius: '8px', flexShrink: 0,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            background: 'rgba(0,229,255,0.07)', border: '1px solid rgba(0,229,255,0.14)', color: 'var(--accent)',
-                          }}>
-                            {Icon ? <Icon /> : link.platform}
-                          </span>
-                          {link.platform}
-                        </a>
-                      )
-                    })}
-                  </div>
-                </Card>
+                    {/* Subject */}
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <label htmlFor="subject" style={labelStyle}>
+                        Subject <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="subject" name="subject" type="text"
+                        value={formData.subject}
+                        onChange={handleChange} onBlur={handleBlur}
+                        placeholder="What's this about?" autoComplete="off"
+                        className={['form-input', errors.subject && touched.subject ? 'error' : ''].join(' ')}
+                        aria-required="true"
+                        aria-describedby={errors.subject && touched.subject ? 'subject-err' : undefined}
+                        aria-invalid={!!(errors.subject && touched.subject)}
+                      />
+                      {errors.subject && touched.subject && (
+                        <p id="subject-err" role="alert" style={{ marginTop: '0.375rem', fontSize: '0.75rem', color: 'var(--error)' }}>
+                          {errors.subject}
+                        </p>
+                      )}
+                    </div>
 
-                <Card padding="md">
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.75 }}>
-                    Whether you have a project idea, an internship opportunity, or simply want to connect — feel free to reach out. I respond within 24–48 hours.
-                  </p>
-                </Card>
-              </motion.div>
+                    {/* Message */}
+                    <div style={{ marginBottom: '1.75rem' }}>
+                      <label htmlFor="message" style={labelStyle}>
+                        Message <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
+                      </label>
+                      <textarea
+                        id="message" name="message" rows={5}
+                        value={formData.message}
+                        onChange={handleChange} onBlur={handleBlur}
+                        placeholder="Tell me about your project, opportunity, or idea..."
+                        className={['form-input resize-none', errors.message && touched.message ? 'error' : ''].join(' ')}
+                        aria-required="true"
+                        aria-describedby={errors.message && touched.message ? 'message-err' : undefined}
+                        aria-invalid={!!(errors.message && touched.message)}
+                        style={{ display: 'block' }}
+                      />
+                      {errors.message && touched.message && (
+                        <p id="message-err" role="alert" style={{ marginTop: '0.375rem', fontSize: '0.75rem', color: 'var(--error)' }}>
+                          {errors.message}
+                        </p>
+                      )}
+                    </div>
 
-              {/* Contact form */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true as const }} transition={{ duration: 0.45, delay: 0.1 }}
-              >
-                <Card padding="lg">
-                  {/* Success state */}
-                  {status === 'success' && (
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                      style={{ textAlign: 'center', padding: '2rem 0' }} role="status" aria-live="polite">
-                      <div style={{
-                        width: '60px', height: '60px', borderRadius: '50%',
-                        background: 'rgba(34,197,94,0.10)', display: 'flex',
-                        alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem',
-                      }}>
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-                          <circle cx="14" cy="14" r="14" fill="rgba(34,197,94,0.15)"/>
-                          <path d="M8 14l4 4 8-8" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                      <h3 style={{
-                        fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                        fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem',
-                      }}>
-                        Message Sent!
-                      </h3>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                        Thanks for reaching out. I'll get back to you soon.
-                      </p>
-                      <Button variant="secondary" size="sm" onClick={reset}>Send Another</Button>
-                    </motion.div>
-                  )}
+                    {/* Submit */}
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
+                      isLoading={status === 'loading'}
+                      style={{ width: '100%' }}
+                      aria-label="Send contact message"
+                    >
+                      {status === 'loading' ? 'Sending…' : 'Send Message'}
+                    </Button>
 
-                  {/* Error banner */}
-                  {status === 'error' && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      style={{
-                        marginBottom: '1.25rem', padding: '0.75rem 1rem',
-                        background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.18)',
-                        borderRadius: '8px', fontSize: '0.875rem', color: 'var(--error)',
-                        display: 'flex', alignItems: 'center', gap: '0.5rem',
-                      }}
-                      role="alert" aria-live="assertive">
-                      Something went wrong. Please try again or email me directly.
-                      <button onClick={reset} style={{ marginLeft: 'auto', color: 'rgba(239,68,68,0.6)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.125rem' }} aria-label="Dismiss">×</button>
-                    </motion.div>
-                  )}
+                  </form>
+                )}
+              </div>
+            </motion.div>
 
-                  {status !== 'success' && (
-                    <form onSubmit={handleSubmit} noValidate aria-label="Contact form">
-                      {/* Grid: 2-col on sm+, 1-col on mobile to prevent overflow */}
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+          </div>{/* end two-column grid */}
 
-                        {/* Name */}
-                        <div>
-                          <label htmlFor="name" style={labelStyle}>
-                            Name <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
-                          </label>
-                          <input id="name" name="name" type="text" value={formData.name}
-                            onChange={handleChange} onBlur={handleBlur}
-                            placeholder="Your full name" autoComplete="name"
-                            className={['form-input', errors.name && touched.name ? 'error' : ''].join(' ')}
-                            aria-required="true"
-                            aria-describedby={errors.name && touched.name ? 'name-err' : undefined}
-                            aria-invalid={!!(errors.name && touched.name)} />
-                          {errors.name && touched.name && (
-                            <p id="name-err" role="alert" style={{ marginTop: '4px', fontSize: '0.75rem', color: 'var(--error)' }}>{errors.name}</p>
-                          )}
-                        </div>
-
-                        {/* Email */}
-                        <div>
-                          <label htmlFor="email" style={labelStyle}>
-                            Email <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
-                          </label>
-                          <input id="email" name="email" type="email" value={formData.email}
-                            onChange={handleChange} onBlur={handleBlur}
-                            placeholder="your@email.com" autoComplete="email"
-                            className={['form-input', errors.email && touched.email ? 'error' : ''].join(' ')}
-                            aria-required="true"
-                            aria-describedby={errors.email && touched.email ? 'email-err' : undefined}
-                            aria-invalid={!!(errors.email && touched.email)} />
-                          {errors.email && touched.email && (
-                            <p id="email-err" role="alert" style={{ marginTop: '4px', fontSize: '0.75rem', color: 'var(--error)' }}>{errors.email}</p>
-                          )}
-                        </div>
-
-                        {/* Subject */}
-                        <div style={{ gridColumn: '1 / -1' }}>
-                          <label htmlFor="subject" style={labelStyle}>
-                            Subject <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
-                          </label>
-                          <input id="subject" name="subject" type="text" value={formData.subject}
-                            onChange={handleChange} onBlur={handleBlur}
-                            placeholder="What's this about?" autoComplete="off"
-                            className={['form-input', errors.subject && touched.subject ? 'error' : ''].join(' ')}
-                            aria-required="true"
-                            aria-describedby={errors.subject && touched.subject ? 'subject-err' : undefined}
-                            aria-invalid={!!(errors.subject && touched.subject)} />
-                          {errors.subject && touched.subject && (
-                            <p id="subject-err" role="alert" style={{ marginTop: '4px', fontSize: '0.75rem', color: 'var(--error)' }}>{errors.subject}</p>
-                          )}
-                        </div>
-
-                        {/* Message */}
-                        <div style={{ gridColumn: '1 / -1' }}>
-                          <label htmlFor="message" style={labelStyle}>
-                            Message <span style={{ color: 'var(--error)' }} aria-hidden="true">*</span>
-                          </label>
-                          <textarea id="message" name="message" rows={5} value={formData.message}
-                            onChange={handleChange} onBlur={handleBlur}
-                            placeholder="Tell me about your project, opportunity, or idea..."
-                            className={['form-input resize-none', errors.message && touched.message ? 'error' : ''].join(' ')}
-                            aria-required="true"
-                            aria-describedby={errors.message && touched.message ? 'message-err' : undefined}
-                            aria-invalid={!!(errors.message && touched.message)} />
-                          {errors.message && touched.message && (
-                            <p id="message-err" role="alert" style={{ marginTop: '4px', fontSize: '0.75rem', color: 'var(--error)' }}>{errors.message}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div style={{ marginTop: '1.5rem' }}>
-                        <Button type="submit" variant="primary" size="lg"
-                          isLoading={status === 'loading'}
-                          style={{ width: '100%' }}
-                          aria-label="Send contact message">
-                          {status === 'loading' ? 'Sending…' : 'Send Message'}
-                        </Button>
-                      </div>
-                    </form>
-                  )}
-                </Card>
-              </motion.div>
-          </div>
         </Container>
       </section>
     </>

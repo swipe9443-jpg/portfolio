@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import type { ReactNode } from 'react'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
 import { SectionTitle } from '@/components/ui/SectionTitle'
@@ -50,7 +51,7 @@ const DiamondDot = () => (
 )
 
 /* ── Value card icon glyphs ───────────────────────────────────────────────── */
-const valueIcons: Record<string, JSX.Element> = {
+const valueIcons: Record<string, ReactNode> = {
   'Clarity Over Complexity': (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="11" cy="11" r="8" />

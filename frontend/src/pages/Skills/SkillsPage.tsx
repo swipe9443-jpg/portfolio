@@ -1,12 +1,176 @@
 import { motion } from 'framer-motion'
+import type { ReactNode } from 'react'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { PageMeta } from '@/components/ui/PageMeta'
 
+// ── react-icons imports ───────────────────────────────────────────────────────
+// Si* = Simple Icons (brand logos)  |  Tb* = Tabler Icons
+import { SiFigma }          from 'react-icons/si'
+import { SiAdobephotoshop } from 'react-icons/si'
+import { SiHtml5 }          from 'react-icons/si'
+import { SiCss3 }           from 'react-icons/si'
+import { SiJavascript }     from 'react-icons/si'
+import { SiReact }          from 'react-icons/si'
+import { SiTailwindcss }    from 'react-icons/si'
+import { SiVite }           from 'react-icons/si'
+import { SiTypescript }     from 'react-icons/si'
+import { SiNodedotjs }      from 'react-icons/si'
+import { SiGit }            from 'react-icons/si'
+import { SiGithub }         from 'react-icons/si'
+import { SiPostman }        from 'react-icons/si'
+import { SiNpm }            from 'react-icons/si'
+import { SiMysql }          from 'react-icons/si'
+import { SiPostgresql }     from 'react-icons/si'
+import { SiExpress }        from 'react-icons/si'
+import { SiCanva }          from 'react-icons/si'
+import { SiFramer }         from 'react-icons/si'
+import { SiPicsart }        from 'react-icons/si'
+
+import {
+  TbApi,
+  TbPencilBolt,
+  TbVectorBezierArc,
+  TbBrush,
+  TbDeviceDesktop,
+  TbBrain,
+  TbHierarchy,
+  TbAccessible,
+  TbDeviceMobile,
+  TbAtom,
+  TbCode,
+  TbStack2,
+  TbUsers,
+  TbMessageCircle,
+  TbRefresh,
+  TbEye,
+  TbCalendarCheck,
+  TbSchool,
+  TbTrendingUp,
+  TbWorld,
+  TbRocket,
+  TbBriefcase,
+  TbBooks,
+  TbBrandVscode,
+} from 'react-icons/tb'
+
+// ── Icon size — single token applied everywhere ───────────────────────────────
+const ICON_SIZE = 13
+
+// ── Skill → icon map ─────────────────────────────────────────────────────────
+const skillIconMap: Record<string, ReactNode> = {
+  // ── Design & Creativity ──────────────────────────────────────────────────
+  'Figma':                             <SiFigma           size={ICON_SIZE} color="#F24E1E" aria-hidden="true" />,
+  'Adobe Photoshop':                   <SiAdobephotoshop  size={ICON_SIZE} color="#31A8FF" aria-hidden="true" />,
+  'Wireframing':                       <TbPencilBolt      size={ICON_SIZE} aria-hidden="true" />,
+  'Prototyping':                       <TbVectorBezierArc size={ICON_SIZE} aria-hidden="true" />,
+  'UI Design':                         <TbBrush           size={ICON_SIZE} aria-hidden="true" />,
+  'UX Fundamentals':                   <TbDeviceDesktop   size={ICON_SIZE} aria-hidden="true" />,
+
+  // Picsart — official Simple Icons brand mark, official red #FF4B4B
+  'Picsart': <SiPicsart size={ICON_SIZE} color="#FF4B4B" aria-hidden="true" />,
+
+  // PixelLab — "P" lettermark in a rounded square, brand purple #7B5CF0
+  // No entry in any icon library; hand-traced from official app icon
+  'PixelLab': (
+    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 13 13" fill="none" aria-hidden="true">
+      <rect width="13" height="13" rx="3" fill="#7B5CF0" />
+      <text
+        x="6.5" y="9.5"
+        textAnchor="middle"
+        fontFamily="system-ui, -apple-system, sans-serif"
+        fontWeight="800"
+        fontSize="8"
+        fill="#ffffff"
+      >P</text>
+    </svg>
+  ),
+
+  // CapCut — wordmark uses a bold "C" cut-scissors motif; brand is black/white.
+  // Rendered as the distinctive clapper-board scissors symbol in currentColor
+  // so it remains readable on the dark theme without hardcoding black.
+  'CapCut': (
+    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 13 13" fill="none" aria-hidden="true">
+      <rect width="13" height="13" rx="2.5" fill="currentColor" fillOpacity="0.12" />
+      {/* Scissors blades */}
+      <circle cx="4.2" cy="4.2" r="1.6" stroke="currentColor" strokeWidth="1.1" />
+      <circle cx="4.2" cy="8.8" r="1.6" stroke="currentColor" strokeWidth="1.1" />
+      <line x1="5.5" y1="5.2"  x2="11" y2="2"   stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+      <line x1="5.5" y1="7.8"  x2="11" y2="11"  stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    </svg>
+  ),
+
+  // PowerDirector by CyberLink — blue forward-play triangle, brand blue #0071CE
+  // No entry in any icon library; based on the CyberLink PowerDirector app icon
+  'PowerDirector': (
+    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 13 13" fill="none" aria-hidden="true">
+      <rect width="13" height="13" rx="2.5" fill="#0071CE" fillOpacity="0.15" />
+      {/* Bold right-pointing play triangle — centred */}
+      <path d="M4.5 3.2L10.3 6.5L4.5 9.8V3.2Z" fill="#0071CE" />
+    </svg>
+  ),
+
+  // ── Frontend Development ─────────────────────────────────────────────────
+  'HTML':                              <SiHtml5           size={ICON_SIZE} color="#E34F26" aria-hidden="true" />,
+  'CSS':                               <SiCss3            size={ICON_SIZE} color="#1572B6" aria-hidden="true" />,
+  'JavaScript':                        <SiJavascript      size={ICON_SIZE} color="#F7DF1E" aria-hidden="true" />,
+  'TypeScript':                        <SiTypescript      size={ICON_SIZE} color="#3178C6" aria-hidden="true" />,
+  'React':                             <SiReact           size={ICON_SIZE} color="#61DAFB" aria-hidden="true" />,
+  'Tailwind CSS':                      <SiTailwindcss     size={ICON_SIZE} color="#06B6D4" aria-hidden="true" />,
+  'Vite':                              <SiVite            size={ICON_SIZE} color="#646CFF" aria-hidden="true" />,
+  'Framer Motion':                     <SiFramer          size={ICON_SIZE} color="#0055FF" aria-hidden="true" />,
+  'Responsive Design':                 <TbDeviceMobile    size={ICON_SIZE} aria-hidden="true" />,
+  'Modern Web Interfaces':             <TbDeviceDesktop   size={ICON_SIZE} aria-hidden="true" />,
+
+  // ── Computer Science Fundamentals ────────────────────────────────────────
+  'Problem Solving':                   <TbBrain           size={ICON_SIZE} aria-hidden="true" />,
+  'Algorithmic Thinking':              <TbHierarchy       size={ICON_SIZE} aria-hidden="true" />,
+  'Software Development Fundamentals': <TbCode            size={ICON_SIZE} aria-hidden="true" />,
+  'Object-Oriented Programming':       <TbAtom            size={ICON_SIZE} aria-hidden="true" />,
+  'Data Structures Basics':            <TbStack2          size={ICON_SIZE} aria-hidden="true" />,
+
+  // ── Professional Skills ──────────────────────────────────────────────────
+  'Continuous Learning':               <TbBooks           size={ICON_SIZE} aria-hidden="true" />,
+  'Team Collaboration':                <TbUsers           size={ICON_SIZE} aria-hidden="true" />,
+  'Communication':                     <TbMessageCircle   size={ICON_SIZE} aria-hidden="true" />,
+  'Adaptability':                      <TbRefresh         size={ICON_SIZE} aria-hidden="true" />,
+  'Attention to Detail':               <TbEye             size={ICON_SIZE} aria-hidden="true" />,
+  'Project Planning':                  <TbCalendarCheck   size={ICON_SIZE} aria-hidden="true" />,
+
+  // ── Current Focus ────────────────────────────────────────────────────────
+  'Internship Experience':             <TbBriefcase       size={ICON_SIZE} aria-hidden="true" />,
+  'UI/UX Design Growth':               <TbTrendingUp      size={ICON_SIZE} aria-hidden="true" />,
+  'Frontend Development':              <TbCode            size={ICON_SIZE} aria-hidden="true" />,
+  'Portfolio Development':             <TbRocket          size={ICON_SIZE} aria-hidden="true" />,
+  'Real-World Project Experience':     <TbWorld           size={ICON_SIZE} aria-hidden="true" />,
+
+  // ── Extra tools (roadmap / resume cross-reference) ───────────────────────
+  'Node.js':                           <SiNodedotjs       size={ICON_SIZE} color="#339933" aria-hidden="true" />,
+  'Express.js':                        <SiExpress         size={ICON_SIZE} aria-hidden="true" />,
+  'REST API':                          <TbApi             size={ICON_SIZE} aria-hidden="true" />,
+  'MySQL':                             <SiMysql           size={ICON_SIZE} color="#4479A1" aria-hidden="true" />,
+  'PostgreSQL':                        <SiPostgresql      size={ICON_SIZE} color="#4169E1" aria-hidden="true" />,
+  'Git':                               <SiGit             size={ICON_SIZE} color="#F05032" aria-hidden="true" />,
+  'GitHub':                            <SiGithub          size={ICON_SIZE} aria-hidden="true" />,
+  'VS Code':                           <TbBrandVscode     size={ICON_SIZE} color="#007ACC" aria-hidden="true" />,
+  'Postman':                           <SiPostman         size={ICON_SIZE} color="#FF6C37" aria-hidden="true" />,
+  'npm':                               <SiNpm             size={ICON_SIZE} color="#CB3837" aria-hidden="true" />,
+  'Canva':                             <SiCanva           size={ICON_SIZE} color="#00C4CC" aria-hidden="true" />,
+  'Design Systems':                    <TbHierarchy       size={ICON_SIZE} aria-hidden="true" />,
+  'User Research':                     <TbUsers           size={ICON_SIZE} aria-hidden="true" />,
+  'User Flows':                        <TbHierarchy       size={ICON_SIZE} aria-hidden="true" />,
+  'Information Architecture':          <TbStack2          size={ICON_SIZE} aria-hidden="true" />,
+  'Accessibility':                     <TbAccessible      size={ICON_SIZE} aria-hidden="true" />,
+  'UI/UX Design':                      <TbBrush           size={ICON_SIZE} aria-hidden="true" />,
+  'Web Development':                   <TbWorld           size={ICON_SIZE} aria-hidden="true" />,
+  'Full-Stack Development':            <TbStack2          size={ICON_SIZE} aria-hidden="true" />,
+  'Learning':                          <TbSchool          size={ICON_SIZE} aria-hidden="true" />,
+}
+
 // ── Category metadata: icon, accent colour, description ───────────────────────
 const categoryMeta: Record<string, {
-  icon: JSX.Element
+  icon: ReactNode
   accent: string
   description: string
 }> = {
@@ -79,7 +243,7 @@ const categoryMeta: Record<string, {
   },
 }
 
-const fallbackMeta = {
+const fallbackMeta: { accent: string; description: string; icon: ReactNode } = {
   accent: '#00e5ff',
   description: 'Skills and capabilities in this area.',
   icon: (
@@ -244,8 +408,12 @@ export function SkillsPage() {
                           className="skill-badge"
                           style={{
                             borderColor: `${meta.accent}18`,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.375rem',
                           }}
                         >
+                          {skillIconMap[skill] ?? null}
                           {skill}
                         </span>
                       ))}
