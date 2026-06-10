@@ -185,64 +185,86 @@ export const content: PortfolioContent = {
   // ─── Skills ──────────────────────────────────────────────────────────────────
   skills: [
     {
-      id: 'design',
-      category: 'Design & Creativity',
+      id: 'design-ux',
+      category: 'Design & UX',
       skills: [
+        // Tools
         'Figma',
         'Adobe Photoshop',
-        'Wireframing',
-        'Prototyping',
-        'UI Design',
-        'UX Fundamentals',
         'Picsart',
         'PixelLab',
-        'CapCut',
-        'PowerDirector',
+        // Skills
+        'UI Design',
+        'UX Fundamentals',
+        'Wireframing',
+        'Prototyping',
+        'Design Systems',
       ],
     },
     {
       id: 'frontend',
       category: 'Frontend Development',
       skills: [
-        'HTML',
-        'CSS',
+        // Technologies
+        'HTML5',
+        'CSS3',
         'JavaScript',
+        'TypeScript (Learning)',
+        'React (Learning)',
+        // Skills
         'Responsive Design',
         'Modern Web Interfaces',
+        'Component-Based Development',
       ],
     },
     {
-      id: 'cs',
-      category: 'Computer Science Fundamentals',
+      id: 'dev-tools',
+      category: 'Development Tools',
+      skills: [
+        // Tools
+        'Git',
+        'GitHub',
+        'VS Code',
+        'Vercel',
+        // Skills
+        'Version Control',
+        'Deployment',
+        'Project Organization',
+      ],
+    },
+    {
+      id: 'cs-foundations',
+      category: 'Computer Science Foundations',
       skills: [
         'Problem Solving',
         'Algorithmic Thinking',
-        'Software Development Fundamentals',
         'Object-Oriented Programming',
-        'Data Structures Basics',
+        'Data Structures',
+        'Software Engineering Principles',
+      ],
+    },
+    {
+      id: 'content-creation',
+      category: 'Content Creation & Multimedia',
+      skills: [
+        // Tools
+        'CapCut',
+        'PowerDirector',
+        // Skills
+        'Video Editing',
+        'Content Design',
+        'Social Media Graphics',
       ],
     },
     {
       id: 'professional',
       category: 'Professional Skills',
       skills: [
-        'Continuous Learning',
         'Team Collaboration',
         'Communication',
-        'Adaptability',
         'Attention to Detail',
         'Project Planning',
-      ],
-    },
-    {
-      id: 'focus',
-      category: 'Current Focus',
-      skills: [
-        'Internship Experience',
-        'UI/UX Design Growth',
-        'Frontend Development',
-        'Portfolio Development',
-        'Real-World Project Experience',
+        'Self-Learning',
       ],
     },
   ],

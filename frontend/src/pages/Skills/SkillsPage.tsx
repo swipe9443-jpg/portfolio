@@ -1,199 +1,123 @@
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
-import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { PageMeta } from '@/components/ui/PageMeta'
 
-// ── react-icons imports ───────────────────────────────────────────────────────
-// Si* = Simple Icons (brand logos)  |  Tb* = Tabler Icons
+// ── Brand icons ───────────────────────────────────────────────────────────────
 import { SiFigma }          from 'react-icons/si'
 import { SiAdobephotoshop } from 'react-icons/si'
 import { SiHtml5 }          from 'react-icons/si'
 import { SiCss3 }           from 'react-icons/si'
 import { SiJavascript }     from 'react-icons/si'
-import { SiReact }          from 'react-icons/si'
-import { SiTailwindcss }    from 'react-icons/si'
-import { SiVite }           from 'react-icons/si'
 import { SiTypescript }     from 'react-icons/si'
-import { SiNodedotjs }      from 'react-icons/si'
+import { SiReact }          from 'react-icons/si'
 import { SiGit }            from 'react-icons/si'
 import { SiGithub }         from 'react-icons/si'
-import { SiPostman }        from 'react-icons/si'
-import { SiNpm }            from 'react-icons/si'
-import { SiMysql }          from 'react-icons/si'
-import { SiPostgresql }     from 'react-icons/si'
-import { SiExpress }        from 'react-icons/si'
-import { SiCanva }          from 'react-icons/si'
-import { SiFramer }         from 'react-icons/si'
+import { SiVercel }         from 'react-icons/si'
 import { SiPicsart }        from 'react-icons/si'
 
+// ── Tabler Icons ──────────────────────────────────────────────────────────────
 import {
-  TbApi,
-  TbPencilBolt,
-  TbVectorBezierArc,
-  TbBrush,
-  TbDeviceDesktop,
-  TbBrain,
-  TbHierarchy,
-  TbAccessible,
-  TbDeviceMobile,
-  TbAtom,
-  TbCode,
-  TbStack2,
-  TbUsers,
-  TbMessageCircle,
-  TbRefresh,
-  TbEye,
-  TbCalendarCheck,
-  TbSchool,
-  TbTrendingUp,
-  TbWorld,
-  TbRocket,
-  TbBriefcase,
-  TbBooks,
+  TbBrush, TbDeviceDesktop, TbPencilBolt, TbVectorBezierArc,
+  TbComponents, TbDeviceMobile, TbLayoutDashboard,
   TbBrandVscode,
+  TbBrain, TbHierarchy, TbAtom, TbStack2, TbTerminal,
+  TbVideo, TbScissors, TbPhoto,
+  TbUsers, TbMessageCircle, TbEye, TbCalendarCheck, TbBooks,
 } from 'react-icons/tb'
 
-// ── Icon size — single token applied everywhere ───────────────────────────────
-const ICON_SIZE = 13
+/* ─────────────────────────────────────────────────────────────────────────────
+   CONSTANTS
+───────────────────────────────────────────────────────────────────────────── */
+const CHIP_ICON_SIZE = 13   // badge chips
+const TOOL_ICON_SIZE = 22   // tool showcase cards
 
-// ── Skill → icon map ─────────────────────────────────────────────────────────
-const skillIconMap: Record<string, ReactNode> = {
-  // ── Design & Creativity ──────────────────────────────────────────────────
-  'Figma':                             <SiFigma           size={ICON_SIZE} color="#F24E1E" aria-hidden="true" />,
-  'Adobe Photoshop':                   <SiAdobephotoshop  size={ICON_SIZE} color="#31A8FF" aria-hidden="true" />,
-  'Wireframing':                       <TbPencilBolt      size={ICON_SIZE} aria-hidden="true" />,
-  'Prototyping':                       <TbVectorBezierArc size={ICON_SIZE} aria-hidden="true" />,
-  'UI Design':                         <TbBrush           size={ICON_SIZE} aria-hidden="true" />,
-  'UX Fundamentals':                   <TbDeviceDesktop   size={ICON_SIZE} aria-hidden="true" />,
-
-  // Picsart — official Simple Icons brand mark, official red #FF4B4B
-  'Picsart': <SiPicsart size={ICON_SIZE} color="#FF4B4B" aria-hidden="true" />,
-
-  // PixelLab — "P" lettermark in a rounded square, brand purple #7B5CF0
-  // No entry in any icon library; hand-traced from official app icon
-  'PixelLab': (
-    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 13 13" fill="none" aria-hidden="true">
-      <rect width="13" height="13" rx="3" fill="#7B5CF0" />
-      <text
-        x="6.5" y="9.5"
-        textAnchor="middle"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        fontWeight="800"
-        fontSize="8"
-        fill="#ffffff"
-      >P</text>
-    </svg>
-  ),
-
-  // CapCut — wordmark uses a bold "C" cut-scissors motif; brand is black/white.
-  // Rendered as the distinctive clapper-board scissors symbol in currentColor
-  // so it remains readable on the dark theme without hardcoding black.
-  'CapCut': (
-    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 13 13" fill="none" aria-hidden="true">
-      <rect width="13" height="13" rx="2.5" fill="currentColor" fillOpacity="0.12" />
-      {/* Scissors blades */}
-      <circle cx="4.2" cy="4.2" r="1.6" stroke="currentColor" strokeWidth="1.1" />
-      <circle cx="4.2" cy="8.8" r="1.6" stroke="currentColor" strokeWidth="1.1" />
-      <line x1="5.5" y1="5.2"  x2="11" y2="2"   stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-      <line x1="5.5" y1="7.8"  x2="11" y2="11"  stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-    </svg>
-  ),
-
-  // PowerDirector by CyberLink — blue forward-play triangle, brand blue #0071CE
-  // No entry in any icon library; based on the CyberLink PowerDirector app icon
-  'PowerDirector': (
-    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 13 13" fill="none" aria-hidden="true">
-      <rect width="13" height="13" rx="2.5" fill="#0071CE" fillOpacity="0.15" />
-      {/* Bold right-pointing play triangle — centred */}
-      <path d="M4.5 3.2L10.3 6.5L4.5 9.8V3.2Z" fill="#0071CE" />
-    </svg>
-  ),
-
-  // ── Frontend Development ─────────────────────────────────────────────────
-  'HTML':                              <SiHtml5           size={ICON_SIZE} color="#E34F26" aria-hidden="true" />,
-  'CSS':                               <SiCss3            size={ICON_SIZE} color="#1572B6" aria-hidden="true" />,
-  'JavaScript':                        <SiJavascript      size={ICON_SIZE} color="#F7DF1E" aria-hidden="true" />,
-  'TypeScript':                        <SiTypescript      size={ICON_SIZE} color="#3178C6" aria-hidden="true" />,
-  'React':                             <SiReact           size={ICON_SIZE} color="#61DAFB" aria-hidden="true" />,
-  'Tailwind CSS':                      <SiTailwindcss     size={ICON_SIZE} color="#06B6D4" aria-hidden="true" />,
-  'Vite':                              <SiVite            size={ICON_SIZE} color="#646CFF" aria-hidden="true" />,
-  'Framer Motion':                     <SiFramer          size={ICON_SIZE} color="#0055FF" aria-hidden="true" />,
-  'Responsive Design':                 <TbDeviceMobile    size={ICON_SIZE} aria-hidden="true" />,
-  'Modern Web Interfaces':             <TbDeviceDesktop   size={ICON_SIZE} aria-hidden="true" />,
-
-  // ── Computer Science Fundamentals ────────────────────────────────────────
-  'Problem Solving':                   <TbBrain           size={ICON_SIZE} aria-hidden="true" />,
-  'Algorithmic Thinking':              <TbHierarchy       size={ICON_SIZE} aria-hidden="true" />,
-  'Software Development Fundamentals': <TbCode            size={ICON_SIZE} aria-hidden="true" />,
-  'Object-Oriented Programming':       <TbAtom            size={ICON_SIZE} aria-hidden="true" />,
-  'Data Structures Basics':            <TbStack2          size={ICON_SIZE} aria-hidden="true" />,
-
-  // ── Professional Skills ──────────────────────────────────────────────────
-  'Continuous Learning':               <TbBooks           size={ICON_SIZE} aria-hidden="true" />,
-  'Team Collaboration':                <TbUsers           size={ICON_SIZE} aria-hidden="true" />,
-  'Communication':                     <TbMessageCircle   size={ICON_SIZE} aria-hidden="true" />,
-  'Adaptability':                      <TbRefresh         size={ICON_SIZE} aria-hidden="true" />,
-  'Attention to Detail':               <TbEye             size={ICON_SIZE} aria-hidden="true" />,
-  'Project Planning':                  <TbCalendarCheck   size={ICON_SIZE} aria-hidden="true" />,
-
-  // ── Current Focus ────────────────────────────────────────────────────────
-  'Internship Experience':             <TbBriefcase       size={ICON_SIZE} aria-hidden="true" />,
-  'UI/UX Design Growth':               <TbTrendingUp      size={ICON_SIZE} aria-hidden="true" />,
-  'Frontend Development':              <TbCode            size={ICON_SIZE} aria-hidden="true" />,
-  'Portfolio Development':             <TbRocket          size={ICON_SIZE} aria-hidden="true" />,
-  'Real-World Project Experience':     <TbWorld           size={ICON_SIZE} aria-hidden="true" />,
-
-  // ── Extra tools (roadmap / resume cross-reference) ───────────────────────
-  'Node.js':                           <SiNodedotjs       size={ICON_SIZE} color="#339933" aria-hidden="true" />,
-  'Express.js':                        <SiExpress         size={ICON_SIZE} aria-hidden="true" />,
-  'REST API':                          <TbApi             size={ICON_SIZE} aria-hidden="true" />,
-  'MySQL':                             <SiMysql           size={ICON_SIZE} color="#4479A1" aria-hidden="true" />,
-  'PostgreSQL':                        <SiPostgresql      size={ICON_SIZE} color="#4169E1" aria-hidden="true" />,
-  'Git':                               <SiGit             size={ICON_SIZE} color="#F05032" aria-hidden="true" />,
-  'GitHub':                            <SiGithub          size={ICON_SIZE} aria-hidden="true" />,
-  'VS Code':                           <TbBrandVscode     size={ICON_SIZE} color="#007ACC" aria-hidden="true" />,
-  'Postman':                           <SiPostman         size={ICON_SIZE} color="#FF6C37" aria-hidden="true" />,
-  'npm':                               <SiNpm             size={ICON_SIZE} color="#CB3837" aria-hidden="true" />,
-  'Canva':                             <SiCanva           size={ICON_SIZE} color="#00C4CC" aria-hidden="true" />,
-  'Design Systems':                    <TbHierarchy       size={ICON_SIZE} aria-hidden="true" />,
-  'User Research':                     <TbUsers           size={ICON_SIZE} aria-hidden="true" />,
-  'User Flows':                        <TbHierarchy       size={ICON_SIZE} aria-hidden="true" />,
-  'Information Architecture':          <TbStack2          size={ICON_SIZE} aria-hidden="true" />,
-  'Accessibility':                     <TbAccessible      size={ICON_SIZE} aria-hidden="true" />,
-  'UI/UX Design':                      <TbBrush           size={ICON_SIZE} aria-hidden="true" />,
-  'Web Development':                   <TbWorld           size={ICON_SIZE} aria-hidden="true" />,
-  'Full-Stack Development':            <TbStack2          size={ICON_SIZE} aria-hidden="true" />,
-  'Learning':                          <TbSchool          size={ICON_SIZE} aria-hidden="true" />,
+/* ─────────────────────────────────────────────────────────────────────────────
+   SKILL CHIP ICON MAP  (13 px, used inside skill chips)
+───────────────────────────────────────────────────────────────────────────── */
+const chipIconMap: Record<string, ReactNode> = {
+  // Design & UX
+  'UI Design':        <TbBrush           size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'UX Fundamentals':  <TbDeviceDesktop   size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Wireframing':      <TbPencilBolt      size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Prototyping':      <TbVectorBezierArc size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Design Systems':   <TbLayoutDashboard size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  // Frontend
+  'HTML5':                       <SiHtml5         size={CHIP_ICON_SIZE} color="#E34F26" aria-hidden="true" />,
+  'CSS3':                        <SiCss3          size={CHIP_ICON_SIZE} color="#1572B6" aria-hidden="true" />,
+  'JavaScript':                  <SiJavascript    size={CHIP_ICON_SIZE} color="#F7DF1E" aria-hidden="true" />,
+  'TypeScript (Learning)':       <SiTypescript    size={CHIP_ICON_SIZE} color="#3178C6" aria-hidden="true" />,
+  'React (Learning)':            <SiReact         size={CHIP_ICON_SIZE} color="#61DAFB" aria-hidden="true" />,
+  'Responsive Design':           <TbDeviceMobile  size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Modern Web Interfaces':       <TbDeviceDesktop size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Component-Based Development': <TbComponents    size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  // CS Foundations
+  'Problem Solving':                <TbBrain     size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Algorithmic Thinking':           <TbHierarchy size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Object-Oriented Programming':    <TbAtom      size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Data Structures':                <TbStack2    size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Software Engineering Principles':<TbTerminal  size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  // Content Creation
+  'Video Editing':        <TbVideo    size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Content Design':       <TbScissors size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Social Media Graphics':<TbPhoto    size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  // Professional
+  'Team Collaboration': <TbUsers         size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Communication':      <TbMessageCircle size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Attention to Detail':<TbEye           size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Project Planning':   <TbCalendarCheck size={CHIP_ICON_SIZE} aria-hidden="true" />,
+  'Self-Learning':      <TbBooks         size={CHIP_ICON_SIZE} aria-hidden="true" />,
 }
 
-// ── Category metadata: icon, accent colour, description ───────────────────────
-const categoryMeta: Record<string, {
-  icon: ReactNode
-  accent: string
+/* ─────────────────────────────────────────────────────────────────────────────
+   SKILL CATEGORY PANELS  (Section 1)
+   Only 4 categories matching the reference: Design & UX, Frontend,
+   CS Foundations, Professional Skills.
+   Development Tools + Content Creation move exclusively to Section 2.
+───────────────────────────────────────────────────────────────────────────── */
+interface SkillPanel {
+  id:          string
+  title:       string
+  accent:      string
   description: string
-}> = {
-  'Design & Creativity': {
-    accent: '#00e5ff',
-    description: 'Visual design, prototyping tools, and creative problem-solving.',
+  emoji:       string          // decorative only, hidden from AT
+  skills:      string[]
+  icon:        ReactNode
+}
+
+const skillPanels: SkillPanel[] = [
+  {
+    id:          'design-ux',
+    title:       'Design & UX',
+    accent:      '#00e5ff',
+    description: 'Crafting user-centered experiences through design and research.',
+    emoji:       '🎨',
+    skills:      ['UI Design', 'UX Fundamentals', 'Wireframing', 'Prototyping', 'Design Systems'],
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
         aria-hidden="true">
-        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+        <circle cx="13.5" cy="6.5"  r=".5" fill="currentColor" />
         <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
         <circle cx="8.5"  cy="7.5"  r=".5" fill="currentColor" />
         <circle cx="6.5"  cy="12.5" r=".5" fill="currentColor" />
-        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125A1.64 1.64 0 0 1 14.441 18h1.978c3.051 0 5.555-2.503 5.555-5.554C21.974 6.012 17.491 2 12 2z" />
+        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688
+                 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125
+                 A1.64 1.64 0 0 1 14.441 18h1.978c3.051 0 5.555-2.503 5.555-5.554
+                 C21.974 6.012 17.491 2 12 2z" />
       </svg>
     ),
   },
-  'Frontend Development': {
-    accent: '#7dd3fc',
-    description: 'Building responsive interfaces and modern web experiences.',
+  {
+    id:          'frontend',
+    title:       'Frontend Development',
+    accent:      '#7dd3fc',
+    description: 'Building responsive and interactive web experiences with modern technologies.',
+    emoji:       '💻',
+    skills:      ['HTML5', 'CSS3', 'JavaScript', 'TypeScript (Learning)', 'React (Learning)', 'Responsive Design', 'Modern Web Interfaces'],
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
         aria-hidden="true">
         <polyline points="16 18 22 12 16 6" />
@@ -201,24 +125,32 @@ const categoryMeta: Record<string, {
       </svg>
     ),
   },
-  'Computer Science Fundamentals': {
-    accent: '#a78bfa',
-    description: 'Core CS concepts, algorithms, and software engineering principles.',
+  {
+    id:          'cs-foundations',
+    title:       'Computer Science Foundations',
+    accent:      '#a78bfa',
+    description: 'Core CS concepts and problem-solving principles.',
+    emoji:       '📚',
+    skills:      ['Problem Solving', 'Algorithmic Thinking', 'Object-Oriented Programming', 'Data Structures', 'Software Engineering Principles'],
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
         aria-hidden="true">
         <rect x="4" y="4" width="16" height="16" rx="2" />
-        <rect x="9" y="9" width="6" height="6" />
+        <rect x="9" y="9" width="6"  height="6" />
         <path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3" />
       </svg>
     ),
   },
-  'Professional Skills': {
-    accent: '#4ade80',
-    description: 'Soft skills and professional attributes for team environments.',
+  {
+    id:          'professional',
+    title:       'Professional Skills',
+    accent:      '#4ade80',
+    description: 'Essential skills for effective collaboration and growth.',
+    emoji:       '🤝',
+    skills:      ['Communication', 'Team Collaboration', 'Attention to Detail', 'Project Planning', 'Self-Learning'],
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
         aria-hidden="true">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -228,206 +160,488 @@ const categoryMeta: Record<string, {
       </svg>
     ),
   },
-  'Current Focus': {
-    accent: '#fb923c',
-    description: 'Active areas of growth and professional development goals.',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-        aria-hidden="true">
-        <circle cx="12" cy="12" r="10" />
-        <circle cx="12" cy="12" r="6" />
-        <circle cx="12" cy="12" r="2" fill="currentColor" />
-      </svg>
-    ),
-  },
-}
-
-const fallbackMeta: { accent: string; description: string; icon: ReactNode } = {
-  accent: '#00e5ff',
-  description: 'Skills and capabilities in this area.',
-  icon: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-      aria-hidden="true">
-      <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M18.66 5.34l1.41-1.41" />
-    </svg>
-  ),
-}
-
-// ── Animation variants ────────────────────────────────────────────────────────
-const cardVariants = {
-  hidden:  { opacity: 0, y: 28 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { duration: 0.45, delay: i * 0.08, ease: 'easeOut' as const },
-  }),
-}
-
-// ── Learning roadmap ──────────────────────────────────────────────────────────
-const roadmap = [
-  { status: 'current',  label: 'HTML, CSS, JavaScript',  note: 'Core web foundation'       },
-  { status: 'current',  label: 'Figma + UI/UX Design',   note: 'Design systems & prototypes' },
-  { status: 'current',  label: 'Adobe Photoshop',        note: 'Visual editing & assets'   },
-  { status: 'learning', label: 'React + TypeScript',     note: 'Component architecture'    },
-  { status: 'learning', label: 'Responsive Design',      note: 'Mobile-first interfaces'   },
-  { status: 'planned',  label: 'Node.js + Express',      note: 'Backend fundamentals'      },
-  { status: 'planned',  label: 'Full-Stack Projects',    note: 'End-to-end applications'   },
 ]
 
-const statusConfig: Record<string, { dot: string; label: string; bg: string; border: string }> = {
+/* ─────────────────────────────────────────────────────────────────────────────
+   TOOLS & TECHNOLOGIES  (Section 2)
+   Grouped tool items with large icons + name labels.
+───────────────────────────────────────────────────────────────────────────── */
+interface ToolItem {
+  name:    string
+  icon:    ReactNode
+  accent?: string
+}
+interface ToolGroup {
+  label: string
+  tools: ToolItem[]
+}
+
+// PixelLab SVG — no library entry, hand-traced brand mark
+const PixelLabIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect width="24" height="24" rx="5" fill="#7B5CF0" />
+    <text x="12" y="17" textAnchor="middle"
+      fontFamily="system-ui,-apple-system,sans-serif"
+      fontWeight="900" fontSize="15" fill="#fff">P</text>
+  </svg>
+)
+
+// CapCut SVG
+const CapCutIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect width="24" height="24" rx="5" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+    <circle cx="8"  cy="8"  r="3"   stroke="currentColor" strokeWidth="1.8" />
+    <circle cx="8"  cy="16" r="3"   stroke="currentColor" strokeWidth="1.8" />
+    <line x1="10.5" y1="9.5"  x2="20" y2="4"  stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <line x1="10.5" y1="14.5" x2="20" y2="20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+)
+
+// PowerDirector SVG
+const PowerDirectorIcon = ({ size }: { size: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect width="24" height="24" rx="5" fill="rgba(0,113,206,0.18)" />
+    <path d="M8 5.5L19 12L8 18.5V5.5Z" fill="#0071CE" />
+  </svg>
+)
+
+const toolGroups: ToolGroup[] = [
+  {
+    label: 'Design Tools',
+    tools: [
+      { name: 'Figma',           icon: <SiFigma          size={TOOL_ICON_SIZE} color="#F24E1E" />,  accent: '#F24E1E' },
+      { name: 'Adobe Photoshop', icon: <SiAdobephotoshop size={TOOL_ICON_SIZE} color="#31A8FF" />,  accent: '#31A8FF' },
+      { name: 'Picsart',         icon: <SiPicsart        size={TOOL_ICON_SIZE} color="#FF4B4B" />,  accent: '#FF4B4B' },
+      { name: 'PixelLab',        icon: <PixelLabIcon size={TOOL_ICON_SIZE} />,                      accent: '#7B5CF0' },
+    ],
+  },
+  {
+    label: 'Development Technologies',
+    tools: [
+      { name: 'HTML5',      icon: <SiHtml5      size={TOOL_ICON_SIZE} color="#E34F26" />, accent: '#E34F26' },
+      { name: 'CSS3',       icon: <SiCss3       size={TOOL_ICON_SIZE} color="#1572B6" />, accent: '#1572B6' },
+      { name: 'JavaScript', icon: <SiJavascript size={TOOL_ICON_SIZE} color="#F7DF1E" />, accent: '#F7DF1E' },
+      { name: 'TypeScript', icon: <SiTypescript size={TOOL_ICON_SIZE} color="#3178C6" />, accent: '#3178C6' },
+      { name: 'React',      icon: <SiReact      size={TOOL_ICON_SIZE} color="#61DAFB" />, accent: '#61DAFB' },
+    ],
+  },
+  {
+    label: 'Development Tools',
+    tools: [
+      { name: 'Git',    icon: <SiGit          size={TOOL_ICON_SIZE} color="#F05032" />, accent: '#F05032' },
+      { name: 'GitHub', icon: <SiGithub       size={TOOL_ICON_SIZE} />,                 accent: '#ffffff' },
+      { name: 'VS Code',icon: <TbBrandVscode  size={TOOL_ICON_SIZE} color="#007ACC" />, accent: '#007ACC' },
+      { name: 'Vercel', icon: <SiVercel       size={TOOL_ICON_SIZE} />,                 accent: '#ffffff' },
+    ],
+  },
+  {
+    label: 'Content Creation',
+    tools: [
+      { name: 'CapCut',        icon: <CapCutIcon        size={TOOL_ICON_SIZE} />, accent: '#00e5ff' },
+      { name: 'PowerDirector', icon: <PowerDirectorIcon size={TOOL_ICON_SIZE} />, accent: '#0071CE' },
+    ],
+  },
+]
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LEARNING ROADMAP DATA
+───────────────────────────────────────────────────────────────────────────── */
+const roadmap = [
+  { status: 'current',  label: 'HTML, CSS, JavaScript',  note: 'Core web foundation'         },
+  { status: 'current',  label: 'Figma + UI/UX Design',   note: 'Design systems & prototypes'  },
+  { status: 'current',  label: 'Adobe Photoshop',        note: 'Visual editing & assets'      },
+  { status: 'current',  label: 'Git & GitHub',           note: 'Version control & workflow'   },
+  { status: 'learning', label: 'React + TypeScript',     note: 'Component architecture'       },
+  { status: 'learning', label: 'Responsive Design',      note: 'Mobile-first interfaces'      },
+  { status: 'planned',  label: 'Node.js + Express',      note: 'Backend fundamentals'         },
+  { status: 'planned',  label: 'Full-Stack Projects',    note: 'End-to-end applications'      },
+]
+
+const statusCfg: Record<string, { dot: string; label: string; bg: string; border: string }> = {
   current:  { dot: '#22c55e', label: 'Active',   bg: 'rgba(34,197,94,0.08)',  border: 'rgba(34,197,94,0.22)'  },
   learning: { dot: '#f59e0b', label: 'Learning', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.22)' },
   planned:  { dot: '#00e5ff', label: 'Planned',  bg: 'rgba(0,229,255,0.07)',  border: 'rgba(0,229,255,0.20)'  },
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   ANIMATION HELPERS
+───────────────────────────────────────────────────────────────────────────── */
+const fadeUp = (delay = 0) => ({
+  initial:     { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0  },
+  viewport:    { once: true as const, margin: '-32px' },
+  transition:  { duration: 0.46, delay, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] },
+})
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ToolCard — interactive tool item
+───────────────────────────────────────────────────────────────────────────── */
+function ToolCard({ tool }: { tool: ToolItem }) {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.04, y: -3 }}
+      transition={{ duration: 0.18, ease: 'easeOut' }}
+      style={{
+        display:        'flex',
+        alignItems:     'center',
+        gap:            '0.75rem',
+        padding:        '0.875rem 1.125rem',
+        background:     'rgba(13,20,36,0.92)',
+        border:         '1px solid rgba(255,255,255,0.07)',
+        borderRadius:   '12px',
+        backdropFilter: 'blur(16px)',
+        cursor:         'default',
+        transition:     'border-color 0.2s ease, box-shadow 0.2s ease',
+        minWidth:       0,
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget
+        el.style.borderColor = `${tool.accent ?? '#00e5ff'}40`
+        el.style.boxShadow   = `0 0 0 1px ${tool.accent ?? '#00e5ff'}18, 0 8px 28px rgba(0,0,0,0.4)`
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget
+        el.style.borderColor = 'rgba(255,255,255,0.07)'
+        el.style.boxShadow   = 'none'
+      }}
+    >
+      {/* Icon */}
+      <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        {tool.icon}
+      </span>
+      {/* Name */}
+      <span style={{
+        fontFamily:    "'Space Grotesk', system-ui, sans-serif",
+        fontSize:      '0.875rem',
+        fontWeight:    600,
+        color:         'var(--text-primary)',
+        whiteSpace:    'nowrap',
+      }}>
+        {tool.name}
+      </span>
+    </motion.div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PAGE
+───────────────────────────────────────────────────────────────────────────── */
 export function SkillsPage() {
-  const { skills } = content
 
   return (
     <>
       <PageMeta
         title="Skills | Josh Fallarcuna"
-        description="Technical skills, tools, and capabilities — UI/UX Design, Frontend Development, and Computer Science fundamentals."
+        description="Technical skills, tools, and capabilities — UI/UX Design, Frontend Development, and more."
         ogTitle="Skills — Josh Fallarcuna"
-        ogDescription="Explore the full range of design and development skills including Figma, HTML, CSS, JavaScript, and more."
+        ogDescription="Technologies, tools, and disciplines actively applied across design, development, and problem solving."
       />
 
       {/* ══════════════════════════════════════════════════════════════════════
-          PAGE HERO
+          SECTION 1 — SKILLS & CAPABILITIES
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="section-wrapper relative overflow-hidden" aria-label="Skills overview">
-        {/* Ambient top glow */}
+      <section
+        className="section-wrapper relative overflow-hidden"
+        aria-label="Skills and capabilities"
+      >
+        {/* Background glows */}
+        <div style={{
+          position: 'absolute', top: '-6rem', left: '-4rem',
+          width: '560px', height: '560px', pointerEvents: 'none', zIndex: 0,
+          background: 'radial-gradient(circle, rgba(0,149,255,0.09) 0%, transparent 65%)',
+          filter: 'blur(48px)',
+        }} aria-hidden="true" />
+        <div style={{
+          position: 'absolute', bottom: '-4rem', right: '-4rem',
+          width: '480px', height: '480px', pointerEvents: 'none', zIndex: 0,
+          background: 'radial-gradient(circle, rgba(167,139,250,0.07) 0%, transparent 65%)',
+          filter: 'blur(48px)',
+        }} aria-hidden="true" />
         <div style={{
           position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-          width: '860px', height: '420px', pointerEvents: 'none', zIndex: 0,
-          background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.08) 0%, rgba(0,229,255,0.03) 50%, transparent 75%)',
+          width: '900px', height: '340px', pointerEvents: 'none', zIndex: 0,
+          background: 'radial-gradient(ellipse at top, rgba(0,229,255,0.045) 0%, transparent 70%)',
         }} aria-hidden="true" />
 
         <Container className="relative z-10">
+
           {/* Page header */}
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            style={{ maxWidth: '600px', marginBottom: '5rem' }}
+            style={{ maxWidth: '640px', marginBottom: '4.5rem' }}
           >
             <p className="page-hero-label">Technical Expertise</p>
             <h1 className="page-hero-heading">
               Skills &amp; <span className="text-gradient">Capabilities</span>
             </h1>
             <p className="page-hero-body">
-              Tools, disciplines, and technologies I work with — organised by domain.
-              Each category reflects real skills I'm actively building and applying.
+              Technologies, tools, and disciplines actively applied across design,
+              development, and problem solving.
             </p>
           </motion.div>
 
-          {/* ── Skill category cards ─────────────────────────────────────────── */}
+          {/* ── Horizontal skill panels ─────────────────────────────────────── */}
           <div
-            className="skills-grid"
+            style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
             role="list"
             aria-label="Skill categories"
           >
-            {skills.map((cat, idx) => {
-              const meta = categoryMeta[cat.category] ?? fallbackMeta
-              return (
-                <motion.div
-                  key={cat.id}
-                  role="listitem"
-                  custom={idx}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: '-24px' }}
-                  variants={cardVariants}
-                  className="skill-category-card"
-                >
-                  {/* Top accent bar */}
-                  <div
-                    className="skill-cat-accent-bar"
-                    style={{ background: meta.accent }}
-                    aria-hidden="true"
-                  />
+            {skillPanels.map((panel, idx) => (
+              <motion.article
+                key={panel.id}
+                role="listitem"
+                {...fadeUp(idx * 0.08)}
+                aria-label={panel.title}
+                style={{
+                  position:       'relative',
+                  overflow:       'hidden',
+                  background:     'rgba(13,20,36,0.92)',
+                  border:         '1px solid rgba(255,255,255,0.07)',
+                  borderRadius:   '16px',
+                  backdropFilter: 'blur(20px)',
+                  transition:     'border-color 0.22s ease, box-shadow 0.22s ease, transform 0.25s ease',
+                }}
+                whileHover={{
+                  y: -3,
+                  transition: { duration: 0.22, ease: 'easeOut' },
+                }}
+                onMouseEnter={e => {
+                  const el = e.currentTarget
+                  el.style.borderColor = `${panel.accent}30`
+                  el.style.boxShadow   = `0 0 0 1px ${panel.accent}12, 0 16px 48px rgba(0,0,0,0.45)`
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget
+                  el.style.borderColor = 'rgba(255,255,255,0.07)'
+                  el.style.boxShadow   = 'none'
+                }}
+              >
+                {/* Left accent bar */}
+                <div style={{
+                  position:     'absolute',
+                  top:          0,
+                  left:         0,
+                  width:        '3px',
+                  height:       '100%',
+                  background:   panel.accent,
+                  opacity:      0.7,
+                  borderRadius: '16px 0 0 16px',
+                  transition:   'opacity 0.22s ease',
+                }} aria-hidden="true" />
 
-                  <div style={{ padding: '1.75rem' }}>
-                    {/* ── Card header ────────────────────────── */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
-                      {/* Icon circle */}
-                      <div
-                        className="skill-cat-icon"
-                        style={{
-                          color: meta.accent,
-                          background: `${meta.accent}12`,
-                          border: `1px solid ${meta.accent}28`,
-                        }}
-                        aria-hidden="true"
-                      >
-                        {meta.icon}
-                      </div>
+                {/*
+                  Two-column layout:
+                  Left: 260px fixed — icon + title + description
+                  Right: flex-1 — chip grid
+                  Collapses to single column on tablet/mobile via flex-wrap
+                */}
+                <div style={{
+                  display:        'flex',
+                  flexWrap:       'wrap',
+                  gap:            '0',
+                  paddingLeft:    '3px', // offset left bar
+                }}>
 
-                      <div style={{ flex: 1, minWidth: 0, paddingTop: '2px' }}>
-                        <h2 style={{
-                          fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif",
-                          fontSize: '0.9375rem', fontWeight: 700,
-                          color: '#ffffff', lineHeight: 1.3,
-                          letterSpacing: '-0.01em', margin: 0,
-                        }}>
-                          {cat.category}
-                        </h2>
-                        <p style={{
-                          fontSize: '0.6875rem', color: 'var(--text-muted)',
-                          fontWeight: 500, letterSpacing: '0.06em',
-                          textTransform: 'uppercase', margin: '4px 0 0',
-                        }}>
-                          {cat.skills.length} skill{cat.skills.length !== 1 ? 's' : ''}
-                        </p>
-                      </div>
+                  {/* ── LEFT: identity ─────────────────────────────────────── */}
+                  <div style={{
+                    width:          '260px',
+                    flexShrink:     0,
+                    padding:        '2rem 2rem 2rem 2.25rem',
+                    display:        'flex',
+                    flexDirection:  'column',
+                    gap:            '0.75rem',
+                    // vertical divider on wide screens
+                    borderRight:    '1px solid rgba(255,255,255,0.05)',
+                  }}>
+                    {/* Icon box */}
+                    <div style={{
+                      width:          '52px',
+                      height:         '52px',
+                      display:        'flex',
+                      alignItems:     'center',
+                      justifyContent: 'center',
+                      background:     `${panel.accent}12`,
+                      border:         `1px solid ${panel.accent}28`,
+                      borderRadius:   '14px',
+                      color:          panel.accent,
+                      flexShrink:     0,
+                    }} aria-hidden="true">
+                      {panel.icon}
                     </div>
+
+                    {/* Title */}
+                    <h2 style={{
+                      fontFamily:    "'Space Grotesk', 'Inter', system-ui, sans-serif",
+                      fontSize:      '1rem',
+                      fontWeight:    700,
+                      color:         'var(--text-primary)',
+                      lineHeight:    1.3,
+                      letterSpacing: '-0.015em',
+                      margin:        0,
+                    }}>
+                      {panel.title}
+                    </h2>
 
                     {/* Description */}
                     <p style={{
-                      fontSize: '0.8125rem', color: 'var(--text-muted)',
-                      lineHeight: 1.6, marginBottom: '1.25rem',
+                      fontSize:   '0.8125rem',
+                      color:      'var(--text-muted)',
+                      lineHeight: 1.65,
+                      margin:     0,
                     }}>
-                      {meta.description}
+                      {panel.description}
                     </p>
+                  </div>
 
-                    {/* Divider */}
+                  {/* ── RIGHT: skill chips ──────────────────────────────────── */}
+                  <div style={{
+                    flex:           '1 1 300px',
+                    padding:        '2rem 2rem 2rem 2rem',
+                    display:        'flex',
+                    alignItems:     'center',
+                  }}>
                     <div style={{
-                      height: '1px', background: 'rgba(255,255,255,0.06)',
-                      marginBottom: '1.25rem',
-                    }} aria-hidden="true" />
-
-                    {/* ── Skill badges ─────────────────────────── */}
-                    <div
-                      style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}
-                      aria-label={`${cat.category} skills`}
+                      display:    'flex',
+                      flexWrap:   'wrap',
+                      gap:        '0.5rem',
+                      alignContent:'flex-start',
+                    }}
+                      aria-label={`${panel.title} skills`}
                     >
-                      {cat.skills.map(skill => (
-                        <span
+                      {panel.skills.map(skill => (
+                        <motion.span
                           key={skill}
                           className="skill-badge"
                           style={{
-                            borderColor: `${meta.accent}18`,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.375rem',
+                            borderColor:  `${panel.accent}22`,
+                            display:      'inline-flex',
+                            alignItems:   'center',
+                            gap:          '0.375rem',
+                            cursor:       'default',
                           }}
+                          whileHover={{ scale: 1.06 }}
+                          transition={{ duration: 0.14, ease: 'easeOut' }}
                         >
-                          {skillIconMap[skill] ?? null}
+                          {chipIconMap[skill] ?? null}
                           {skill}
-                        </span>
+                        </motion.span>
                       ))}
                     </div>
                   </div>
-                </motion.div>
-              )
-            })}
+
+                </div>
+              </motion.article>
+            ))}
           </div>
+
         </Container>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          LEARNING ROADMAP
+          SECTION 2 — TOOLS & TECHNOLOGIES
+      ══════════════════════════════════════════════════════════════════════ */}
+      <section
+        className="section-wrapper section-divided relative overflow-hidden"
+        aria-label="Tools and technologies"
+      >
+        {/* Ambient glow — purple left, cyan right */}
+        <div style={{
+          position: 'absolute', top: '20%', left: '-8rem',
+          width: '400px', height: '400px', pointerEvents: 'none', zIndex: 0,
+          background: 'radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 65%)',
+          filter: 'blur(48px)',
+        }} aria-hidden="true" />
+        <div style={{
+          position: 'absolute', bottom: '10%', right: '-6rem',
+          width: '360px', height: '360px', pointerEvents: 'none', zIndex: 0,
+          background: 'radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 65%)',
+          filter: 'blur(48px)',
+        }} aria-hidden="true" />
+
+        <Container className="relative z-10">
+
+          {/* Section header */}
+          <motion.div {...fadeUp(0)} style={{ marginBottom: '3.5rem' }}>
+            <p className="page-hero-label" style={{ marginBottom: '0.875rem' }}>
+              Tools &amp; Technologies
+            </p>
+            <h2 style={{
+              fontFamily:    "'Space Grotesk', 'Inter', system-ui, sans-serif",
+              fontSize:      'clamp(2rem, 4.5vw, 3rem)',
+              fontWeight:    700,
+              lineHeight:    1.1,
+              letterSpacing: '-0.025em',
+              color:         'var(--text-primary)',
+              marginBottom:  '0.875rem',
+            }}>
+              Tools &amp; <span className="text-gradient">Technologies</span>
+            </h2>
+            <p style={{
+              fontSize:   '1.0625rem',
+              color:      'var(--text-secondary)',
+              lineHeight: 1.75,
+              maxWidth:   '38rem',
+            }}>
+              A curated set of tools and technologies I use to bring ideas to life.
+            </p>
+          </motion.div>
+
+          {/* Tool groups */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+            {toolGroups.map((group, gi) => (
+              <motion.div key={group.label} {...fadeUp(gi * 0.07)}>
+
+                {/* Group label */}
+                <p style={{
+                  fontFamily:    "'Space Grotesk', system-ui, sans-serif",
+                  fontSize:      '0.6875rem',
+                  fontWeight:    700,
+                  color:         'var(--accent)',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  marginBottom:  '1rem',
+                }}>
+                  {group.label}
+                </p>
+
+                {/* Tool cards row */}
+                <div style={{
+                  display:       'flex',
+                  flexWrap:      'wrap',
+                  gap:           '0.75rem',
+                }}>
+                  {group.tools.map((tool, ti) => (
+                    <motion.div
+                      key={tool.name}
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-16px' }}
+                      transition={{ duration: 0.35, delay: gi * 0.06 + ti * 0.04, ease: 'easeOut' }}
+                    >
+                      <ToolCard tool={tool} />
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Group divider — not after the last group */}
+                {gi < toolGroups.length - 1 && (
+                  <div style={{
+                    height:     '1px',
+                    background: 'rgba(255,255,255,0.04)',
+                    marginTop:  '2.5rem',
+                  }} aria-hidden="true" />
+                )}
+              </motion.div>
+            ))}
+          </div>
+
+        </Container>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          SECTION 3 — LEARNING ROADMAP  (unchanged)
       ══════════════════════════════════════════════════════════════════════ */}
       <section className="section-wrapper section-divided" aria-label="Learning roadmap">
         <Container>
@@ -436,36 +650,26 @@ export function SkillsPage() {
             subtitle="Where I am today and what I'm actively building towards."
           />
 
-          <div style={{
-            maxWidth: '720px', margin: '0 auto',
-            display: 'flex', flexDirection: 'column', gap: '0.75rem',
-          }}>
+          <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {roadmap.map((item, i) => {
-              const s = statusConfig[item.status]
+              const s = statusCfg[item.status]
               return (
                 <motion.div
                   key={item.label}
                   initial={{ opacity: 0, x: -18 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-16px' }}
-                  transition={{ duration: 0.4, delay: i * 0.07, ease: 'easeOut' }}
+                  transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeOut' }}
                 >
                   <div className="glass-card roadmap-row">
-                    {/* Left: dot + content */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <span
-                        style={{
-                          width: '9px', height: '9px', borderRadius: '50%',
-                          background: s.dot, flexShrink: 0,
-                          boxShadow: `0 0 8px ${s.dot}70`,
-                        }}
-                        aria-hidden="true"
-                      />
+                      <span style={{
+                        width: '9px', height: '9px', borderRadius: '50%',
+                        background: s.dot, flexShrink: 0,
+                        boxShadow: `0 0 8px ${s.dot}70`,
+                      }} aria-hidden="true" />
                       <div>
-                        <p style={{
-                          fontSize: '0.9375rem', fontWeight: 600,
-                          color: 'var(--text-primary)', lineHeight: 1.3,
-                        }}>
+                        <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.3 }}>
                           {item.label}
                         </p>
                         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -473,8 +677,6 @@ export function SkillsPage() {
                         </p>
                       </div>
                     </div>
-
-                    {/* Right: status pill */}
                     <span style={{
                       flexShrink: 0, fontSize: '0.6875rem', fontWeight: 600,
                       padding: '0.25rem 0.75rem', borderRadius: '9999px',
