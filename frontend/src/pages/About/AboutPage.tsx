@@ -3,10 +3,10 @@ import type { ReactNode } from 'react'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
 import { SectionTitle } from '@/components/ui/SectionTitle'
-import { Card } from '@/components/ui/Card'
 import { PageMeta } from '@/components/ui/PageMeta'
-import heroPhoto from '@/assets/profile.png'
+import { AboutHero } from '@/components/ui/AboutHero'
 
+/* ── fadeUp helper (used by lower sections only) ─────────────────────────── */
 const fadeUp = (delay = 0) => ({
   initial:     { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
@@ -76,11 +76,41 @@ const valueIcons: Record<string, ReactNode> = {
 }
 
 /* ── Education level badge colours ───────────────────────────────────────── */
-const eduLevelColor: Record<number, { bg: string; border: string; text: string }> = {
-  0: { bg: 'rgba(0,149,255,0.10)', border: 'rgba(0,149,255,0.30)', text: 'rgba(0,200,255,1)'  },
-  1: { bg: 'rgba(0,229,255,0.07)', border: 'rgba(0,229,255,0.20)', text: 'var(--accent)'       },
-  2: { bg: 'rgba(100,116,139,0.08)', border: 'rgba(100,116,139,0.22)', text: 'var(--text-muted)' },
-}
+// (removed — replaced by vertical timeline)
+
+/* ── Why Work With Me — dashboard card data ──────────────────────────────── */
+const whyWorkCards = [
+  {
+    title: 'Creative Thinking',
+    description: 'Combines technical and creative problem solving to build solutions that are both functional and visually compelling.',
+    icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z',
+  },
+  {
+    title: 'UI/UX Systems',
+    description: 'Strong interest in user-centered design systems — from wireframing to polished, accessible interfaces.',
+    icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z',
+  },
+  {
+    title: 'Frontend Growth',
+    description: 'Actively building frontend development skills with React, TypeScript, and modern tooling every day.',
+    icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
+  },
+  {
+    title: 'Quality Focused',
+    description: 'Detail-oriented and committed to clean execution — the small things make the difference between good and great.',
+    icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z',
+  },
+  {
+    title: 'Fast Learner',
+    description: 'Always improving and adapting to new tools, frameworks, and design patterns to stay current and effective.',
+    icon: 'M13 10V3L4 14h7v7l9-11h-7z',
+  },
+  {
+    title: 'Collaborative',
+    description: 'Reliable, professional, and easy to work with — open to feedback and committed to delivering quality on time.',
+    icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+  },
+]
 
 export function AboutPage() {
   const { about } = content
@@ -95,184 +125,7 @@ export function AboutPage() {
       />
 
       {/* ── ABOUT HERO ─────────────────────────────────────────────────────────── */}
-      <section className="section-wrapper relative overflow-hidden" aria-label="About">
-        <div className="glow-blob opacity-[0.05]" style={{
-          width: '400px', height: '400px', top: '50%', left: '-5rem', transform: 'translateY(-50%)',
-          background: 'radial-gradient(circle, rgba(0,229,255,0.5) 0%, transparent 70%)',
-        }} aria-hidden="true" />
-
-        <Container className="relative z-10">
-          <SectionTitle title="About Me" align="left" subtitle="The story behind the work." />
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-
-            {/* LEFT — photo + stats */}
-            <motion.div
-              initial={{ opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true as const }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-            >
-              <div className="photo-frame-transparent" style={{
-                height: '520px', marginBottom: '1.5rem',
-                boxShadow: '0 0 0 1px rgba(0,229,255,0.12), 0 32px 72px rgba(0,0,0,0.55)',
-              }}>
-                <img src={heroPhoto} alt="Josh Fallarcuna" />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.875rem' }}>
-                {[
-                  { value: '3+',   label: 'Projects'    },
-                  { value: '2+',   label: 'Yrs Learning' },
-                  { value: '100%', label: 'Dedication'  },
-                ].map(s => (
-                  <div key={s.label} className="stat-box">
-                    <span className="stat-value">{s.value}</span>
-                    <span className="stat-label">{s.label}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* RIGHT — text */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-
-              {/* Name + Title */}
-              <motion.div {...fadeUp(0)}>
-                <p style={{
-                  fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                  fontSize: '0.6875rem', fontWeight: 600,
-                  color: 'var(--accent)', letterSpacing: '0.14em', textTransform: 'uppercase',
-                  marginBottom: '0.625rem',
-                }}>
-                  Full Name
-                </p>
-                <h1 style={{
-                  fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                  fontSize: 'clamp(1.625rem, 3.5vw, 2.125rem)',
-                  fontWeight: 700, lineHeight: 1.1,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-primary)',
-                  marginBottom: '0.5rem',
-                }}>
-                  Josh Valeri D. Fallarcuna
-                </h1>
-                <p style={{
-                  fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                  fontSize: '0.9375rem', fontWeight: 500,
-                  color: 'var(--accent)', lineHeight: 1.4,
-                }}>
-                  Aspiring UI/UX Designer &amp; Full-Stack Developer
-                </p>
-              </motion.div>
-
-              {/* Biography */}
-              <motion.div {...fadeUp(0.06)}>
-                <p style={{
-                  fontSize: '0.6875rem', fontWeight: 600,
-                  color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase',
-                  marginBottom: '0.875rem',
-                  fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                }}>
-                  Biography
-                </p>
-                {about.paragraphs.map((p, i) => (
-                  <p key={i} style={{
-                    fontSize: '1rem', color: 'var(--text-secondary)',
-                    lineHeight: 1.85,
-                    marginBottom: i < about.paragraphs.length - 1 ? '1.125rem' : 0,
-                  }}>
-                    {p}
-                  </p>
-                ))}
-              </motion.div>
-
-              {/* Design Philosophy */}
-              <motion.div {...fadeUp(0.12)} style={{
-                padding: '1.375rem 1.625rem',
-                background: 'rgba(0,229,255,0.05)',
-                border: '1px solid rgba(0,229,255,0.14)',
-                borderLeft: '3px solid var(--accent)',
-                borderRadius: '0 12px 12px 0',
-              }}>
-                <p style={{
-                  fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                  fontSize: '0.9375rem', fontStyle: 'italic',
-                  color: 'var(--text-secondary)', lineHeight: 1.8,
-                }}>
-                  "I design intuitive digital experiences and build modern web applications that transform ideas into polished products."
-                </p>
-                <p style={{ marginTop: '0.75rem', fontSize: '0.8125rem', color: 'var(--accent)', fontWeight: 600 }}>
-                  — Design Philosophy
-                </p>
-              </motion.div>
-
-              {/* Personal info table */}
-              <motion.div {...fadeUp(0.18)}>
-                <Card padding="lg">
-                  <dl>
-                    {about.personalInfo
-                      .filter(info => !['Full Name', 'Role'].includes(info.label))
-                      .map((info, i, arr) => (
-                        <div key={info.label} style={{
-                          display: 'flex', gap: '1.25rem',
-                          padding: '0.75rem 0',
-                          borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                          alignItems: 'baseline',
-                        }}>
-                          <dt style={{
-                            width: '6.5rem', flexShrink: 0,
-                            fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                            fontSize: '0.6875rem', fontWeight: 600,
-                            color: 'var(--text-muted)',
-                            letterSpacing: '0.09em', textTransform: 'uppercase',
-                          }}>
-                            {info.label}
-                          </dt>
-                          <dd style={{ fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: 1.55 }}>
-                            {info.value}
-                          </dd>
-                        </div>
-                      ))}
-                  </dl>
-                </Card>
-              </motion.div>
-
-              {/* Open to */}
-              <motion.div {...fadeUp(0.24)}>
-                <div style={{
-                  padding: '1.25rem 1.5rem',
-                  background: 'rgba(0,229,255,0.04)',
-                  border: '1px solid rgba(0,229,255,0.12)',
-                  borderRadius: '12px',
-                }}>
-                  <p style={{
-                    fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                    fontSize: '0.6875rem', fontWeight: 600,
-                    color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase',
-                    marginBottom: '0.875rem',
-                  }}>
-                    Open to
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {['Internships', 'Collaborations', 'Freelance', 'Learning Opportunities'].map(tag => (
-                      <span key={tag} style={{
-                        padding: '0.3125rem 0.875rem',
-                        background: 'rgba(0,229,255,0.06)',
-                        border: '1px solid rgba(0,229,255,0.14)',
-                        borderRadius: '9999px',
-                        fontSize: '0.8125rem', color: 'var(--text-secondary)',
-                      }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-
-            </div>
-          </div>
-        </Container>
-      </section>
+      <AboutHero />
 
       {/* ── TIMELINE ────────────────────────────────────────────────────────────── */}
       <section className="section-wrapper section-divided" aria-label="Journey timeline">
@@ -395,11 +248,6 @@ export function AboutPage() {
       <section className="section-wrapper section-divided" aria-label="Core values">
         <Container>
           <SectionTitle title="Core Values" subtitle="The principles that guide how I work." />
-
-          {/*
-            2-column grid. gap-7 (28px) gives enough gutter between cards
-            at this content density without wasting space.
-          */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 22rem), 1fr))',
@@ -419,7 +267,6 @@ export function AboutPage() {
                 }}
                   className="glass-card"
                 >
-                  {/* Icon container */}
                   <div style={{
                     width: '48px', height: '48px',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -435,8 +282,6 @@ export function AboutPage() {
                       </svg>
                     )}
                   </div>
-
-                  {/* Title */}
                   <h3 style={{
                     fontFamily: "'Space Grotesk', system-ui, sans-serif",
                     fontSize: '1.0625rem', fontWeight: 700,
@@ -447,14 +292,7 @@ export function AboutPage() {
                   }}>
                     {val.title}
                   </h3>
-
-                  {/* Description */}
-                  <p style={{
-                    fontSize: '0.9rem',
-                    color: 'var(--text-secondary)',
-                    lineHeight: 1.8,
-                    flex: 1,
-                  }}>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.8, flex: 1 }}>
                     {val.description}
                   </p>
                 </div>
@@ -468,31 +306,23 @@ export function AboutPage() {
       <section className="section-wrapper section-divided" aria-label="Career goals and current focus">
         <Container>
           <SectionTitle title="Goals &amp; Focus" subtitle="Where I'm headed and what I'm working on right now." />
-
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 26rem), 1fr))',
             gap: '1.75rem',
           }}>
-
             {/* Career Goals */}
             <motion.div {...fadeUp(0.05)} style={{ height: '100%' }}>
               <div style={{
-                height: '100%',
-                display: 'flex', flexDirection: 'column',
+                height: '100%', display: 'flex', flexDirection: 'column',
                 padding: '2rem 2rem 2.25rem',
                 background: 'rgba(13,20,36,0.90)',
                 border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: '16px',
-                backdropFilter: 'blur(20px)',
-              }}
-                className="glass-card"
-              >
-                {/* Card header */}
+                borderRadius: '16px', backdropFilter: 'blur(20px)',
+              }} className="glass-card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', marginBottom: '1.75rem' }}>
                   <div style={{
-                    width: '40px', height: '40px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: 'rgba(0,149,255,0.10)', border: '1px solid rgba(0,149,255,0.25)',
                     borderRadius: '10px', flexShrink: 0,
                   }}>
@@ -502,37 +332,15 @@ export function AboutPage() {
                     </svg>
                   </div>
                   <div>
-                    <h2 style={{
-                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                      fontSize: '1.0625rem', fontWeight: 700,
-                      color: 'var(--text-primary)', lineHeight: 1.2,
-                      marginBottom: '0.125rem',
-                    }}>
-                      Career Goals
-                    </h2>
-                    <p style={{
-                      fontSize: '0.75rem', color: 'var(--text-muted)',
-                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                      letterSpacing: '0.04em',
-                    }}>
-                      What I'm building toward
-                    </p>
+                    <h2 style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: '0.125rem' }}>Career Goals</h2>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: "'Space Grotesk', system-ui, sans-serif", letterSpacing: '0.04em' }}>What I'm building toward</p>
                   </div>
                 </div>
-
-                {/* List */}
                 <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
                   {about.careerGoals.map(goal => (
-                    <li key={goal} style={{
-                      display: 'flex', alignItems: 'flex-start', gap: '0.75rem',
-                    }}>
+                    <li key={goal} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                       <CheckIcon />
-                      <span style={{
-                        fontSize: '0.9375rem', color: 'var(--text-secondary)',
-                        lineHeight: 1.65,
-                      }}>
-                        {goal}
-                      </span>
+                      <span style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)', lineHeight: 1.65 }}>{goal}</span>
                     </li>
                   ))}
                 </ul>
@@ -542,21 +350,15 @@ export function AboutPage() {
             {/* Current Focus */}
             <motion.div {...fadeUp(0.12)} style={{ height: '100%' }}>
               <div style={{
-                height: '100%',
-                display: 'flex', flexDirection: 'column',
+                height: '100%', display: 'flex', flexDirection: 'column',
                 padding: '2rem 2rem 2.25rem',
                 background: 'rgba(13,20,36,0.90)',
                 border: '1px solid rgba(255,255,255,0.07)',
-                borderRadius: '16px',
-                backdropFilter: 'blur(20px)',
-              }}
-                className="glass-card"
-              >
-                {/* Card header */}
+                borderRadius: '16px', backdropFilter: 'blur(20px)',
+              }} className="glass-card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', marginBottom: '1.75rem' }}>
                   <div style={{
-                    width: '40px', height: '40px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.22)',
                     borderRadius: '10px', flexShrink: 0,
                   }}>
@@ -566,173 +368,238 @@ export function AboutPage() {
                     </svg>
                   </div>
                   <div>
-                    <h2 style={{
-                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                      fontSize: '1.0625rem', fontWeight: 700,
-                      color: 'var(--text-primary)', lineHeight: 1.2,
-                      marginBottom: '0.125rem',
-                    }}>
-                      Current Focus
-                    </h2>
-                    <p style={{
-                      fontSize: '0.75rem', color: 'var(--text-muted)',
-                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                      letterSpacing: '0.04em',
-                    }}>
-                      Right now, actively working on
-                    </p>
+                    <h2 style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2, marginBottom: '0.125rem' }}>Current Focus</h2>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: "'Space Grotesk', system-ui, sans-serif", letterSpacing: '0.04em' }}>Right now, actively working on</p>
                   </div>
                 </div>
-
-                {/* List */}
                 <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
                   {about.currentFocus.map(focus => (
-                    <li key={focus} style={{
-                      display: 'flex', alignItems: 'flex-start', gap: '0.75rem',
-                    }}>
+                    <li key={focus} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                       <DiamondDot />
-                      <span style={{
-                        fontSize: '0.9375rem', color: 'var(--text-secondary)',
-                        lineHeight: 1.65,
-                      }}>
-                        {focus}
-                      </span>
+                      <span style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)', lineHeight: 1.65 }}>{focus}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </motion.div>
-
           </div>
         </Container>
       </section>
 
-      {/* ── EDUCATION ───────────────────────────────────────────────────────────── */}
+      {/* ── EDUCATION — Vertical Timeline ──────────────────────────────────────── */}
       <section className="section-wrapper section-divided" aria-label="Education">
         <Container>
           <SectionTitle title="Education" subtitle="Academic background and learning institutions." align="left" />
 
-          {/*
-            Education cards constrained to 760px — resume-width reading column.
-            Each card is structured as a distinct academic record with strong
-            three-level hierarchy: institution → degree → detail + period badge.
-          */}
-          <div style={{ maxWidth: '760px', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {about.education.map((edu, i) => {
-              const level = eduLevelColor[i] ?? eduLevelColor[2]
-              return (
-                <motion.div
-                  key={`${edu.institution}-${i}`}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true as const, margin: '-24px' }}
-                  transition={{ duration: 0.4, delay: i * 0.09, ease: 'easeOut' }}
-                >
-                  <div style={{
-                    display: 'flex', flexDirection: 'column',
-                    padding: '1.75rem 2rem',
-                    background: 'rgba(13,20,36,0.90)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    borderRadius: '16px',
-                    backdropFilter: 'blur(20px)',
-                    transition: 'border-color 0.2s ease, box-shadow 0.2s ease, transform 0.25s ease',
-                  }}
-                    className="glass-card"
-                  >
-                    {/* Top row: institution name + period badge */}
-                    <div style={{
-                      display: 'flex', flexWrap: 'wrap',
-                      justifyContent: 'space-between', alignItems: 'flex-start',
-                      gap: '0.75rem',
-                      marginBottom: '0.75rem',
-                    }}>
-                      <p style={{
-                        fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                        fontSize: '1.0625rem', fontWeight: 700,
-                        color: 'var(--text-primary)',
-                        lineHeight: 1.25, flex: 1, minWidth: 0,
-                      }}>
-                        {edu.institution}
-                      </p>
+          {/* Timeline wrapper */}
+          <div style={{ maxWidth: '760px', position: 'relative', marginTop: '2.5rem' }}>
 
-                      {/* Period badge — level-tinted */}
-                      <span style={{
-                        flexShrink: 0,
-                        padding: '0.3125rem 0.875rem',
-                        background: level.bg,
-                        border: `1px solid ${level.border}`,
-                        borderRadius: '9999px',
-                        fontSize: '0.75rem', fontWeight: 600,
-                        color: level.text,
-                        fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                        letterSpacing: '0.03em', whiteSpace: 'nowrap',
-                      }}>
-                        {edu.period}
-                      </span>
+            {/* Vertical spine line */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                left: '11px',
+                top: '12px',
+                bottom: '12px',
+                width: '2px',
+                background: 'linear-gradient(180deg, rgba(0,229,255,0.55) 0%, rgba(0,229,255,0.12) 100%)',
+                borderRadius: '2px',
+              }}
+            />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {about.education.map((edu, i) => {
+                const isFirst = i === 0
+                return (
+                  <motion.div
+                    key={`${edu.institution}-${i}`}
+                    initial={{ opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true as const, margin: '-24px' }}
+                    transition={{ duration: 0.42, delay: i * 0.1, ease: 'easeOut' }}
+                    style={{ display: 'flex', gap: '1.75rem', alignItems: 'flex-start' }}
+                  >
+                    {/* Timeline dot */}
+                    <div style={{ flexShrink: 0, position: 'relative', zIndex: 1, marginTop: '22px' }}>
+                      <motion.div
+                        animate={{ boxShadow: isFirst
+                          ? ['0 0 0 0 rgba(0,229,255,0.45)', '0 0 0 7px rgba(0,229,255,0)', '0 0 0 0 rgba(0,229,255,0)']
+                          : undefined
+                        }}
+                        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }}
+                        style={{
+                          width: '24px', height: '24px', borderRadius: '50%',
+                          background: isFirst
+                            ? 'radial-gradient(circle, #00e5ff 0%, #0095ff 100%)'
+                            : 'rgba(0,229,255,0.12)',
+                          border: isFirst
+                            ? '2px solid rgba(0,229,255,0.9)'
+                            : '2px solid rgba(0,229,255,0.35)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
+                        {/* Inner dot */}
+                        <div style={{
+                          width: '8px', height: '8px', borderRadius: '50%',
+                          background: isFirst ? '#fff' : 'rgba(0,229,255,0.7)',
+                        }} />
+                      </motion.div>
                     </div>
 
-                    {/* Divider between institution row and degree/detail */}
-                    <div style={{
-                      height: '1px',
-                      background: 'rgba(255,255,255,0.05)',
-                      marginBottom: '0.875rem',
-                    }} aria-hidden="true" />
-
-                    {/* Degree */}
-                    <p style={{
-                      fontSize: '0.9375rem', fontWeight: 600,
-                      color: level.text,
-                      lineHeight: 1.45,
-                      marginBottom: edu.details ? '0.5rem' : 0,
-                    }}>
-                      {edu.degree}
-                    </p>
-
-                    {/* Details */}
-                    {edu.details && (
-                      <p style={{
-                        fontSize: '0.8125rem',
-                        color: 'var(--text-muted)',
-                        lineHeight: 1.7,
+                    {/* Card */}
+                    <div
+                      className="edu-timeline-card"
+                      style={{
+                        flex: 1,
+                        padding: '1.5rem',
+                        background: isFirst
+                          ? 'rgba(0,149,255,0.05)'
+                          : 'rgba(13,20,36,0.90)',
+                        border: isFirst
+                          ? '1px solid rgba(0,229,255,0.22)'
+                          : '1px solid rgba(0,229,255,0.10)',
+                        borderRadius: '18px',
+                        backdropFilter: 'blur(20px)',
+                        boxShadow: isFirst ? '0 0 28px rgba(0,229,255,0.07)' : 'none',
+                        transition: 'border-color 0.22s ease, box-shadow 0.22s ease, transform 0.25s ease',
+                        cursor: 'default',
+                      }}
+                    >
+                      {/* Card top row: school name + date badge */}
+                      <div style={{
+                        display: 'flex', flexWrap: 'wrap',
+                        justifyContent: 'space-between', alignItems: 'flex-start',
+                        gap: '0.625rem', marginBottom: '0.625rem',
                       }}>
-                        {edu.details}
+                        <p style={{
+                          fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                          fontSize: '1rem', fontWeight: 700,
+                          color: 'var(--text-primary)', lineHeight: 1.3,
+                          flex: 1, minWidth: 0,
+                        }}>
+                          {edu.institution}
+                        </p>
+
+                        {/* Date badge — pill, right side */}
+                        <span style={{
+                          flexShrink: 0,
+                          padding: '0.25rem 0.75rem',
+                          background: 'transparent',
+                          border: '1px solid rgba(0,229,255,0.35)',
+                          borderRadius: '9999px',
+                          fontSize: '0.6875rem', fontWeight: 600,
+                          color: 'var(--accent)',
+                          fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                          letterSpacing: '0.04em',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {edu.period}
+                        </span>
+                      </div>
+
+                      {/* Divider */}
+                      <div style={{ height: '1px', background: 'rgba(0,229,255,0.08)', marginBottom: '0.625rem' }} aria-hidden="true" />
+
+                      {/* Degree / level */}
+                      <p style={{
+                        fontSize: '0.9rem', fontWeight: 600,
+                        color: isFirst ? 'var(--accent)' : 'var(--text-secondary)',
+                        lineHeight: 1.45,
+                        marginBottom: edu.details ? '0.5rem' : 0,
+                      }}>
+                        {edu.degree}
                       </p>
-                    )}
-                  </div>
-                </motion.div>
-              )
-            })}
+
+                      {/* Description */}
+                      {edu.details && (
+                        <p style={{
+                          fontSize: '0.8125rem',
+                          color: 'var(--text-muted)',
+                          lineHeight: 1.7,
+                        }}>
+                          {edu.details}
+                        </p>
+                      )}
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
           </div>
         </Container>
       </section>
 
-      {/* ── WHY WORK WITH ME ────────────────────────────────────────────────────── */}
+      {/* ── WHY WORK WITH ME — Dashboard Cards ──────────────────────────────────── */}
       <section className="section-wrapper section-divided" aria-label="Why work with me">
         <Container>
           <SectionTitle title="Why Work With Me" subtitle="What I bring to every collaboration." align="left" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" style={{ maxWidth: '900px' }}>
-            {about.whyWorkWithMe.map((item, i) => (
+
+          <div className="why-work-grid" style={{ maxWidth: '900px', marginTop: '2rem' }}>
+            {whyWorkCards.map((card, i) => (
               <motion.div
-                key={item}
-                initial={{ opacity: 0, y: 16 }}
+                key={card.title}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true as const, margin: '-16px' }}
-                transition={{ duration: 0.38, delay: i * 0.07, ease: 'easeOut' }}
+                transition={{ duration: 0.42, delay: i * 0.08, ease: 'easeOut' }}
+                style={{ height: '100%' }}
               >
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: '0.75rem',
-                  padding: '0.875rem 1.125rem',
-                  background: 'rgba(0,229,255,0.04)',
-                  border: '1px solid rgba(0,229,255,0.10)',
-                  borderRadius: '10px',
-                }}>
-                  <span style={{
-                    width: '8px', height: '8px', borderRadius: '2px',
-                    background: 'var(--accent)', transform: 'rotate(45deg)', flexShrink: 0,
-                  }} aria-hidden="true" />
-                  <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                    {item}
-                  </span>
+                <div
+                  className="why-work-card"
+                  style={{
+                    height: '100%',
+                    display: 'flex', flexDirection: 'column',
+                    padding: '1.5rem',
+                    background: 'rgba(13,20,36,0.90)',
+                    border: '1px solid rgba(0,229,255,0.12)',
+                    borderRadius: '18px',
+                    backdropFilter: 'blur(20px)',
+                    transition: 'border-color 0.22s ease, box-shadow 0.22s ease, transform 0.25s ease',
+                    cursor: 'default',
+                  }}
+                >
+                  {/* Icon */}
+                  <div style={{
+                    width: '44px', height: '44px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: 'rgba(0,229,255,0.07)',
+                    border: '1px solid rgba(0,229,255,0.18)',
+                    borderRadius: '12px',
+                    marginBottom: '1rem',
+                    flexShrink: 0,
+                  }}>
+                    <svg
+                      width="20" height="20" viewBox="0 0 24 24"
+                      fill="none" stroke="var(--accent)"
+                      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d={card.icon} />
+                    </svg>
+                  </div>
+
+                  {/* Title */}
+                  <h3 style={{
+                    fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                    fontSize: '1rem', fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    lineHeight: 1.25,
+                    marginBottom: '0.5rem',
+                    letterSpacing: '-0.01em',
+                  }}>
+                    {card.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.75,
+                    flex: 1,
+                  }}>
+                    {card.description}
+                  </p>
                 </div>
               </motion.div>
             ))}

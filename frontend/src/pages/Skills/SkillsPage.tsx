@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { Container } from '@/components/ui/Container'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { PageMeta } from '@/components/ui/PageMeta'
+import { LearningRoadmap } from '@/components/ui/LearningRoadmap'
 
 // ── Brand icons ───────────────────────────────────────────────────────────────
 import { SiFigma }          from 'react-icons/si'
@@ -290,26 +291,6 @@ const toolGroups: ToolGroup[] = [
     ],
   },
 ]
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   LEARNING ROADMAP DATA
-───────────────────────────────────────────────────────────────────────────── */
-const roadmap = [
-  { status: 'current',  label: 'HTML, CSS, JavaScript',  note: 'Core web foundation'         },
-  { status: 'current',  label: 'Figma + UI/UX Design',   note: 'Design systems & prototypes'  },
-  { status: 'current',  label: 'Adobe Photoshop',        note: 'Visual editing & assets'      },
-  { status: 'current',  label: 'Git & GitHub',           note: 'Version control & workflow'   },
-  { status: 'learning', label: 'React + TypeScript',     note: 'Component architecture'       },
-  { status: 'learning', label: 'Responsive Design',      note: 'Mobile-first interfaces'      },
-  { status: 'planned',  label: 'Node.js + Express',      note: 'Backend fundamentals'         },
-  { status: 'planned',  label: 'Full-Stack Projects',    note: 'End-to-end applications'      },
-]
-
-const statusCfg: Record<string, { dot: string; label: string; bg: string; border: string }> = {
-  current:  { dot: '#22c55e', label: 'Active',   bg: 'rgba(34,197,94,0.08)',  border: 'rgba(34,197,94,0.22)'  },
-  learning: { dot: '#f59e0b', label: 'Learning', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.22)' },
-  planned:  { dot: '#00e5ff', label: 'Planned',  bg: 'rgba(0,229,255,0.07)',  border: 'rgba(0,229,255,0.20)'  },
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    ANIMATION HELPERS
@@ -689,7 +670,7 @@ export function SkillsPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          SECTION 3 — LEARNING ROADMAP  (unchanged)
+          SECTION 3 — LEARNING ROADMAP  (Step Progress Layout)
       ══════════════════════════════════════════════════════════════════════ */}
       <section className="section-wrapper section-divided" aria-label="Learning roadmap">
         <Container>
@@ -697,48 +678,7 @@ export function SkillsPage() {
             title="Learning Roadmap"
             subtitle="Where I am today and what I'm actively building towards."
           />
-
-          <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {roadmap.map((item, i) => {
-              const s = statusCfg[item.status]
-              return (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, x: -18 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: '-16px' }}
-                  transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeOut' }}
-                >
-                  <div className="glass-card roadmap-row">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <span style={{
-                        width: '9px', height: '9px', borderRadius: '50%',
-                        background: s.dot, flexShrink: 0,
-                        boxShadow: `0 0 8px ${s.dot}70`,
-                      }} aria-hidden="true" />
-                      <div>
-                        <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.3 }}>
-                          {item.label}
-                        </p>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                          {item.note}
-                        </p>
-                      </div>
-                    </div>
-                    <span style={{
-                      flexShrink: 0, fontSize: '0.6875rem', fontWeight: 600,
-                      padding: '0.25rem 0.75rem', borderRadius: '9999px',
-                      background: s.bg, border: `1px solid ${s.border}`,
-                      color: s.dot, whiteSpace: 'nowrap',
-                      letterSpacing: '0.05em', textTransform: 'uppercase',
-                    }}>
-                      {s.label}
-                    </span>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
+          <LearningRoadmap />
         </Container>
       </section>
     </>
