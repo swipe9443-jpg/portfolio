@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { content } from '@/content/content'
@@ -32,7 +33,7 @@ const thumbnailStyles: Record<string, React.CSSProperties> = {
   'task-manager': { background: 'linear-gradient(135deg, #050d1c 0%, #07111e 50%, #091828 100%)' },
 }
 
-function SectionBlock({ label, children }: { label: string; children: React.ReactNode }) {
+const SectionBlock = memo(function SectionBlock({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <motion.div {...fadeUp(0.05)}>
       <Card padding="lg">
@@ -47,7 +48,7 @@ function SectionBlock({ label, children }: { label: string; children: React.Reac
       </Card>
     </motion.div>
   )
-}
+})
 
 const categoryStyle = (cat: string): React.CSSProperties => {
   const map: Record<string, React.CSSProperties> = {
@@ -58,7 +59,7 @@ const categoryStyle = (cat: string): React.CSSProperties => {
   return map[cat] ?? { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', color: 'var(--text-secondary)' }
 }
 
-export function ProjectDetail() {
+export const ProjectDetail = memo(function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const { projects } = content
@@ -67,6 +68,8 @@ export function ProjectDetail() {
   const currentIndex = projects.findIndex(p => p.id === slug)
   const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null
   const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null
+
+  const goBack    = useCallback(() => navigate('/projects'), [navigate])
 
   if (!project) {
     return (
@@ -120,7 +123,7 @@ export function ProjectDetail() {
             style={{ marginBottom: '2.5rem' }}
           >
             <button
-              onClick={() => navigate('/projects')}
+              onClick={goBack}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
                 fontSize: '0.8125rem', color: 'var(--text-muted)',
@@ -337,6 +340,8 @@ export function ProjectDetail() {
                           aspectRatio: '16/9',
                         }}>
                           <img src={src} alt={`${project.title} screenshot ${i + 1}`}
+                            loading="lazy"
+                            decoding="async"
                             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                         </div>
                       ))}
@@ -461,4 +466,4 @@ export function ProjectDetail() {
       )}
     </>
   )
-}
+})

@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/Card'
@@ -94,10 +95,11 @@ interface ProjectCardProps {
   index:   number
 }
 
-export function ProjectCard({ project, index }: ProjectCardProps) {
+export const ProjectCard = memo(function ProjectCard({ project, index }: ProjectCardProps) {
   const navigate = useNavigate()
   const thumb = thumbnailStyles[project.id] ?? fallbackThumbnail
   const isComingSoon = project.comingSoon === true
+  const handleView = useCallback(() => navigate(`/projects/${project.id}`), [navigate, project.id])
 
   return (
     <motion.article
@@ -269,7 +271,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
               project.detail && (
                 <Button
                   variant="primary" size="sm" rightIcon={<ArrowIcon />}
-                  onClick={() => navigate(`/projects/${project.id}`)}
+                  onClick={handleView}
                   aria-label={`View ${project.title} details`}
                 >
                   View Project
@@ -281,4 +283,4 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
       </Card>
     </motion.article>
   )
-}
+})

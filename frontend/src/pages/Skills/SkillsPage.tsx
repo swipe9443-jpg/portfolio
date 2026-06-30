@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 import { Container } from '@/components/ui/Container'
@@ -6,18 +7,10 @@ import { PageMeta } from '@/components/ui/PageMeta'
 import { LearningRoadmap } from '@/components/ui/LearningRoadmap'
 
 // ── Brand icons ───────────────────────────────────────────────────────────────
-import { SiFigma }          from 'react-icons/si'
-import { SiAdobephotoshop } from 'react-icons/si'
-import { SiHtml5 }          from 'react-icons/si'
-import { SiCss3 }           from 'react-icons/si'
-import { SiJavascript }     from 'react-icons/si'
-import { SiTypescript }     from 'react-icons/si'
-import { SiReact }          from 'react-icons/si'
-import { SiGit }            from 'react-icons/si'
-import { SiGithub }         from 'react-icons/si'
-import { SiVercel }         from 'react-icons/si'
-import { SiPicsart }        from 'react-icons/si'
-import { SiOpenai }         from 'react-icons/si'
+import {
+  SiFigma, SiAdobephotoshop, SiHtml5, SiCss3, SiJavascript,
+  SiTypescript, SiReact, SiGit, SiGithub, SiVercel, SiPicsart, SiOpenai,
+} from 'react-icons/si'
 
 // ── Tabler Icons ──────────────────────────────────────────────────────────────
 import {
@@ -305,7 +298,7 @@ const fadeUp = (delay = 0) => ({
 /* ─────────────────────────────────────────────────────────────────────────────
    ToolCard — interactive tool item
 ───────────────────────────────────────────────────────────────────────────── */
-function ToolCard({ tool }: { tool: ToolItem }) {
+const ToolCard = memo(function ToolCard({ tool }: { tool: ToolItem }) {
   return (
     <motion.div
       whileHover={{ scale: 1.04, y: -3 }}
@@ -334,11 +327,9 @@ function ToolCard({ tool }: { tool: ToolItem }) {
         el.style.boxShadow   = 'none'
       }}
     >
-      {/* Icon */}
       <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
         {tool.icon}
       </span>
-      {/* Name */}
       <span style={{
         fontFamily:    "'Space Grotesk', system-ui, sans-serif",
         fontSize:      '0.875rem',
@@ -350,12 +341,8 @@ function ToolCard({ tool }: { tool: ToolItem }) {
       </span>
     </motion.div>
   )
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   PAGE
-───────────────────────────────────────────────────────────────────────────── */
-export function SkillsPage() {
+})
+export const SkillsPage = memo(function SkillsPage() {
 
   return (
     <>
@@ -683,4 +670,4 @@ export function SkillsPage() {
       </section>
     </>
   )
-}
+})

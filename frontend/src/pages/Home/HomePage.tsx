@@ -1,13 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import { motion, useInView, useMotionValue, useSpring, animate } from 'framer-motion'
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef, useCallback, useMemo } from 'react'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
 import { Button } from '@/components/ui/Button'
 import { SectionTitle } from '@/components/ui/SectionTitle'
 import { PageMeta } from '@/components/ui/PageMeta'
 import { downloadResume } from '@/config/resume'
-import heroPhoto from '@/assets/profile.png'
+import { PROFILE_PHOTO_WEBP, PROFILE_PHOTO_PNG } from '@/config/images'
+// Use stable public-folder paths so the <link rel="preload"> in index.html
+// resolves to the same URL as the <img> src — browser reuses the preloaded response.
+const heroPhotoWebp = PROFILE_PHOTO_WEBP
+const heroPhotoPng  = PROFILE_PHOTO_PNG
 
 // ── Icons for Core Expertise cards ───────────────────────────────────────────
 import { SiFigma, SiAdobephotoshop, SiHtml5, SiCss3, SiJavascript, SiReact, SiTailwindcss, SiVite, SiTypescript, SiFramer } from 'react-icons/si'
@@ -101,10 +105,10 @@ const heroItem = (delay = 0, y = 28) => ({
   transition: { duration: 0.6, delay, ease: EASE_CINEMATIC },
 })
 
-/** Hero name — slide up with slight blur */
+/** Hero name — slide up, no filter — filter:blur on animated elements triggers paint every frame */
 const heroName = (delay = 0) => ({
-  initial:    { opacity: 0, y: 40, filter: 'blur(4px)' },
-  animate:    { opacity: 1, y: 0,  filter: 'blur(0px)' },
+  initial:    { opacity: 0, y: 40 },
+  animate:    { opacity: 1, y: 0  },
   transition: { duration: 0.8, delay, ease: EASE_CINEMATIC },
 })
 
@@ -145,7 +149,7 @@ const chipReveal = (i: number) => ({
 })
 
 /* ── CountUp component ────────────────────────────────────────────────────── */
-function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
+const CountUp = memo(function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
   const ref       = useRef<HTMLSpanElement>(null)
   const isVisible = useInView(ref, { once: true, margin: '-60px' })
   const motVal    = useMotionValue(0)
@@ -155,7 +159,9 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
     if (!isVisible) return
     const ctrl = animate(motVal, target, { duration: 1.5, ease: 'easeOut' })
     return ctrl.stop
-  }, [isVisible, target, motVal])
+    // motVal is stable (MotionValue identity never changes), safe to omit
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVisible, target])
 
   useEffect(() => {
     return spring.on('change', v => {
@@ -164,15 +170,33 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
   }, [spring, suffix])
 
   return <span ref={ref}>0{suffix}</span>
-}
+})
+
+// ── Module-level static data — never re-allocated on render ──────────────────
+const HERO_CHIPS = [
+  { label: 'Figma Expert',       dot: '#F24E1E' },
+  { label: 'React Developer',    dot: '#61DAFB' },
+  { label: 'UI Systems',         dot: '#00e5ff' },
+  { label: 'Learning Full-Stack',dot: '#a78bfa' },
+] as const
 
 export function HomePage() {
   const navigate = useNavigate()
   const { hero, home, projects } = content
 
-  const featuredProjects = home.featuredProjectIds
-    .map(id => projects.find(p => p.id === id))
-    .filter(Boolean) as typeof projects
+  const featuredProjects = useMemo(
+    () =>
+      home.featuredProjectIds
+        .map(id => projects.find(p => p.id === id))
+        .filter(Boolean) as typeof projects,
+    // content is module-level static — this memo runs once and is stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
+
+  const goProjects    = useCallback(() => navigate(hero.ctas.primary.href), [navigate, hero.ctas.primary.href])
+  const goContact     = useCallback(() => navigate('/contact'), [navigate])
+  const goAllProjects = useCallback(() => navigate('/projects'), [navigate])
 
   return (
     <>
@@ -219,8 +243,8 @@ export function HomePage() {
               {/* ① Available badge */}
               <motion.div {...heroItem(0.0)} style={{ marginBottom: '1.75rem' }}>
                 <motion.span
-                  initial={{ opacity: 0, filter: 'blur(6px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0, ease: EASE_CINEMATIC }}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
@@ -363,7 +387,7 @@ export function HomePage() {
                   <Button
                     variant="primary"
                     size="lg"
-                    onClick={() => navigate(hero.ctas.primary.href)}
+                    onClick={goProjects}
                     aria-label="View my projects"
                   >
                     {hero.ctas.primary.label}
@@ -390,12 +414,7 @@ export function HomePage() {
                 style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.25rem' }}
                 aria-label="Key skills"
               >
-                {[
-                  { label: 'Figma Expert',       dot: '#F24E1E' },
-                  { label: 'React Developer',     dot: '#61DAFB' },
-                  { label: 'UI Systems',          dot: '#00e5ff' },
-                  { label: 'Learning Full-Stack', dot: '#a78bfa' },
-                ].map((chip, i) => (
+                {HERO_CHIPS.map((chip, i) => (
                   <motion.span
                     key={chip.label}
                     {...chipReveal(i)}
@@ -486,7 +505,18 @@ export function HomePage() {
                       boxShadow: '0 0 0 1px rgba(0,229,255,0.08), 0 0 48px rgba(0,229,255,0.08), 0 40px 96px rgba(0,0,0,0.6)',
                     }}
                   >
-                    <img src={heroPhoto} alt="Josh Fallarcuna — UI/UX Designer" />
+                    <picture>
+                      <source srcSet={heroPhotoWebp} type="image/webp" />
+                      <img
+                        src={heroPhotoPng}
+                        alt="Josh Fallarcuna — UI/UX Designer"
+                        loading="eager"
+                        decoding="async"
+                        fetchPriority="high"
+                        width={435}
+                        height={654}
+                      />
+                    </picture>
                   </div>
                 </motion.div>
 
@@ -539,14 +569,12 @@ export function HomePage() {
                     boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
                   }}
                 >
+                  {/* Pulse uses opacity only — compositor-safe, no paint */}
                   <motion.div
-                    animate={{
-                      borderColor: ['rgba(34,197,94,0.22)', 'rgba(34,197,94,0.55)', 'rgba(34,197,94,0.22)'],
-                      boxShadow: ['0 0 0 rgba(34,197,94,0)', '0 0 14px rgba(34,197,94,0.20)', '0 0 0 rgba(34,197,94,0)'],
-                    }}
+                    animate={{ opacity: [0.7, 1, 0.7] }}
                     transition={{ repeat: Infinity, duration: 2.8, ease: 'easeInOut' }}
                     style={{
-                      border: '1px solid rgba(34,197,94,0.22)',
+                      border: '1px solid rgba(34,197,94,0.35)',
                       borderRadius: '10px',
                       padding: '0.375rem 0.5rem',
                     }}
@@ -640,22 +668,7 @@ export function HomePage() {
 
           </div>
 
-          {/* Responsive grid — activates 50/50 at lg+ */}
-          <style>{`
-            @media (min-width: 1024px) {
-              .hero-grid {
-                grid-template-columns: 1fr 1fr !important;
-                gap: 4rem !important;
-              }
-            }
-            @media (min-width: 768px) and (max-width: 1023px) {
-              .hero-grid {
-                grid-template-columns: 1fr !important;
-                max-width: 640px;
-                margin: 0 auto;
-              }
-            }
-          `}</style>
+          {/* Responsive grid styles are in globals.css */}
 
           {/* Scroll cue — slow bounce + opacity pulse */}
           <motion.div
@@ -809,11 +822,11 @@ export function HomePage() {
                   el.style.boxShadow   = '0 32px 96px rgba(0,0,0,0.5)'
                 }}
               >
-                {/* ══ LEFT: Image panel — slow zoom on scroll into view ══════ */}
+                {/* ══ LEFT: Image panel — subtle scale on scroll into view ══════ */}
                 <motion.div
                   className="fp-image-panel"
-                  initial={{ scale: 1 }}
-                  whileInView={{ scale: 1.03 }}
+                  initial={{ opacity: 0.92 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true, margin: '-80px' }}
                   transition={{ duration: 1.4, ease: 'easeOut' }}
                   style={{ background: bg, position: 'relative', overflow: 'hidden', minHeight: '320px' }}
@@ -1002,12 +1015,12 @@ export function HomePage() {
                         In Development
                       </span>
                     ) : (
-                      <Button variant="primary" size="lg" onClick={() => navigate(`/projects/${project.id}`)} aria-label={`View full case study for ${project.title}`}>
+                    <Button variant="primary" size="lg" onClick={() => navigate(`/projects/${project.id}`)} aria-label={`View full case study for ${project.title}`}>
                         View Full Case Study
                         <svg width="13" height="13" viewBox="0 0 12 12" fill="none" style={{ marginLeft:'0.5rem' }} aria-hidden="true"><path d="M1.5 10.5L10.5 1.5M10.5 1.5H5M10.5 1.5V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       </Button>
                     )}
-                    <Button variant="secondary" size="lg" onClick={() => navigate('/projects')} aria-label="Browse all projects">
+                    <Button variant="secondary" size="lg" onClick={goAllProjects} aria-label="Browse all projects">
                       All Projects
                     </Button>
                   </div>
@@ -1017,23 +1030,7 @@ export function HomePage() {
             )
           })()}
 
-          {/* 50/50 desktop split */}
-          <style>{`
-            @media (min-width: 900px) {
-              .featured-project-card {
-                grid-template-columns: 1fr 1fr !important;
-              }
-              .fp-image-panel {
-                min-height: unset !important;
-                border-right: 1px solid rgba(0,229,255,0.09) !important;
-              }
-            }
-            @media (max-width: 899px) {
-              .fp-content-panel {
-                padding: 2rem 1.75rem !important;
-              }
-            }
-          `}</style>
+          {/* Featured project responsive styles are in globals.css */}
         </Container>
       </section>
 
@@ -1306,10 +1303,10 @@ export function HomePage() {
               gap: '1.5rem',
               justifyContent: 'center',
             }}>
-              <Button variant="primary"   size="lg" onClick={() => navigate('/contact')}>
+              <Button variant="primary"   size="lg" onClick={goContact}>
                 {home.cta.primary}
               </Button>
-              <Button variant="secondary" size="lg" onClick={() => navigate('/projects')}>
+              <Button variant="secondary" size="lg" onClick={goAllProjects}>
                 {home.cta.secondary}
               </Button>
             </div>

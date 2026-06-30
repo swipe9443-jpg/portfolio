@@ -1,11 +1,11 @@
-import { type FC, useState } from 'react'
+import { memo, type FC } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { downloadResume } from '@/config/resume'
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Social icons
+   Social icons — static, no hover state needed here (handled by CSS)
 ───────────────────────────────────────────────────────────────────────────── */
 const GitHubIcon: FC = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -36,101 +36,69 @@ const LinkedInIcon: FC = () => (
 const platformIcons: Record<string, FC> = { GitHub: GitHubIcon, LinkedIn: LinkedInIcon }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Social icon button — extracted for clean hook usage
+   Social icon button — pure CSS hover, no useState
 ───────────────────────────────────────────────────────────────────────────── */
-function SocialButton({ link }: { link: { platform: string; url: string; label: string } }) {
+const SocialButton = memo(function SocialButton({
+  link,
+}: {
+  link: { platform: string; url: string; label: string }
+}) {
   const Icon = platformIcons[link.platform]
-  const [hovered, setHovered] = useState(false)
-
   return (
     <a
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={link.label}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: '40px', height: '40px',
-        borderRadius: '10px',
-        color:       hovered ? 'var(--accent)'              : 'var(--text-muted)',
-        border:      hovered ? '1px solid rgba(0,229,255,0.28)' : '1px solid rgba(255,255,255,0.07)',
-        background:  hovered ? 'rgba(0,229,255,0.07)'       : 'rgba(255,255,255,0.02)',
-        boxShadow:   hovered ? '0 0 16px rgba(0,229,255,0.12)' : 'none',
-        transition:  'color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease',
-        textDecoration: 'none',
-      }}
+      className="footer-social-btn"
     >
       {Icon ? <Icon /> : link.platform}
     </a>
   )
-}
+})
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Nav link — active + hover states
+   Nav link — pure CSS hover
 ───────────────────────────────────────────────────────────────────────────── */
-function FooterNavLink({ item }: { item: { label: string; href: string } }) {
-  const [hovered, setHovered] = useState(false)
-
+const FooterNavLink = memo(function FooterNavLink({
+  item,
+}: {
+  item: { label: string; href: string }
+}) {
   return (
     <NavLink
       to={item.href}
       end={item.href === '/'}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className="footer-nav-link"
       style={({ isActive }) => ({
-        fontSize: '0.875rem',
         fontWeight: isActive ? 500 : 400,
-        color:    isActive ? 'var(--text-primary)' : hovered ? 'var(--text-secondary)' : 'var(--text-muted)',
-        textDecoration: 'none',
-        letterSpacing:  '0.01em',
-        transition:     'color 0.2s ease',
-        whiteSpace:     'nowrap',
-        /* Subtle underline on hover — cinematic accent line */
-        borderBottom:   hovered && !isActive
-          ? '1px solid rgba(0,229,255,0.25)'
-          : '1px solid transparent',
-        paddingBottom:  '1px',
+        color: isActive ? 'var(--text-primary)' : undefined,
       })}
     >
       {item.label}
     </NavLink>
   )
-}
+})
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Resume button
+   Resume button — pure CSS hover
 ───────────────────────────────────────────────────────────────────────────── */
-function ResumeButton() {
-  const [hovered, setHovered] = useState(false)
+const ResumeButton = memo(function ResumeButton() {
   return (
     <button
       onClick={downloadResume}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       aria-label="Download resume PDF"
-      style={{
-        background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-        fontSize:      '0.875rem',
-        fontWeight:    400,
-        color:         hovered ? 'var(--text-secondary)' : 'var(--text-muted)',
-        letterSpacing: '0.01em',
-        transition:    'color 0.2s ease',
-        borderBottom:  hovered ? '1px solid rgba(0,229,255,0.25)' : '1px solid transparent',
-        paddingBottom: '1px',
-        textAlign:     'left',
-      }}
+      className="footer-resume-btn"
     >
       Download Resume ↓
     </button>
   )
-}
+})
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Footer
 ───────────────────────────────────────────────────────────────────────────── */
-export function Footer() {
+export const Footer = memo(function Footer() {
   const { footer, nav } = content
 
   return (
@@ -139,12 +107,10 @@ export function Footer() {
       style={{
         position:   'relative',
         overflow:   'hidden',
-        /* Deeper surface — lifts footer off the page body */
         background: 'linear-gradient(180deg, var(--bg) 0%, #030611 100%)',
       }}
     >
 
-      {/* ── Cinematic top edge: vignette + glow ────────────────────────────── */}
       {/* Faint top border */}
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0,
@@ -153,28 +119,25 @@ export function Footer() {
         pointerEvents: 'none',
       }} aria-hidden="true" />
 
-      {/* Ambient center glow — ties footer to the page's light language */}
+      {/* Ambient center glow */}
       <div style={{
         position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
         width: '700px', height: '320px', pointerEvents: 'none',
         background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.06) 0%, rgba(0,229,255,0.02) 40%, transparent 70%)',
       }} aria-hidden="true" />
 
-      {/* Subtle noise vignette — adds cinematic depth */}
+      {/* Subtle vignette */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background:
-          'radial-gradient(ellipse 120% 80% at 50% 100%, rgba(0,0,0,0.45) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse 120% 80% at 50% 100%, rgba(0,0,0,0.45) 0%, transparent 70%)',
       }} aria-hidden="true" />
 
-      {/* ── Main content ────────────────────────────────────────────────────── */}
+      {/* ── Main content ── */}
       <div className="container-main footer-section" style={{ position: 'relative', zIndex: 1 }}>
         <div className="footer-grid">
 
-          {/* ── Left: identity + social ──────────────────────────────────── */}
+          {/* Left: identity + social */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-
-            {/* Brand name */}
             <div>
               <p style={{
                 fontFamily:    "'Space Grotesk', system-ui, sans-serif",
@@ -196,16 +159,11 @@ export function Footer() {
               </p>
             </div>
 
-            {/* Thin accent rule — cinematic brand separator */}
             <div style={{
-              width:        '2rem',
-              height:       '1px',
-              background:   'var(--accent)',
-              opacity:      0.4,
-              borderRadius: '1px',
+              width: '2rem', height: '1px',
+              background: 'var(--accent)', opacity: 0.4, borderRadius: '1px',
             }} aria-hidden="true" />
 
-            {/* Social icons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {footer.socialLinks.map(link => (
                 <SocialButton key={link.platform} link={link} />
@@ -213,7 +171,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* ── Center: navigation ───────────────────────────────────────── */}
+          {/* Center: navigation */}
           <nav aria-label="Footer navigation">
             <p style={{
               fontFamily:    "'Space Grotesk', system-ui, sans-serif",
@@ -226,12 +184,7 @@ export function Footer() {
             }}>
               Navigation
             </p>
-            <ul style={{
-              listStyle: 'none',
-              display:   'flex',
-              flexDirection: 'column',
-              gap:       '0.875rem',
-            }}>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               {nav.map(item => (
                 <li key={item.href}>
                   <FooterNavLink item={item} />
@@ -240,7 +193,7 @@ export function Footer() {
             </ul>
           </nav>
 
-          {/* ── Right: resume ────────────────────────────────────────────── */}
+          {/* Right: resume */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <p style={{
               fontFamily:    "'Space Grotesk', system-ui, sans-serif",
@@ -255,11 +208,10 @@ export function Footer() {
             </p>
             <ResumeButton />
           </div>
-
         </div>
       </div>
 
-      {/* ── Bottom bar: copyright ───────────────────────────────────────────── */}
+      {/* Bottom bar: copyright */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -271,7 +223,6 @@ export function Footer() {
           zIndex:          1,
           paddingTop:      '1.25rem',
           paddingBottom:   '1.75rem',
-          /* Single very faint rule — no double-border */
           borderTop:       '1px solid rgba(255,255,255,0.04)',
           display:         'flex',
           alignItems:      'center',
@@ -279,39 +230,25 @@ export function Footer() {
           gap:             '0.5rem',
         }}
       >
-        {/* Micro cyan diamond — cinematic punctuation mark */}
         <span style={{
-          display:      'inline-block',
-          width:        '5px',
-          height:       '5px',
-          borderRadius: '1px',
-          background:   'var(--accent)',
-          opacity:      0.3,
-          transform:    'rotate(45deg)',
-          flexShrink:   0,
+          display: 'inline-block', width: '5px', height: '5px',
+          borderRadius: '1px', background: 'var(--accent)',
+          opacity: 0.3, transform: 'rotate(45deg)', flexShrink: 0,
         }} aria-hidden="true" />
-
         <p style={{
-          fontSize:   '0.75rem',
-          color:      'rgba(100,116,139,0.55)',
-          textAlign:  'center',
-          letterSpacing: '0.02em',
+          fontSize: '0.75rem', color: 'rgba(100,116,139,0.55)',
+          textAlign: 'center', letterSpacing: '0.02em',
         }}>
           {footer.copyright}
         </p>
-
         <span style={{
-          display:      'inline-block',
-          width:        '5px',
-          height:       '5px',
-          borderRadius: '1px',
-          background:   'var(--accent)',
-          opacity:      0.3,
-          transform:    'rotate(45deg)',
-          flexShrink:   0,
+          display: 'inline-block', width: '5px', height: '5px',
+          borderRadius: '1px', background: 'var(--accent)',
+          opacity: 0.3, transform: 'rotate(45deg)', flexShrink: 0,
         }} aria-hidden="true" />
       </motion.div>
 
+      {/* CSS-only hover styles are now in globals.css */}
     </footer>
   )
-}
+})

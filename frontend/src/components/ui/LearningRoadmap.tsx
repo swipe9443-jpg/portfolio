@@ -615,13 +615,7 @@ export function LearningRoadmap() {
         Click any step to explore · ← → keyboard navigation
       </p>
 
-      {/* Pulse keyframe injected once */}
-      <style>{`
-        @keyframes roadmap-pulse {
-          0%, 100% { opacity: 0.6; transform: scale(1); }
-          50%       { opacity: 0;   transform: scale(1.55); }
-        }
-      `}</style>
+      {/* Pulse keyframe is now in globals.css */}
     </motion.div>
   )
 }

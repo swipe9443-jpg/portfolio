@@ -1,16 +1,17 @@
-import { useEffect }        from 'react'
+import { memo, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 
-// Scroll to top on every route change
-function ScrollToTop() {
+// Scroll to top on every route change — instant to avoid conflict with scroll-behavior:smooth
+const ScrollToTop = memo(function ScrollToTop() {
   const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior }) }, [pathname])
   return null
-}
+})
 
+// Defined at module level — never re-allocated on each render
 const pageVariants = {
   initial:  { opacity: 0, y: 16 },
   animate:  { opacity: 1, y: 0  },
@@ -22,7 +23,8 @@ const pageTransition = {
   ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
 }
 
-function AnimatedPage({ children }: { children: React.ReactNode }) {
+// Memoized — only re-renders when children identity changes (route switch)
+const AnimatedPage = memo(function AnimatedPage({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
       variants={pageVariants}
@@ -34,7 +36,7 @@ function AnimatedPage({ children }: { children: React.ReactNode }) {
       {children}
     </motion.div>
   )
-}
+})
 
 export function RootLayout() {
   const location = useLocation()

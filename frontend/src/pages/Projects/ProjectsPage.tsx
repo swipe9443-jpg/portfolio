@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
@@ -17,11 +17,15 @@ function matchesFilter(category: string, filter: Filter): boolean {
   return true
 }
 
-export function ProjectsPage() {
+export const ProjectsPage = memo(function ProjectsPage() {
   const { projects } = content
   const [activeFilter, setActiveFilter] = useState<Filter>('All')
 
-  const filtered = projects.filter(p => matchesFilter(p.category, activeFilter))
+  const filtered = useMemo(
+    () => projects.filter(p => matchesFilter(p.category, activeFilter)),
+    [activeFilter, projects],
+  )
+  const handleFilter = useCallback((f: Filter) => setActiveFilter(f), [])
 
   return (
     <>
@@ -69,7 +73,7 @@ export function ProjectsPage() {
             {filters.map(f => (
               <button
                 key={f}
-                onClick={() => setActiveFilter(f)}
+                onClick={() => handleFilter(f)}
                 aria-pressed={activeFilter === f}
                 style={{
                   padding: '0.4375rem 1.125rem',   /* 7px 18px — 8pt grid */
@@ -108,4 +112,4 @@ export function ProjectsPage() {
       </section>
     </>
   )
-}
+})

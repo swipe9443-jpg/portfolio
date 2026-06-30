@@ -73,14 +73,15 @@ html {
 body {
   min-height: 100vh;
   background-color: var(--bg);
-  background-image: radial-gradient(circle, rgba(0,229,255,0.025) 1px, transparent 1px);
-  background-size: 32px 32px;
   color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.7;
   overflow-x: hidden;
 }
+
+/* Dot-grid pattern: defined only in index.html inline critical CSS to avoid duplication.
+   The fixed pseudo-layer in index.html handles this to prevent FOUC. */
 
 /* Scrollbar */
 ::-webkit-scrollbar        { width: 4px; }
@@ -119,6 +120,8 @@ body {
 .section-wrapper {
   padding-top: 7rem;          /* 112px */
   padding-bottom: 7rem;
+  /* Constrain layout/style recalculation to this subtree */
+  contain: layout style;
 }
 @media (min-width: 768px) {
   .section-wrapper {
@@ -268,13 +271,16 @@ body {
    DECORATIVE
 ───────────────────────────────────────────────────────────────────────────── */
 
-/* Ambient glow blob */
+/* Ambient glow blob — compositor-only layer: blur is rasterized once */
 .glow-blob {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80px);
   z-index: 0;
+  /* Isolate blur to its own layer so it doesn't repaint parent stacking contexts */
+  will-change: opacity;
+  contain: strict;
 }
 
 /* Cyan accent underline for SectionTitle */
@@ -407,8 +413,63 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   ACCESSIBILITY
+   PERFORMANCE HINTS
+   GPU-composited layers for the elements we animate most frequently.
+   Only applied to known heavy animators — avoids layer explosion.
 ───────────────────────────────────────────────────────────────────────────── */
+
+/* Floating hero image — transformed via framer y:[0,-8,0] infinite */
+.photo-frame-transparent,
+.photo-frame {
+  will-change: transform;
+}
+
+/*
+  Contain the dot-grid background pattern to its own rendering context.
+  The fixed pseudo-layer in index.html critical CSS is already correct;
+  this ensures subsequent paint operations don't re-composite unnecessarily.
+*/
+body::before {
+  contain: strict;
+}
+
+/*
+  Content visibility for off-screen sections.
+  `auto` = browser skips paint/layout for sections far outside viewport.
+  `contain-intrinsic-size` reserves space to prevent scroll-jump.
+  Only applied to non-hero sections to prevent LCP regression.
+*/
+.section-wrapper.section-divided {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+}
+
+/* ── Additional containment for layout-only sections ── */
+.stats-section {
+  contain: layout style;
+}
+.footer-section {
+  contain: layout style;
+}
+
+/*
+  Composited hover transforms — promote cards to their own GPU layer
+  only during hover, not permanently (avoids wasting VRAM at rest).
+*/
+.glass-card:hover,
+.project-card:hover,
+.skill-category-card:hover,
+.why-work-card:hover,
+.timeline-card:hover,
+.edu-timeline-card:hover {
+  will-change: transform;
+}
+
+/*
+  Animate only transform/opacity — compositor-only properties
+  that bypass layout and paint, keeping animation on the GPU thread.
+*/
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -560,4 +621,239 @@ body {
     0 0 32px rgba(0, 229, 255, 0.09),
     0 12px 40px rgba(0, 0, 0, 0.50) !important;
   transform: translateY(-4px);
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NAVBAR — Logo pulse keyframe (moved from Navbar inline <style>)
+   GPU-composited: uses opacity only — no box-shadow (avoids paint layer).
+   The border glow is set as a static CSS shadow; only brightness pulses.
+───────────────────────────────────────────────────────────────────────────── */
+@keyframes logo-pulse {
+  0%, 60%, 100% { opacity: 0.85; }
+  30%           { opacity: 1;    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LEARNING ROADMAP — Pulse ring keyframe (moved from LearningRoadmap inline <style>)
+   Uses transform + opacity only — compositor-safe.
+───────────────────────────────────────────────────────────────────────────── */
+@keyframes roadmap-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1);    }
+  50%       { opacity: 0;   transform: scale(1.55); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FOOTER — CSS-only hover styles (moved from Footer inline <style>)
+   Pure CSS hover replaces all useState hover logic.
+───────────────────────────────────────────────────────────────────────────── */
+.footer-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  color: var(--text-muted);
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.02);
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.footer-social-btn:hover {
+  color: var(--accent);
+  border-color: rgba(0,229,255,0.28);
+  background: rgba(0,229,255,0.07);
+  box-shadow: 0 0 16px rgba(0,229,255,0.12);
+}
+.footer-nav-link {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+.footer-nav-link:hover {
+  color: var(--text-secondary);
+  border-bottom-color: rgba(0,229,255,0.25);
+}
+.footer-resume-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+  text-align: left;
+}
+.footer-resume-btn:hover {
+  color: var(--text-secondary);
+  border-bottom-color: rgba(0,229,255,0.25);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NAVBAR — Responsive dock visibility (moved from Navbar inline <style>)
+───────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .md-dock     { display: flex !important; }
+  .mobile-dock { display: none  !important; }
+}
+@media (max-width: 767px) {
+  .md-dock     { display: none  !important; }
+  .mobile-dock { display: flex  !important; }
+}
+/* Tablet — tighter dock padding */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .md-dock { padding: 6px 8px; gap: 2px; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESUME PAGE — Scoped layout styles (moved from ResumePage inline <style>)
+───────────────────────────────────────────────────────────────────────────── */
+/* Main grid — stacks mobile, 50/50 desktop */
+.resume-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+}
+@media (min-width: 900px) {
+  .resume-main-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+}
+/* CTA button row */
+.resume-cta-row {
+  display: flex;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+.resume-cta-row button {
+  min-width: 160px;
+}
+/* Skills grid responsive */
+@media (max-width: 600px) {
+  .resume-skills-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+/* Timeline card hover — compositor-only transform */
+.resume-timeline-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,229,255,0.22) !important;
+  box-shadow: 0 0 18px rgba(0,229,255,0.07), 0 8px 28px rgba(0,0,0,0.35);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ABOUT HERO — Responsive layout (moved from AboutHero inline <style>)
+───────────────────────────────────────────────────────────────────────────── */
+.about-main-card {
+  grid-template-columns: 1fr !important;
+}
+.about-img-col {
+  border-right: none !important;
+  border-bottom: 1px solid rgba(0,229,255,0.09);
+  min-height: 380px !important;
+}
+.about-content-col {
+  padding: 2rem 1.75rem !important;
+}
+@media (min-width: 900px) {
+  .about-main-card {
+    grid-template-columns: 45fr 55fr !important;
+  }
+  .about-img-col {
+    border-right: 1px solid rgba(0,229,255,0.09) !important;
+    border-bottom: none !important;
+    min-height: 560px !important;
+  }
+  .about-content-col {
+    padding: 3rem 2.75rem !important;
+  }
+}
+/* Bottom grid: stack on mobile, 60/40 on desktop */
+.about-bottom-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .about-bottom-grid {
+    display: grid;
+    grid-template-columns: 60fr 40fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CONTACT PAGE — Responsive layout (moved from ContactPage inline <style>)
+───────────────────────────────────────────────────────────────────────────── */
+.contact-split {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 860px) {
+  .contact-split {
+    grid-template-columns: 42fr 58fr;
+  }
+  .contact-left {
+    border-right: 1px solid rgba(0,229,255,0.08);
+    border-bottom: none !important;
+  }
+}
+@media (max-width: 859px) {
+  .contact-left {
+    border-bottom: 1px solid rgba(0,229,255,0.08);
+    border-right: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HOME PAGE — Hero grid & featured project responsive
+   (moved from HomePage inline <style> blocks)
+───────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4rem !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+}
+@media (min-width: 900px) {
+  .featured-project-card {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .fp-image-panel {
+    min-height: unset !important;
+    border-right: 1px solid rgba(0,229,255,0.09) !important;
+  }
+}
+@media (max-width: 899px) {
+  .fp-content-panel {
+    padding: 2rem 1.75rem !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PAGE SPINNER — Suspense fallback spin keyframe
+───────────────────────────────────────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

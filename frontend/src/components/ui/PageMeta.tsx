@@ -1,48 +1,44 @@
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 
 interface PageMetaProps {
-  title:        string
-  description:  string
-  ogTitle?:     string
+  title:          string
+  description:    string
+  ogTitle?:       string
   ogDescription?: string
+}
+
+// Cached element references — avoids repeated querySelector calls
+let descEl:    HTMLMetaElement | null = null
+let ogTitleEl: HTMLMetaElement | null = null
+let ogDescEl:  HTMLMetaElement | null = null
+
+function getOrCreate(selector: string, attrs: Record<string, string>): HTMLMetaElement {
+  let el = document.querySelector<HTMLMetaElement>(selector)
+  if (!el) {
+    el = document.createElement('meta')
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v)
+    document.head.appendChild(el)
+  }
+  return el
 }
 
 /**
  * Sets page <title>, <meta name="description">, and Open Graph tags
  * without any runtime dependency — pure DOM manipulation.
+ * Memoized: only re-runs when props actually change.
  */
-export function PageMeta({ title, description, ogTitle, ogDescription }: PageMetaProps) {
+export const PageMeta = memo(function PageMeta({ title, description, ogTitle, ogDescription }: PageMetaProps) {
   useEffect(() => {
-    // Title
     document.title = title
 
-    // Description
-    let descEl = document.querySelector<HTMLMetaElement>('meta[name="description"]')
-    if (!descEl) {
-      descEl = document.createElement('meta')
-      descEl.name = 'description'
-      document.head.appendChild(descEl)
-    }
-    descEl.content = description
+    descEl    = descEl    ?? getOrCreate('meta[name="description"]',       { name: 'description' })
+    ogTitleEl = ogTitleEl ?? getOrCreate('meta[property="og:title"]',      { property: 'og:title' })
+    ogDescEl  = ogDescEl  ?? getOrCreate('meta[property="og:description"]', { property: 'og:description' })
 
-    // OG title
-    let ogTitleEl = document.querySelector<HTMLMetaElement>('meta[property="og:title"]')
-    if (!ogTitleEl) {
-      ogTitleEl = document.createElement('meta')
-      ogTitleEl.setAttribute('property', 'og:title')
-      document.head.appendChild(ogTitleEl)
-    }
+    descEl.content    = description
     ogTitleEl.content = ogTitle ?? title
-
-    // OG description
-    let ogDescEl = document.querySelector<HTMLMetaElement>('meta[property="og:description"]')
-    if (!ogDescEl) {
-      ogDescEl = document.createElement('meta')
-      ogDescEl.setAttribute('property', 'og:description')
-      document.head.appendChild(ogDescEl)
-    }
-    ogDescEl.content = ogDescription ?? description
+    ogDescEl.content  = ogDescription ?? description
   }, [title, description, ogTitle, ogDescription])
 
   return null
-}
+})

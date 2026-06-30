@@ -1,11 +1,14 @@
+import { memo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Container } from '@/components/ui/Container'
 import { Button } from '@/components/ui/Button'
 import { PageMeta } from '@/components/ui/PageMeta'
 
-export function NotFoundPage() {
+export const NotFoundPage = memo(function NotFoundPage() {
   const navigate = useNavigate()
+  const goHome     = useCallback(() => navigate('/'),         [navigate])
+  const goProjects = useCallback(() => navigate('/projects'), [navigate])
 
   return (
     <>
@@ -58,10 +61,10 @@ export function NotFoundPage() {
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button variant="primary" size="lg" onClick={() => navigate('/')}>
+            <Button variant="primary" size="lg" onClick={goHome}>
               Back to Home
             </Button>
-            <Button variant="secondary" size="lg" onClick={() => navigate('/projects')}>
+            <Button variant="secondary" size="lg" onClick={goProjects}>
               View Projects
             </Button>
           </div>
@@ -70,4 +73,4 @@ export function NotFoundPage() {
     </section>
     </>
   )
-}
+})

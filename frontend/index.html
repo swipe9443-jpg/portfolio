@@ -3,15 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Primary SEO -->
+    <title>Josh Fallarcuna | Portfolio</title>
     <meta name="description" content="Josh Fallarcuna — Aspiring UI/UX Designer & Future Full-Stack Web Developer. Explore projects, skills, and contact info." />
-    <meta property="og:title" content="Josh Fallarcuna | Portfolio" />
-    <meta property="og:description" content="Aspiring UI/UX Designer & Future Full-Stack Web Developer" />
+    <meta name="author" content="Josh Fallarcuna" />
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="UI/UX Designer, Frontend Developer, React, TypeScript, Portfolio, Josh Fallarcuna" />
+    <link rel="canonical" href="https://joshfallarcuna.vercel.app/" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="Josh Fallarcuna | Portfolio" />
+    <meta property="og:description" content="Aspiring UI/UX Designer & Future Full-Stack Web Developer. Explore my projects, skills, and design work." />
+    <meta property="og:site_name" content="Josh Fallarcuna Portfolio" />
+    <meta property="og:image" content="/profile.webp" />
+    <meta property="og:url" content="https://joshfallarcuna.vercel.app/" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Josh Fallarcuna | Portfolio" />
+    <meta name="twitter:description" content="Aspiring UI/UX Designer & Future Full-Stack Web Developer." />
+    <meta name="twitter:image" content="/profile.webp" />
+
+    <!-- Theme -->
+    <meta name="theme-color" content="#050816" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Performance hints -->
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+
+    <!--
+      DNS prefetch + preconnect for Google Fonts CDN.
+      crossorigin is required on gstatic for CORS font fetching.
+    -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <title>Josh Fallarcuna | Portfolio</title>
+
+    <!--
+      Google Fonts — non-blocking load via media="print" swap trick.
+      1. media="print" loads the stylesheet without blocking render.
+      2. onload switches it to media="all" so the font activates after paint.
+      3. <noscript> is the fallback for JS-disabled browsers.
+      font-display=swap is already in the URL to prevent FOIT.
+      Weights trimmed to minimum needed:
+        Inter: 400 (body), 500 (emphasis), 600 (semibold), 700 (heading)
+        Space Grotesk: 600, 700 (display/heading only — 400/500 not used)
+    -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <!--
+      Preload the hero portrait — LCP element on the homepage.
+      Uses a stable public-folder path so the preload is valid in both
+      dev (Vite serves /public directly) and production (copied to dist root).
+      fetchpriority="high" tells the browser to prioritise this over other images.
+    -->
+    <link
+      rel="preload"
+      as="image"
+      href="/profile.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
+
+    <!--
+      Critical CSS — inlined to prevent FOUC (flash of unstyled content).
+      Sets background/text colors immediately before any JS/CSS loads.
+      The main bundle fills in the rest after parse.
+    -->
+    <style>
+      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+      :root{color-scheme:dark}
+      html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+      body{
+        background-color:#050816;
+        color:#ffffff;
+        font-family:'Inter',system-ui,-apple-system,sans-serif;
+        min-height:100vh;
+        overflow-x:hidden;
+      }
+      #root{min-height:100vh}
+      /* Prevent layout shift from dot-grid background appearing late */
+      body::before{
+        content:'';
+        position:fixed;
+        inset:0;
+        background-image:radial-gradient(circle,rgba(0,229,255,.025) 1px,transparent 1px);
+        background-size:32px 32px;
+        pointer-events:none;
+        z-index:-1;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react'
+import { memo, type HTMLAttributes } from 'react'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   /** Content padding preset — follows the 8px grid */
@@ -14,7 +14,8 @@ const paddings: Record<NonNullable<CardProps['padding']>, string> = {
   lg:   'p-8',     /* 32px */
 }
 
-export function Card({ children, padding = 'md', flat = false, className = '', ...props }: CardProps) {
+// Memoized — pure presentational, props only change on content updates
+export const Card = memo(function Card({ children, padding = 'md', flat = false, className = '', ...props }: CardProps) {
   return (
     <div
       className={[
@@ -28,4 +29,4 @@ export function Card({ children, padding = 'md', flat = false, className = '', .
       {children}
     </div>
   )
-}
+})

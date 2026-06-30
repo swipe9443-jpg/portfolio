@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 
 interface SectionTitleProps {
@@ -7,7 +8,8 @@ interface SectionTitleProps {
   className?: string
 }
 
-export function SectionTitle({ title, subtitle, align = 'center', className = '' }: SectionTitleProps) {
+// Memoized — receives only primitive props, never needs to re-render
+export const SectionTitle = memo(function SectionTitle({ title, subtitle, align = 'center', className = '' }: SectionTitleProps) {
   const isCenter = align === 'center'
 
   return (
@@ -60,4 +62,4 @@ export function SectionTitle({ title, subtitle, align = 'center', className = ''
       )}
     </motion.div>
   )
-}
+})

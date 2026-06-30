@@ -1,9 +1,10 @@
-import type { HTMLAttributes } from 'react'
+import { memo, type HTMLAttributes } from 'react'
 
-export function Container({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
+// Memoized — a pure layout wrapper that never needs to re-render on its own
+export const Container = memo(function Container({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={['container-main', className].join(' ')} {...props}>
       {children}
     </div>
   )
-}
+})

@@ -1,565 +1,572 @@
+import { memo } from 'react'
 import { motion } from 'framer-motion'
-import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
-import { Button } from '@/components/ui/Button'
 import { PageMeta } from '@/components/ui/PageMeta'
 import { downloadResume, viewResume } from '@/config/resume'
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Animation preset
-───────────────────────────────────────────────────────────────────────────── */
+/* ── Easing ─────────────────────────────────────────────────────────────── */
+const E: [number, number, number, number] = [0.22, 1, 0.36, 1]
+
+/* ── Animation variants ─────────────────────────────────────────────────── */
 const fadeUp = (delay = 0) => ({
-  initial:     { opacity: 0, y: 20 },
+  initial:     { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
-  viewport:    { once: true as const, margin: '-32px' },
-  transition:  { duration: 0.42, delay, ease: 'easeOut' as const },
+  viewport:    { once: true as const, margin: '-48px' },
+  transition:  { duration: 0.56, delay, ease: E },
+})
+const fromLeft = (delay = 0) => ({
+  initial:     { opacity: 0, x: -28 },
+  whileInView: { opacity: 1, x: 0 },
+  viewport:    { once: true as const, margin: '-40px' },
+  transition:  { duration: 0.56, delay, ease: E },
+})
+const fromRight = (delay = 0) => ({
+  initial:     { opacity: 0, x: 28 },
+  whileInView: { opacity: 1, x: 0 },
+  viewport:    { once: true as const, margin: '-40px' },
+  transition:  { duration: 0.56, delay, ease: E },
 })
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Icons
-───────────────────────────────────────────────────────────────────────────── */
-const DownloadIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path d="M8 2v9M5 8l3 3 3-3M2 13h12"
-      stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+/* ── Shared style helpers ───────────────────────────────────────────────── */
+const GLASS: React.CSSProperties = {
+  background: 'rgba(13,20,36,0.92)',
+  border: '1px solid rgba(0,229,255,0.11)',
+  borderRadius: '20px',
+  backdropFilter: 'blur(24px)',
+  WebkitBackdropFilter: 'blur(24px)',
+  boxShadow: '0 0 0 1px rgba(0,229,255,0.04), 0 24px 64px rgba(0,0,0,0.5)',
+}
+const SECTION_LABEL: React.CSSProperties = {
+  fontFamily: "'Space Grotesk', system-ui, sans-serif",
+  fontSize: '0.625rem',
+  fontWeight: 700,
+  color: 'var(--text-muted)',
+  letterSpacing: '0.16em',
+  textTransform: 'uppercase' as const,
+}
+
+/* ── Icons ──────────────────────────────────────────────────────────────── */
+const IconGraduate = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+  </svg>
+)
+const IconBriefcase = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="7" width="20" height="14" rx="2" />
+    <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+    <line x1="12" y1="12" x2="12" y2="12" />
+    <path d="M2 12h20" />
+  </svg>
+)
+const IconSummary = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <polyline points="10 9 9 9 8 9" />
+  </svg>
+)
+const IconSkills = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+)
+const IconTarget = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="6" />
+    <circle cx="12" cy="12" r="2" />
+  </svg>
+)
+const IconDownload = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </svg>
+)
+const IconEye = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+)
+const IconArrow = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+  </svg>
+)
+const IconRocket = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z" />
+    <path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z" />
+    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  </svg>
+)
+const IconCheck = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12" />
   </svg>
 )
 
-const PreviewIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"
-      stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    <circle cx="8" cy="8" r="2"
-      stroke="currentColor" strokeWidth="1.5" />
-  </svg>
-)
-
-const icons = {
-  education: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z" />
-      <path d="M6 12v5c3 3 9 3 12 0v-5" />
-    </svg>
-  ),
-  cert: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="8" r="6" />
-      <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
-    </svg>
-  ),
-  skills: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-    </svg>
-  ),
-  briefcase: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="7" width="20" height="14" rx="2" />
-      <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
-    </svg>
-  ),
-  check: (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <circle cx="7" cy="7" r="6" stroke="rgba(0,229,255,0.20)" />
-      <path d="M4.5 7l1.75 1.75 3.25-3"
-        stroke="var(--accent)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  ),
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Status badge config
-───────────────────────────────────────────────────────────────────────────── */
-const statusCfg: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  completed:     { label: 'Completed',   color: '#4ade80', bg: 'rgba(34,197,94,0.08)',  border: 'rgba(34,197,94,0.22)'  },
-  'in-progress': { label: 'In Progress', color: '#fbbf24', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.22)' },
-  planned:       { label: 'Planned',     color: 'var(--accent)', bg: 'rgba(0,229,255,0.07)', border: 'rgba(0,229,255,0.22)' },
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Card section header — icon box + label
-───────────────────────────────────────────────────────────────────────────── */
-function CardSection({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.75rem' }}>
-      <span style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: '36px', height: '36px', borderRadius: '9px', flexShrink: 0,
-        background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.18)',
-        color: 'var(--accent)',
-      }}>
-        {icon}
-      </span>
-      <h2 style={{
-        fontFamily: "'Space Grotesk', system-ui, sans-serif",
-        fontSize: '0.75rem', fontWeight: 700,
-        color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase',
-      }}>
-        {label}
-      </h2>
-    </div>
-  )
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Core Competencies — grouped categories derived from flat array
-───────────────────────────────────────────────────────────────────────────── */
-const competencyGroups = [
+/* ── Data ───────────────────────────────────────────────────────────────── */
+const educationTimeline = [
   {
-    label: 'UI/UX Design',
-    color: 'rgba(0,149,255,0.9)',
-    tint:  'rgba(0,149,255,0.07)',
-    ring:  'rgba(0,149,255,0.20)',
-    keys:  ['Figma', 'UI Design', 'Wireframing', 'Prototyping'],
+    year: '2023 – Present',
+    title: 'Bachelor of Science in Computer Science',
+    org: 'Saint Columban College, Pagadian City',
+    desc: 'Currently pursuing my degree and building strong foundations in programming, systems, and software development.',
+    isCurrent: true,
   },
   {
-    label: 'Frontend Development',
-    color: 'var(--accent)',
-    tint:  'rgba(0,229,255,0.06)',
-    ring:  'rgba(0,229,255,0.16)',
-    keys:  ['HTML5', 'CSS3', 'JavaScript', 'Responsive Design'],
+    year: '2023',
+    title: 'Senior High School',
+    org: 'Saint Columban College, Pagadian City',
+    desc: 'Strand: Science, Technology, Engineering and Mathematics',
+    isCurrent: false,
   },
   {
-    label: 'Tools & Productivity',
-    color: 'rgba(167,139,250,0.9)',
-    tint:  'rgba(167,139,250,0.07)',
-    ring:  'rgba(167,139,250,0.20)',
-    keys:  ['Microsoft Word', 'Microsoft PowerPoint'],
-  },
-  {
-    label: 'Professional',
-    color: 'rgba(52,211,153,0.9)',
-    tint:  'rgba(52,211,153,0.06)',
-    ring:  'rgba(52,211,153,0.18)',
-    keys:  ['Attention to Detail'],
+    year: '2021',
+    title: 'Junior High School',
+    org: 'Igama Integrated School',
+    desc: 'Completed Junior High School with honors.',
+    isCurrent: false,
   },
 ]
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Shared card shell style
-───────────────────────────────────────────────────────────────────────────── */
-const cardStyle: React.CSSProperties = {
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '2rem 2rem 2.25rem',
-  background: 'rgba(13,20,36,0.90)',
-  border: '1px solid rgba(255,255,255,0.07)',
-  borderRadius: '16px',
-  backdropFilter: 'blur(20px)',
-}
+const experienceTimeline = [
+  {
+    year: '2026',
+    title: 'Incoming Intern – Frontend Developer',
+    org: 'Upcoming',
+    desc: 'Excited to apply my skills, learn in a real-world environment, and contribute to meaningful projects.',
+    badge: 'Upcoming',
+    isCurrent: true,
+  },
+  {
+    year: '2025',
+    title: 'Freelance UI/UX Designer',
+    org: 'Self-Employed',
+    desc: 'Designed modern interfaces, prototypes, and branding for clients and personal projects.',
+    badge: null,
+    isCurrent: false,
+  },
+  {
+    year: '2024 – Present',
+    title: 'Frontend Developer (Projects)',
+    org: 'Personal Projects',
+    desc: 'Building responsive, user-friendly web applications using modern technologies.',
+    badge: null,
+    isCurrent: false,
+  },
+]
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Page
-───────────────────────────────────────────────────────────────────────────── */
-export function ResumePage() {
-  const { resume } = content
+const skills = [
+  { label: 'HTML',       icon: '🌐' },
+  { label: 'CSS',        icon: '🎨' },
+  { label: 'JavaScript', icon: '⚡' },
+  { label: 'TypeScript', icon: '🔷' },
+  { label: 'React',      icon: '⚛️'  },
+  { label: 'Tailwind CSS', icon: '💨' },
+  { label: 'Figma',      icon: '✏️'  },
+  { label: 'Git & GitHub', icon: '🐙' },
+  { label: 'VS Code',    icon: '💻' },
+  { label: 'UI/UX Design', icon: '🖼️' },
+]
 
+const highlights = [
+  { value: '3+',   label: 'Projects Completed'    },
+  { value: '2+',   label: 'Years Learning'         },
+  { value: '6+',   label: 'Technologies Explored'  },
+  { value: 'Open', label: 'To Internship'          },
+]
+
+const goals = [
+  'Internship opportunities in Frontend or Full-Stack Development',
+  'Real-world projects and challenges',
+  'A collaborative and growth-focused environment',
+  'Mentorship and continuous learning',
+]
+
+const trustItems = [
+  { icon: '✦', label: 'Clean & Modern Code'  },
+  { icon: '✦', label: 'Team Player'           },
+  { icon: '✦', label: 'Willing to Learn'      },
+  { icon: '✦', label: 'Passionate Developer'  },
+]
+
+/* ── Timeline entry component ───────────────────────────────────────────── */
+const TimelineEntry = memo(function TimelineEntry({
+  year, title, org, desc, badge, isCurrent, delay,
+}: {
+  year: string; title: string; org: string; desc: string;
+  badge?: string | null; isCurrent: boolean; delay: number
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -16 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: '-20px' }}
+      transition={{ duration: 0.42, delay, ease: E }}
+      style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}
+    >
+      {/* Dot */}
+      <div style={{ flexShrink: 0, position: 'relative', zIndex: 1, marginTop: '13px' }}>
+        <motion.div
+          animate={isCurrent
+            ? { boxShadow: ['0 0 0 0 rgba(0,229,255,0.55)', '0 0 0 7px rgba(0,229,255,0)', '0 0 0 0 rgba(0,229,255,0)'] }
+            : undefined}
+          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut' }}
+          style={{
+            width: '16px', height: '16px', borderRadius: '50%',
+            background: isCurrent ? 'radial-gradient(circle, #00e5ff 0%, #0095ff 100%)' : 'rgba(0,229,255,0.10)',
+            border: isCurrent ? '2px solid rgba(0,229,255,0.9)' : '1px solid rgba(0,229,255,0.30)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: isCurrent ? '#fff' : 'rgba(0,229,255,0.5)' }} />
+        </motion.div>
+      </div>
+
+      {/* Card */}
+      <div
+        className="resume-timeline-card"
+        style={{
+          flex: 1,
+          padding: '0.75rem 1rem',
+          background: isCurrent ? 'rgba(0,149,255,0.05)' : 'rgba(255,255,255,0.02)',
+          border: isCurrent ? '1px solid rgba(0,229,255,0.18)' : '1px solid rgba(255,255,255,0.05)',
+          borderRadius: '12px',
+          transition: 'transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.2rem' }}>
+          <p style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>
+            {title}
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
+            {badge && (
+              <span style={{ padding: '0.15rem 0.55rem', background: 'rgba(0,229,255,0.10)', border: '1px solid rgba(0,229,255,0.28)', borderRadius: '9999px', fontSize: '0.5625rem', fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.06em' }}>
+                {badge}
+              </span>
+            )}
+            <span style={{ padding: '0.125rem 0.5rem', background: 'transparent', border: '1px solid rgba(0,229,255,0.22)', borderRadius: '9999px', fontSize: '0.5625rem', fontWeight: 600, color: 'var(--accent)', whiteSpace: 'nowrap' }}>
+              {year}
+            </span>
+          </div>
+        </div>
+        <p style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--accent)', opacity: 0.75, marginBottom: '0.25rem' }}>{org}</p>
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: 1.55 }}>{desc}</p>
+      </div>
+    </motion.div>
+  )
+})
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+export const ResumePage = memo(function ResumePage() {
   return (
     <>
       <PageMeta
         title="Resume | Josh Fallarcuna"
-        description="Professional profile, education, certifications, and core competencies of Josh Fallarcuna."
+        description="Professional profile, education, skills, and career goals of Josh Fallarcuna."
         ogTitle="Resume — Josh Fallarcuna"
-        ogDescription="Background, certifications, and skills — available for download."
+        ogDescription="Background and skills — available for download."
       />
 
       <section className="section-wrapper relative overflow-hidden" aria-label="Resume page">
 
-        {/* Ambient glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(10,15,30,0.25)' }} aria-hidden="true" />
-        <div className="glow-blob opacity-[0.06]" style={{
-          width: '360px', height: '360px', bottom: '-2rem', right: '-2rem',
-          background: 'radial-gradient(circle, rgba(0,229,255,0.5) 0%, transparent 70%)',
-        }} aria-hidden="true" />
+        {/* ── Ambient glows ── */}
+        <div aria-hidden="true" style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '1000px', height: '560px', pointerEvents: 'none', zIndex: 0, background: 'radial-gradient(ellipse at top, rgba(0,149,255,0.08) 0%, rgba(0,229,255,0.03) 45%, transparent 70%)' }} />
+        <div aria-hidden="true" style={{ position: 'absolute', bottom: '-4rem', right: '-6rem', width: '480px', height: '480px', pointerEvents: 'none', zIndex: 0, background: 'radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 65%)', filter: 'blur(72px)' }} />
 
-        <Container className="relative z-10">
+        <Container style={{ position: 'relative', zIndex: 1 }}>
 
-          {/* ── PAGE HEADER ───────────────────────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            style={{ marginBottom: '4rem' }}
-          >
-            <div style={{
-              display: 'flex', flexWrap: 'wrap',
-              alignItems: 'flex-end', justifyContent: 'space-between',
-              gap: '1.5rem',
-            }}>
-              <div>
-                <p className="page-hero-label">Professional Profile</p>
-                <h1 className="page-hero-heading" style={{ marginBottom: 0 }}>
-                  My <span className="text-gradient">Resume</span>
-                </h1>
-              </div>
-              {/* Header action — opens PDF in a new tab, does not download */}
-              <Button
-                variant="primary" size="md"
-                leftIcon={<PreviewIcon />}
-                onClick={viewResume}
-                aria-label="Preview resume PDF in a new tab"
-                style={{ flexShrink: 0, alignSelf: 'flex-end' }}
-              >
-                Preview Resume
-              </Button>
+          {/* ══ TOP HEADER — centered ═══════════════════════════════════════ */}
+          <motion.div {...fadeUp(0)} style={{ textAlign: 'center', marginBottom: '3rem' }}>
+
+            {/* MY RESUME label with side dividers */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.875rem', marginBottom: '1.375rem' }}>
+              <div style={{ flex: 1, maxWidth: '64px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0,229,255,0.40))' }} aria-hidden="true" />
+              <span style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '0.6875rem', fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.20em', textTransform: 'uppercase' }}>
+                My Resume
+              </span>
+              <div style={{ flex: 1, maxWidth: '64px', height: '1px', background: 'linear-gradient(90deg, rgba(0,229,255,0.40), transparent)' }} aria-hidden="true" />
             </div>
+
+            {/* Main title */}
+            <h1 style={{ fontFamily: "'Space Grotesk', 'Inter', system-ui, sans-serif", fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', fontWeight: 700, lineHeight: 1.08, letterSpacing: '-0.03em', color: 'var(--text-primary)', marginBottom: '1rem' }}>
+              My Journey. My Skills.{' '}
+              <span className="text-gradient">My Future.</span>
+            </h1>
+
+            {/* Subtitle */}
+            <p style={{ fontSize: '1.0625rem', color: 'var(--text-secondary)', lineHeight: 1.75, maxWidth: '560px', margin: '0 auto' }}>
+              A summary of my education, experience, skills and achievements.
+            </p>
           </motion.div>
+          {/* ══ END HEADER ══ */}
 
-          {/* ── PROFESSIONAL SUMMARY ─────────────────────────────────────────── */}
-          <motion.div {...fadeUp(0.05)} style={{ marginBottom: '2rem' }}>
-            <div style={{
-              padding: '2.25rem 2.5rem',
-              background: 'rgba(13,20,36,0.90)',
-              border: '1px solid rgba(255,255,255,0.07)',
-              borderLeft: '3px solid var(--accent)',
-              borderRadius: '0 16px 16px 0',
-              backdropFilter: 'blur(20px)',
-            }}>
-              {/* Eyebrow */}
-              <p style={{
-                fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                fontSize: '0.6875rem', fontWeight: 700,
-                color: 'var(--accent)', letterSpacing: '0.14em', textTransform: 'uppercase',
-                marginBottom: '1rem',
-              }}>
-                Professional Summary
-              </p>
-              {/* Summary prose — constrained for comfortable reading */}
-              <p style={{
-                fontSize: '1.0625rem',
-                color: 'var(--text-secondary)',
-                lineHeight: 1.85,
-                maxWidth: '62ch',
-              }}>
-                {resume.summary}
-              </p>
-            </div>
-          </motion.div>
+          {/* ══ MAIN GRID — 50 / 50 ════════════════════════════════════════ */}
+          <div className="resume-main-grid">
 
-          {/* ── HORIZONTAL RULE ──────────────────────────────────────────────── */}
-          <div style={{
-            height: '1px',
-            background: 'rgba(255,255,255,0.05)',
-            marginBottom: '2rem',
-          }} aria-hidden="true" />
+            {/* ════ LEFT COLUMN — Education + Experience ════════════════════ */}
+            <motion.div {...fromLeft(0.1)} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
 
-          {/* ── 2-COLUMN CARD GRID ───────────────────────────────────────────── */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 28rem), 1fr))',
-            gap: '1.5rem',
-          }}>
-
-            {/* ── EDUCATION ──────────────────────────────────────────────────── */}
-            <motion.div {...fadeUp(0.10)} style={{ height: '100%' }}>
-              <div style={cardStyle} className="glass-card">
-                <CardSection icon={icons.education} label="Education" />
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0', flex: 1 }}>
-                  {resume.education.map((edu, i) => {
-                    const isLast = i === resume.education.length - 1
-                    return (
-                      <div key={i} style={{
-                        position: 'relative',
-                        paddingLeft: '1.375rem',
-                        paddingBottom: isLast ? 0 : '1.75rem',
-                      }}>
-                        {/* Timeline spine */}
-                        <div style={{
-                          position: 'absolute', left: 0, top: '6px',
-                          width: '10px', height: '10px', borderRadius: '50%',
-                          background: i === 0 ? 'var(--accent)' : 'rgba(0,229,255,0.25)',
-                          boxShadow: i === 0 ? '0 0 10px rgba(0,229,255,0.5)' : 'none',
-                          zIndex: 1,
-                        }} />
-                        {!isLast && (
-                          <div style={{
-                            position: 'absolute', left: '4px', top: '18px',
-                            width: '1px',
-                            bottom: '0',
-                            background: 'linear-gradient(180deg, rgba(0,229,255,0.20) 0%, rgba(0,229,255,0.05) 100%)',
-                          }} aria-hidden="true" />
-                        )}
-
-                        {/* Content */}
-                        <p style={{
-                          fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                          fontSize: '0.9375rem', fontWeight: 700,
-                          color: 'var(--text-primary)', lineHeight: 1.3,
-                          marginBottom: '0.3rem',
-                        }}>
-                          {edu.institution}
-                        </p>
-                        <p style={{
-                          fontSize: '0.875rem', fontWeight: 500,
-                          color: 'var(--accent)', lineHeight: 1.4,
-                          marginBottom: '0.3rem',
-                        }}>
-                          {edu.degree}
-                        </p>
-                        <p style={{
-                          display: 'inline-flex', alignItems: 'center',
-                          fontSize: '0.75rem', fontWeight: 600,
-                          color: 'var(--text-muted)',
-                          fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                          letterSpacing: '0.03em',
-                          marginBottom: edu.details ? '0.4rem' : 0,
-                        }}>
-                          {edu.period}
-                        </p>
-                        {edu.details && (
-                          <p style={{
-                            fontSize: '0.8125rem', color: 'var(--text-muted)',
-                            lineHeight: 1.65, fontStyle: 'italic',
-                          }}>
-                            {edu.details}
-                          </p>
-                        )}
-                      </div>
-                    )
-                  })}
+              {/* ── EDUCATION BLOCK ── */}
+              <div style={{ ...GLASS, padding: '1.75rem' }}>
+                {/* Block header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1.5rem' }}>
+                  <span style={{ width: '30px', height: '30px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.18)', borderRadius: '8px', color: 'var(--accent)' }}>
+                    <IconGraduate />
+                  </span>
+                  <p style={{ ...SECTION_LABEL }}>Education</p>
                 </div>
-              </div>
-            </motion.div>
 
-            {/* ── CERTIFICATIONS ─────────────────────────────────────────────── */}
-            <motion.div {...fadeUp(0.16)} style={{ height: '100%' }}>
-              <div style={cardStyle} className="glass-card">
-                <CardSection icon={icons.cert} label="Certifications" />
-
-                <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', flex: 1 }}>
-                  {resume.certifications.map((cert, i) => {
-                    const s = statusCfg[cert.status]
-                    return (
-                      <li key={i} style={{
-                        display: 'flex', alignItems: 'center',
-                        justifyContent: 'space-between', gap: '1.25rem',
-                        padding: '1rem 1.25rem',
-                        background: 'rgba(255,255,255,0.025)',
-                        border: '1px solid rgba(255,255,255,0.06)',
-                        borderRadius: '10px',
-                      }}>
-                        {/* Left: icon + name */}
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', minWidth: 0 }}>
-                          <span style={{
-                            flexShrink: 0, marginTop: '2px',
-                            color: s.color, opacity: 0.8,
-                          }}>
-                            {icons.cert}
-                          </span>
-                          <div style={{ minWidth: 0 }}>
-                            <p style={{
-                              fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                              fontSize: '0.9rem', fontWeight: 600,
-                              color: 'var(--text-primary)', lineHeight: 1.35,
-                            }}>
-                              {cert.name}
-                            </p>
-                            {(cert as { issuer?: string }).issuer && (
-                              <p style={{
-                                fontSize: '0.75rem', color: 'var(--text-muted)',
-                                marginTop: '0.2rem',
-                              }}>
-                                {(cert as { issuer?: string }).issuer}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Right: status badge */}
-                        <span style={{
-                          flexShrink: 0,
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.75rem', fontWeight: 600,
-                          background: s.bg, border: `1px solid ${s.border}`, color: s.color,
-                          fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                          letterSpacing: '0.03em', whiteSpace: 'nowrap',
-                        }}>
-                          {s.label}
-                        </span>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* ── CORE COMPETENCIES ──────────────────────────────────────────── */}
-            <motion.div {...fadeUp(0.22)} style={{ height: '100%' }}>
-              <div style={cardStyle} className="glass-card">
-                <CardSection icon={icons.skills} label="Core Competencies" />
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1 }}>
-                  {competencyGroups.map(group => {
-                    // Only render groups whose keys appear in the content
-                    const badges = group.keys.filter(k =>
-                      resume.coreCompetencies.includes(k)
-                    )
-                    if (badges.length === 0) return null
-                    return (
-                      <div key={group.label}>
-                        {/* Group label */}
-                        <p style={{
-                          fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                          fontSize: '0.6875rem', fontWeight: 700,
-                          color: group.color,
-                          letterSpacing: '0.10em', textTransform: 'uppercase',
-                          marginBottom: '0.625rem',
-                        }}>
-                          {group.label}
-                        </p>
-                        {/* Badges */}
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}
-                          role="list" aria-label={group.label}>
-                          {badges.map(badge => (
-                            <span key={badge} role="listitem" style={{
-                              display: 'inline-flex', alignItems: 'center',
-                              height: '30px', padding: '0 0.875rem',
-                              background: group.tint,
-                              border: `1px solid ${group.ring}`,
-                              borderRadius: '8px',
-                              fontSize: '0.8125rem', fontWeight: 500,
-                              color: 'var(--text-secondary)',
-                              whiteSpace: 'nowrap',
-                              transition: 'background 0.15s, color 0.15s',
-                            }}>
-                              {badge}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* ── EXPERIENCE ─────────────────────────────────────────────────── */}
-            <motion.div {...fadeUp(0.28)} style={{ height: '100%' }}>
-              <div style={cardStyle} className="glass-card">
-                <CardSection icon={icons.briefcase} label="Experience" />
-
-                {/* Capstone project — structured as a proper resume entry */}
-                <div style={{ flex: 1 }}>
-                  {/* Role header */}
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{
-                      display: 'flex', flexWrap: 'wrap',
-                      justifyContent: 'space-between', alignItems: 'flex-start',
-                      gap: '0.625rem', marginBottom: '0.375rem',
-                    }}>
-                      <p style={{
-                        fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                        fontSize: '1rem', fontWeight: 700,
-                        color: 'var(--text-primary)', lineHeight: 1.25,
-                      }}>
-                        UI Designer &amp; Technical Writer
-                      </p>
-                      <span style={{
-                        flexShrink: 0,
-                        padding: '0.2rem 0.75rem',
-                        background: 'rgba(0,229,255,0.07)', border: '1px solid rgba(0,229,255,0.20)',
-                        borderRadius: '9999px',
-                        fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent)',
-                        fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                        whiteSpace: 'nowrap',
-                      }}>
-                        2024 – 2025
-                      </span>
-                    </div>
-                    <p style={{
-                      fontSize: '0.875rem', fontWeight: 500,
-                      color: 'var(--accent)', lineHeight: 1.3,
-                    }}>
-                      Student Counseling Tracker System — Capstone Project
-                    </p>
+                {/* Timeline */}
+                <div style={{ position: 'relative' }}>
+                  {/* Spine */}
+                  <div aria-hidden="true" style={{ position: 'absolute', left: '7px', top: '14px', bottom: '14px', width: '1.5px', background: 'linear-gradient(180deg, rgba(0,229,255,0.55) 0%, rgba(0,229,255,0.08) 100%)' }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {educationTimeline.map((e, i) => (
+                      <TimelineEntry key={e.title} {...e} badge={null} delay={0.12 + i * 0.1} />
+                    ))}
                   </div>
+                </div>
+              </div>
 
-                  {/* Divider */}
-                  <div style={{
-                    height: '1px', background: 'rgba(255,255,255,0.05)',
-                    marginBottom: '1.25rem',
-                  }} aria-hidden="true" />
+              {/* Divider between blocks */}
+              <div aria-hidden="true" style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0,229,255,0.12), transparent)' }} />
 
-                  {/* Responsibilities */}
-                  <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {[
-                      'Designed the full system UI in Figma, including wireframes, component states, and interactive prototypes',
-                      'Built a consistent visual language and component library for use across the application',
-                      'Prepared technical documentation, project reports, and design specifications',
-                      'Assisted in frontend implementation, translating Figma designs into working interfaces',
-                    ].map(item => (
-                      <li key={item} style={{
-                        display: 'flex', alignItems: 'flex-start', gap: '0.625rem',
-                      }}>
-                        <span style={{ flexShrink: 0, marginTop: '2px' }}>{icons.check}</span>
-                        <span style={{
-                          fontSize: '0.875rem', color: 'var(--text-secondary)',
-                          lineHeight: 1.7,
-                        }}>
-                          {item}
+              {/* ── EXPERIENCE BLOCK ── */}
+              <div style={{ ...GLASS, padding: '1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1.5rem' }}>
+                  <span style={{ width: '30px', height: '30px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.18)', borderRadius: '8px', color: 'var(--accent)' }}>
+                    <IconBriefcase />
+                  </span>
+                  <p style={{ ...SECTION_LABEL }}>Experience</p>
+                </div>
+
+                <div style={{ position: 'relative' }}>
+                  <div aria-hidden="true" style={{ position: 'absolute', left: '7px', top: '14px', bottom: '14px', width: '1.5px', background: 'linear-gradient(180deg, rgba(0,229,255,0.55) 0%, rgba(0,229,255,0.08) 100%)' }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {experienceTimeline.map((e, i) => (
+                      <TimelineEntry key={e.title} {...e} delay={0.12 + i * 0.1} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </motion.div>
+            {/* ════ END LEFT ════ */}
+
+            {/* ════ RIGHT COLUMN — Summary + Skills + Highlights + Goals + CTA ══ */}
+            <motion.div {...fromRight(0.1)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+              {/* ── 1. PROFESSIONAL SUMMARY ── */}
+              <motion.div {...fromRight(0.16)} style={{ ...GLASS, padding: '1.625rem 1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
+                  <span style={{ width: '30px', height: '30px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.18)', borderRadius: '8px', color: 'var(--accent)' }}>
+                    <IconSummary />
+                  </span>
+                  <p style={{ ...SECTION_LABEL }}>Professional Summary</p>
+                </div>
+                {/* Left accent line + body */}
+                <div style={{ paddingLeft: '1rem', borderLeft: '2.5px solid rgba(0,229,255,0.50)' }}>
+                  <p style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)', lineHeight: 1.85 }}>
+                    Motivated BSCS student with a passion for building modern, user-friendly web applications.
+                    Strong in UI/UX design, frontend development, and problem solving. Eager to learn, grow,
+                    and contribute to real-world projects.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* ── 2. SKILLS & TECHNOLOGIES ── */}
+              <motion.div {...fromRight(0.2)} style={{ ...GLASS, padding: '1.625rem 1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                    <span style={{ width: '30px', height: '30px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.18)', borderRadius: '8px', color: 'var(--accent)' }}>
+                      <IconSkills />
+                    </span>
+                    <p style={{ ...SECTION_LABEL }}>Skills &amp; Technologies</p>
+                  </div>
+                  <motion.a
+                    href="/skills"
+                    whileHover={{ color: 'var(--accent)', x: 2 }}
+                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textDecoration: 'none', fontFamily: "'Space Grotesk', system-ui, sans-serif" }}
+                  >
+                    View All Skills <IconArrow />
+                  </motion.a>
+                </div>
+
+                {/* 2-row skills grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.5rem' }}>
+                  {skills.map(skill => (
+                    <motion.div
+                      key={skill.label}
+                      whileHover={{ y: -3, borderColor: 'rgba(0,229,255,0.32)', boxShadow: '0 0 14px rgba(0,229,255,0.12)', background: 'rgba(0,229,255,0.06)' }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.625rem 0.25rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', cursor: 'default' }}
+                    >
+                      <span style={{ fontSize: '1.0625rem', lineHeight: 1 }} aria-hidden="true">{skill.icon}</span>
+                      <span style={{ fontSize: '0.5625rem', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2 }}>{skill.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* ── 3. RESUME HIGHLIGHTS ── */}
+              <motion.div {...fromRight(0.24)} style={{ ...GLASS, padding: '1.5rem 1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
+                  <span style={{ width: '30px', height: '30px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.18)', borderRadius: '8px', color: 'var(--accent)' }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  </span>
+                  <p style={{ ...SECTION_LABEL }}>Resume Highlights</p>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '0.625rem' }}>
+                  {highlights.map(h => (
+                    <motion.div
+                      key={h.label}
+                      whileHover={{ y: -3, borderColor: 'rgba(0,229,255,0.28)', boxShadow: '0 0 16px rgba(0,229,255,0.10)' }}
+                      transition={{ duration: 0.18, ease: 'easeOut' }}
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 0.375rem', background: 'rgba(0,229,255,0.03)', border: '1px solid rgba(0,229,255,0.09)', borderRadius: '12px', textAlign: 'center', cursor: 'default' }}
+                    >
+                      <p style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '1.125rem', fontWeight: 700, color: 'var(--accent)', lineHeight: 1, marginBottom: '0.25rem' }}>{h.value}</p>
+                      <p style={{ fontSize: '0.5625rem', fontWeight: 500, color: 'var(--text-muted)', lineHeight: 1.3 }}>{h.label}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* ── 4. WHAT I'M LOOKING FOR ── */}
+              <motion.div {...fromRight(0.28)} style={{ ...GLASS, padding: '1.5rem 1.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1rem' }}>
+                  <span style={{ width: '30px', height: '30px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,229,255,0.08)', border: '1px solid rgba(0,229,255,0.18)', borderRadius: '8px', color: 'var(--accent)' }}>
+                    <IconTarget />
+                  </span>
+                  <p style={{ ...SECTION_LABEL }}>What I'm Looking For</p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'flex-start' }}>
+                  {/* Goals list */}
+                  <ul style={{ flex: 1, listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+                    {goals.map(g => (
+                      <li key={g} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
+                        <span style={{ marginTop: '2px', flexShrink: 0, width: '18px', height: '18px', borderRadius: '50%', background: 'rgba(0,229,255,0.09)', border: '1px solid rgba(0,229,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
+                          <IconCheck />
                         </span>
+                        <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{g}</span>
                       </li>
                     ))}
                   </ul>
 
-                  {/* Note */}
-                  <p style={{
-                    fontSize: '0.75rem', color: 'var(--text-muted)',
-                    marginTop: '1.25rem', fontStyle: 'italic', lineHeight: 1.6,
-                  }}>
-                    Additional professional experience will be added as it becomes available.
-                  </p>
+                  {/* Rocket hologram illustration */}
+                  <div style={{ flexShrink: 0, position: 'relative', width: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Outer glow ring */}
+                    <motion.div
+                      animate={{ scale: [1, 1.12, 1], opacity: [0.25, 0.12, 0.25] }}
+                      transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                      aria-hidden="true"
+                      style={{ position: 'absolute', width: '72px', height: '72px', borderRadius: '50%', border: '1.5px solid rgba(0,229,255,0.30)', boxShadow: '0 0 20px rgba(0,229,255,0.15)' }}
+                    />
+                    {/* Inner ring */}
+                    <motion.div
+                      animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.18, 0.4] }}
+                      transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+                      aria-hidden="true"
+                      style={{ position: 'absolute', width: '50px', height: '50px', borderRadius: '50%', border: '1px solid rgba(0,229,255,0.22)' }}
+                    />
+                    {/* Rocket icon — y + rotateZ are compositor-only (no layout) */}
+                    <motion.div
+                      animate={{ y: [0, -5, 0], rotateZ: [0, 4, 0, -4, 0] }}
+                      transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' }, rotateZ: { duration: 5, repeat: Infinity, ease: 'easeInOut' } }}
+                      style={{ position: 'relative', zIndex: 1, width: '44px', height: '44px', borderRadius: '50%', background: 'rgba(0,229,255,0.07)', border: '1px solid rgba(0,229,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)', boxShadow: '0 0 16px rgba(0,229,255,0.18)' }}
+                    >
+                      <IconRocket />
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
+
+              {/* ── 5. CTA BUTTONS ── */}
+              <motion.div {...fromRight(0.32)}>
+                <div className="resume-cta-row">
+                  {/* View Full Resume — outline glass */}
+                  <motion.button
+                    onClick={viewResume}
+                    whileHover={{ borderColor: 'rgba(0,229,255,0.55)', color: 'var(--accent)', boxShadow: '0 0 24px rgba(0,229,255,0.15), 0 0 0 1px rgba(0,229,255,0.18)' }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                    aria-label="View full resume PDF"
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0 1.5rem', height: '52px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '14px', color: 'var(--text-primary)', fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '0.9375rem', fontWeight: 600, cursor: 'pointer', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+                  >
+                    <IconEye /> View Full Resume
+                  </motion.button>
+
+                  {/* Download Resume — filled cyan */}
+                  <motion.button
+                    onClick={downloadResume}
+                    whileHover={{ filter: 'brightness(1.1)', boxShadow: '0 0 32px rgba(0,229,255,0.35), 0 0 0 1px rgba(0,229,255,0.40)' }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ duration: 0.18, ease: 'easeOut' }}
+                    aria-label="Download resume PDF"
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0 1.5rem', height: '52px', background: 'linear-gradient(135deg, #0095ff, #00e5ff)', border: '1px solid rgba(0,229,255,0.40)', borderRadius: '14px', color: '#050816', fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '0.9375rem', fontWeight: 700, cursor: 'pointer', boxShadow: '0 0 0 1px rgba(0,229,255,0.22), 0 4px 20px rgba(0,229,255,0.15)' }}
+                  >
+                    <IconDownload /> Download Resume (PDF)
+                  </motion.button>
+                </div>
+              </motion.div>
+
             </motion.div>
+            {/* ════ END RIGHT ════ */}
 
-          </div>{/* end grid */}
+          </div>
+          {/* ══ END MAIN GRID ══ */}
 
-          {/* ── BOTTOM CTA ───────────────────────────────────────────────────── */}
+          {/* ══ BOTTOM TRUST STRIP ═════════════════════════════════════════ */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true as const }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            style={{
-              textAlign: 'center', marginTop: '3rem',
-              padding: '2.5rem 2rem',
-              background: 'rgba(0,229,255,0.03)',
-              border: '1px solid rgba(0,229,255,0.09)',
-              borderRadius: '16px',
-            }}
+            {...fadeUp(0.18)}
+            style={{ marginTop: '2.5rem' }}
           >
-            <p style={{
-              fontFamily: "'Space Grotesk', system-ui, sans-serif",
-              fontSize: '1rem', fontWeight: 600,
-              color: 'var(--text-primary)', marginBottom: '0.375rem',
-            }}>
-              Want the full document?
-            </p>
-            <p style={{
-              fontSize: '0.875rem', color: 'var(--text-muted)',
-              marginBottom: '1.5rem', lineHeight: 1.6,
-            }}>
-              Download the PDF for a complete, print-ready overview.
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Button variant="primary" size="lg" leftIcon={<DownloadIcon />}
-                onClick={downloadResume}
-                aria-label="Download full resume PDF">
-                {resume.downloadLabel}
-              </Button>
+            <div style={{ background: 'rgba(13,20,36,0.85)', border: '1px solid rgba(0,229,255,0.10)', borderRadius: '16px', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', padding: '1.125rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0', overflow: 'hidden' }}>
+              {trustItems.map((item, i) => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center' }}>
+                  <motion.div
+                    whileHover={{ color: 'var(--accent)' }}
+                    transition={{ duration: 0.16, ease: 'easeOut' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.35rem 1.25rem', cursor: 'default' }}
+                  >
+                    <span style={{ color: 'var(--accent)', fontSize: '0.5625rem', opacity: 0.7 }} aria-hidden="true">{item.icon}</span>
+                    <span style={{ fontFamily: "'Space Grotesk', system-ui, sans-serif", fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                      {item.label}
+                    </span>
+                  </motion.div>
+                  {i < trustItems.length - 1 && (
+                    <div aria-hidden="true" style={{ width: '1px', height: '20px', background: 'rgba(0,229,255,0.12)', flexShrink: 0 }} />
+                  )}
+                </div>
+              ))}
             </div>
           </motion.div>
+          {/* ══ END TRUST STRIP ══ */}
 
         </Container>
       </section>
+
+      {/* Scoped layout styles are now in globals.css */}
     </>
   )
-}
+})

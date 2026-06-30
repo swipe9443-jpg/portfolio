@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 import { content } from '@/content/content'
@@ -112,7 +113,7 @@ const whyWorkCards = [
   },
 ]
 
-export function AboutPage() {
+export const AboutPage = memo(function AboutPage() {
   const { about } = content
 
   return (
@@ -608,4 +609,4 @@ export function AboutPage() {
       </section>
     </>
   )
-}
+})

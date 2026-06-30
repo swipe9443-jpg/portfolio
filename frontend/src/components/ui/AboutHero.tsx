@@ -7,15 +7,19 @@
  *   Bottom grid (60 stats card | 40 quick-info card)
  */
 
-import React from 'react'
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 import { content } from '@/content/content'
 import { Container } from '@/components/ui/Container'
-import heroPhoto from '@/assets/profile.png'
+import { PROFILE_PHOTO_WEBP, PROFILE_PHOTO_PNG } from '@/config/images'
+// Use stable public-folder paths — matches the preload in index.html
+const heroPhotoWebp = PROFILE_PHOTO_WEBP
+const heroPhotoPng  = PROFILE_PHOTO_PNG
 
 type E4 = [number, number, number, number]
 const E: E4 = [0.22, 1, 0.36, 1]
 
+// Module-level constants — not re-created on every render
 const fadeUp = (delay = 0) => ({
   initial:    { opacity: 0, y: 24 },
   animate:    { opacity: 1, y: 0  },
@@ -80,7 +84,7 @@ const hOff = (e: React.MouseEvent<HTMLDivElement>) => { const el = e.currentTarg
 /* ─────────────────────────────────────────────────────────────────────────
    COMPONENT
 ───────────────────────────────────────────────────────────────────────── */
-export function AboutHero() {
+export const AboutHero = memo(function AboutHero() {
   const { about } = content
   const infoRows = about.personalInfo.filter(r => !['Full Name','Role'].includes(r.label))
 
@@ -162,7 +166,18 @@ export function AboutHero() {
                 background:'rgba(5,8,22,0.4)',
                 height:'clamp(320px,38vw,420px)',
               }}>
-                <img src={heroPhoto} alt="Josh Fallarcuna — UI/UX Designer & Developer" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top', display:'block' }} />
+                <picture>
+                  <source srcSet={heroPhotoWebp} type="image/webp" />
+                  <img
+                    src={heroPhotoPng}
+                    alt="Josh Fallarcuna — UI/UX Designer & Developer"
+                    loading="lazy"
+                    decoding="async"
+                    width={435}
+                    height={654}
+                    style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top', display:'block' }}
+                  />
+                </picture>
               </div>
             </motion.div>
 
@@ -325,58 +340,8 @@ export function AboutHero() {
 
       </Container>
 
-      {/* ─── Responsive styles ──────────────────────────────────────────────── */}
-      <style>{`
-        /* Main card: stack vertically on mobile, 45/55 side-by-side on desktop */
-        .about-main-card {
-          grid-template-columns: 1fr !important;
-        }
-        .about-img-col {
-          border-right: none !important;
-          border-bottom: 1px solid rgba(0,229,255,0.09);
-          min-height: 380px !important;
-        }
-        .about-content-col {
-          padding: 2rem 1.75rem !important;
-        }
-
-        @media (min-width: 900px) {
-          .about-main-card {
-            grid-template-columns: 45fr 55fr !important;
-          }
-          .about-img-col {
-            border-right: 1px solid rgba(0,229,255,0.09) !important;
-            border-bottom: none !important;
-            min-height: 560px !important;
-          }
-          .about-content-col {
-            padding: 3rem 2.75rem !important;
-          }
-        }
-
-        /* Bottom grid: stack on mobile, 60/40 on desktop */
-        .about-bottom-grid {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-        @media (min-width: 768px) {
-          .about-bottom-grid {
-            display: grid;
-            grid-template-columns: 60fr 40fr;
-            gap: 1.5rem;
-            align-items: start;
-          }
-        }
-
-        /* Capability cards: 1 col on tiny screens, 2 col otherwise */
-        @media (max-width: 400px) {
-          .about-content-col .cap-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
+      {/* Responsive styles are now in globals.css */}
 
     </section>
   )
-}
+})
